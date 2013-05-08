@@ -17,7 +17,7 @@ function Start (){
 }
 
 public function AppendDataToLog(){
-  Debug.Log("Create log file");
+  //Debug.Log("Create log file");
   var sw =  File.AppendText(applicationPath+"/A_Mile_In_My_Paws_Log.txt");
   var logline = DateTime.Now+"|"+GetComponent(NetworkConnectionServer).playerName()+"|"+GetComponent(NetworkConnectionServer).currentYear()+
   				"|"+GetComponent(NetworkConnectionServer).reachedGoal()+"|"+GetComponent(NetworkConnectionServer).timeElapsed()+
