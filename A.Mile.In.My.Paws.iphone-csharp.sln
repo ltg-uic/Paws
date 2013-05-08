@@ -1,0 +1,33 @@
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+
+Project("{331033CF-89B1-087A-97A2-F6B501EDF2ED}") = "A.Mile.In.My.Paws.iphone", "Assembly-CSharp-firstpass-vs.csproj", "{E1321AA4-0051-07CA-B5E4-35AA79EF597F}"
+EndProject
+Project("{331033CF-89B1-087A-97A2-F6B501EDF2ED}") = "A.Mile.In.My.Paws.iphone", "Assembly-CSharp-vs.csproj", "{07092529-AC16-9EBD-E3CD-4F488B954F9A}"
+EndProject
+Project("{331033CF-89B1-087A-97A2-F6B501EDF2ED}") = "A.Mile.In.My.Paws.iphone", "Assembly-CSharp-Editor-firstpass-vs.csproj", "{314949CA-FE47-8083-D06D-61F45D495312}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E1321AA4-0051-07CA-B5E4-35AA79EF597F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E1321AA4-0051-07CA-B5E4-35AA79EF597F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E1321AA4-0051-07CA-B5E4-35AA79EF597F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E1321AA4-0051-07CA-B5E4-35AA79EF597F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07092529-AC16-9EBD-E3CD-4F488B954F9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07092529-AC16-9EBD-E3CD-4F488B954F9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07092529-AC16-9EBD-E3CD-4F488B954F9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07092529-AC16-9EBD-E3CD-4F488B954F9A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{314949CA-FE47-8083-D06D-61F45D495312}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{314949CA-FE47-8083-D06D-61F45D495312}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{314949CA-FE47-8083-D06D-61F45D495312}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{314949CA-FE47-8083-D06D-61F45D495312}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	
+EndGlobal

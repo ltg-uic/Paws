@@ -1,0 +1,18 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/EmmitterToggle.js">
+    <Files>
+      <File FileName="Assets/Scripts/UnderWater.js" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/InitialMessage.js" Line="67" Column="19" />
+      <File FileName="Assets/Scripts/GameOver.js" Line="4" Column="1" />
+      <File FileName="Assets/Scripts/PolarBearControl.cs" Line="122" Column="6" />
+      <File FileName="Assets/Scripts/SerialInputOutput.js" Line="61" Column="4" />
+      <File FileName="Assets/Scripts/EmmitterToggle.js" Line="25" Column="20" />
+      <File FileName="Assets/Scripts/BearStatus.cs" Line="127" Column="27" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: 4548eb4bc991b47478b4332286b8fda7
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - splashSound: {fileID: 8300000, guid: e5ed243b6da544336830619fe4d4eb2e, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 

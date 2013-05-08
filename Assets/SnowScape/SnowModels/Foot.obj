@@ -1,0 +1,29 @@
+# Created By Carrara 8.0
+
+# Number of vertices: 4
+v 0.45 0 -0.45
+v -0.45 0 -0.45
+v 0.45 0 0.45
+v -0.45 0 0.45
+
+# Number of normals: 6
+vn 0 1 0
+vn 0 1 0
+vn 0 1 0
+vn 0 1 0
+vn 0 1 0
+vn 0 1 0
+
+# Number of texture vertices: 6
+vt 0 0
+vt 0 0
+vt 1 0
+vt 0 1
+vt 1 1
+vt 1 1
+
+g Foot 
+usemtl Texture_0
+# Number of Polygons: 2
+f 1/1/1 2/3/3 4/5/5 
+f 1/1/1 4/5/5 3/4/4 

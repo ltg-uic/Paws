@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: eba516ddb457043019f9475a47ae85cc
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - polarBearTransform: {instanceID: 0}
+  - polarBear: {instanceID: 0}
+  - _controller: {instanceID: 0}
+  - bs: {instanceID: 0}
+  - other: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 

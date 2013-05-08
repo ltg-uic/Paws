@@ -1,0 +1,11 @@
+fileFormatVersion: 2
+guid: 48901bd10e39b4d2998eca543d8b6ace
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - iceHitSound: {fileID: 8300000, guid: e5ed243b6da544336830619fe4d4eb2e, type: 3}
+  - waterSplashSound: {fileID: 8300000, guid: e688e015f87884c23a75c2305013134a, type: 3}
+  - PruebaPrueba: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 

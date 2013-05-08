@@ -1,0 +1,33 @@
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+
+Project("{D0FB5410-05F6-9629-FC73-022EC7A380B1}") = "A.Mile.In.My.Paws.ipad.05.15", "Assembly-CSharp-firstpass-vs.csproj", "{22C9C021-32CF-709F-3F1A-05EA58ED297B}"
+EndProject
+Project("{D0FB5410-05F6-9629-FC73-022EC7A380B1}") = "A.Mile.In.My.Paws.ipad.05.15", "Assembly-CSharp-vs.csproj", "{BBC208EA-6518-0065-7484-5AC36AF0482B}"
+EndProject
+Project("{D0FB5410-05F6-9629-FC73-022EC7A380B1}") = "A.Mile.In.My.Paws.ipad.05.15", "Assembly-CSharp-Editor-firstpass-vs.csproj", "{FD444322-2FAA-C763-7FC0-E67AEF0BA532}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{22C9C021-32CF-709F-3F1A-05EA58ED297B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22C9C021-32CF-709F-3F1A-05EA58ED297B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22C9C021-32CF-709F-3F1A-05EA58ED297B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22C9C021-32CF-709F-3F1A-05EA58ED297B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BBC208EA-6518-0065-7484-5AC36AF0482B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BBC208EA-6518-0065-7484-5AC36AF0482B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BBC208EA-6518-0065-7484-5AC36AF0482B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BBC208EA-6518-0065-7484-5AC36AF0482B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD444322-2FAA-C763-7FC0-E67AEF0BA532}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD444322-2FAA-C763-7FC0-E67AEF0BA532}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD444322-2FAA-C763-7FC0-E67AEF0BA532}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD444322-2FAA-C763-7FC0-E67AEF0BA532}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	
+EndGlobal

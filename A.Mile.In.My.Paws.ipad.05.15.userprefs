@@ -1,0 +1,17 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/AppendToLog.js">
+    <Files>
+      <File FileName="Assets/Plugins/Arduinity.cs" Line="177" Column="1" />
+      <File FileName="Assets/Scripts/NetworkConnectionBear.js" Line="124" Column="2" />
+      <File FileName="Assets/Scripts/NetworkConnectionServer.js" Line="600" Column="2" />
+      <File FileName="Assets/Scripts/AppendToLog.js" Line="33" Column="1" />
+      <File FileName="Assets/Scripts/PolarBearControl.cs" Line="352" Column="28" />
+      <File FileName="Assets/Scripts/InitialMessage.js" Line="56" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

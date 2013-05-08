@@ -1,0 +1,14 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/BurnedCaloriesGraph.js">
+    <Files>
+      <File FileName="Assets/Scripts/NetworkConnectionServer.js" Line="205" Column="63" />
+      <File FileName="Assets/Scripts/SummaryGraph.js" Line="191" Column="1" />
+      <File FileName="Assets/Scripts/BurnedCaloriesGraph.js" Line="191" Column="43" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
