@@ -1,8 +1,9 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/AppendToLog.js">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/NetworkConnectionBear.js">
     <Files>
       <File FileName="Assets/Scripts/AppendToLog.js" Line="20" Column="5" />
+      <File FileName="Assets/Scripts/NetworkConnectionBear.js" Line="6" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
