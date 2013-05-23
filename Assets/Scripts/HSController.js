@@ -1,9 +1,10 @@
 private var secretKey=""; // Edit this value and make sure it's the same as the one stored on the server
 //var addScoreUrl="http://localhost/unity_test/addscore.php?"; //be sure to add a ? to your url
 var highscoreUrl="http://paws.evl.uic.edu/display.php";    
- 
+var getInterpreters ="http://paws.evl.uic.edu/getInterpreters.php"; 
+
 function Start() {
-	getScores();
+	getPrompts();
 }
 
  /* 
@@ -24,13 +25,13 @@ function postScore(name, score) {
  */
  
 // Get the scores from the MySQL DB to display in a GUIText.
-function getScores() {
-    gameObject.guiText.text = "Loading Scores";
+function getPrompts() {
+    gameObject.guiText.text = "Loading Prompts";
     hs_get = WWW(highscoreUrl);
     yield hs_get;
  
     if(hs_get.error) {
-    	print("There was an error getting the high score: " + hs_get.error);
+    	print("There was an error getting the prompts: " + hs_get.error);
     } else {
         gameObject.guiText.text = hs_get.text; // this is a GUIText that will display the scores in game.
     }
