@@ -3,10 +3,6 @@ private var secretKey=""; // Edit this value and make sure it's the same as the 
 var highscoreUrl="http://paws.evl.uic.edu/display.php";    
 var getInterpreters ="http://paws.evl.uic.edu/getInterpreters.php"; 
 
-function Start() {
-	getPrompts();
-}
-
  /* 
 function postScore(name, score) {
     //This connects to a server side php script that will add the name and score to a MySQL DB.
@@ -25,7 +21,7 @@ function postScore(name, score) {
  */
  
 // Get the scores from the MySQL DB to display in a GUIText.
-function getPrompts() {
+function GetPrompts() {
     gameObject.guiText.text = "Loading Prompts";
     hs_get = WWW(highscoreUrl);
     yield hs_get;
@@ -35,4 +31,28 @@ function getPrompts() {
     } else {
         gameObject.guiText.text = hs_get.text; // this is a GUIText that will display the scores in game.
     }
+}
+
+public function GetInterpreters() {
+   
+   /* hs_get = WWW(getInterpreters);
+    yield hs_get;
+ 
+    if(hs_get.error) {
+    	print("There was an error getting the interpreters: " + hs_get.error);
+    } else {*/
+
+   // String _interpreters = hs_get.text; .
+    //}
+    
+    var _interpreters: String = "JohnS:John|CathyH:Cathy" ;
+   
+    return _interpreters;
+    
+    //}
+}
+
+// Mirlanda: Update the database 
+function UpdateInterpreter(_interpreter: String){
+
 }

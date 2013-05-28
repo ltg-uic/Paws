@@ -4,6 +4,7 @@ import System;
 private var applicationPath:String = "";
   var startDateTime;
   var savedLog = false;
+  
 function Start (){
 
 	applicationPath = Application.dataPath;

@@ -51,14 +51,15 @@
      <Compile Include="Assets\Scripts\BearCameraMovements.js" />
      <Compile Include="Assets\Scripts\BurnedCaloriesGraph.js" />
      <Compile Include="Assets\Scripts\CurrentPosInMap.js" />
+     <Compile Include="Assets\Scripts\DatabaseConnection.js" />
      <Compile Include="Assets\Scripts\DrawLine.js" />
      <Compile Include="Assets\Scripts\EmmitterToggle.js" />
      <Compile Include="Assets\Scripts\Follow.js" />
      <Compile Include="Assets\Scripts\GameOver.js" />
-     <Compile Include="Assets\Scripts\HSController.js" />
      <Compile Include="Assets\Scripts\InfoEventTriggers.js" />
      <Compile Include="Assets\Scripts\InfoPolarBear.js" />
      <Compile Include="Assets\Scripts\InitialMessage.js" />
+     <Compile Include="Assets\Scripts\Interpreters.js" />
      <Compile Include="Assets\Scripts\Network Connection Secondary Display.js" />
      <Compile Include="Assets\Scripts\NetworkConnectionBear.js" />
      <Compile Include="Assets\Scripts\NetworkConnectionServer.js" />

@@ -2,7 +2,12 @@ fileFormatVersion: 2
 guid: d44c71c22845546c492b3f7ff9f83871
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - newSkin: {instanceID: 0}
+  - backgroundTexture: {instanceID: 0}
+  - startBtnTexture: {instanceID: 0}
+  - leftBtnTexture: {instanceID: 0}
+  - rightBtnTexture: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
