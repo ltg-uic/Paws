@@ -72,6 +72,8 @@ function SaveSession(_parameters: String[]){
 
 // Mirlanda: Create php that load scores
 //_parameters[0] = year , _parameters[1] = number_of_results_to_get
+// If you can figure out the way to return an array is better, if not the format of the data 
+//should be Name1:time|Name2:time|
 function GetScores(_parameters: String[]){
 
 }
