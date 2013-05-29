@@ -33,6 +33,7 @@ function GetPrompts() {
     }
 }
 
+// Mirlanda: Create php(s) that load Interpreters Id and name. (1) order alphabetically (2) order by the last used
 public function GetInterpreters() {
    
    /* hs_get = WWW(getInterpreters);
@@ -53,6 +54,24 @@ public function GetInterpreters() {
 }
 
 // Mirlanda: Update the database 
-function UpdateInterpreter(_interpreter: String){
+function UpdateInterpreter(_interpreterID: String){
+
+}
+
+//Mirlanda: Create php that save the log (session)
+/*
+  This is the order of the array
+  DateTime.Now, playerName(), year, reachedGoal(), 
+  elapsedTime , numberSteps(), meters, burnedCalories, typeGraph
+*/
+function SaveSession(_parameters: String[]){
+
+
+
+}
+
+// Mirlanda: Create php that load scores
+//_parameters[0] = year , _parameters[1] = number_of_results_to_get
+function GetScores(_parameters: String[]){
 
 }
