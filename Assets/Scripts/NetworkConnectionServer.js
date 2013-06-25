@@ -21,6 +21,7 @@ var burnedCalories: float;
 var gameTime: int;  // Time in minutes to stop the game.
 var meters: float;
 var elapsedTime: float;
+var interpreterName:String;
 
 private var _scoresCount: int;
 private var _scoreValues:ArrayList;
@@ -54,6 +55,7 @@ private var _scoresLoaded: boolean;
 private var ScreenX: float;
 private var ScreenY: float;
 private var _showInfo:boolean;
+private var _showInterpreterList:boolean = false;
 
 var yearList = [1975,2010,2045];
 private var _yearAgoList = [-35,0,35];
@@ -110,6 +112,7 @@ function Start(){
 }
 
 function Initialize(){
+	interpreterName = "...";
     _displayMinutes = 0;
     elapsedTime = 0;
 	_currentYear = _minYear;
@@ -218,88 +221,8 @@ function DrawViews(){
   	if (!_showSummary)
   	{  // Draw the main view.
 			// Area containing the year slider and selection
-			_scoresLoaded = false;
-			if (!isPlaying){
-	
-				// Area rendering the map and it's labels
-				GUILayout.BeginArea (Rect (areaWidth*0.1, areaHeight*0.1, areaWidth*0.1, _labelHeight));
-				GUILayout.Label("Name: ");	
-				GUILayout.EndArea();
-					
-				
-				GUILayout.BeginArea (Rect (areaWidth*0.17, areaHeight*0.105, areaWidth*0.33, _labelHeight+areaHeight*0.01));
-				_playerName = GUILayout.TextField(_playerName,12);
-				GUILayout.EndArea();
-			
-				GUILayout.BeginArea (Rect (areaWidth*0.405, areaHeight*0.17, areaWidth*0.1, _labelHeight));
-				GUILayout.Label("Year");	
-				GUILayout.EndArea();
-				
-				//Area to display the year selection
-				GUILayout.BeginArea (Rect (areaWidth*0.375, areaHeight*0.2, areaWidth*0.05, areaHeight*0.05));
-				//GUILayout.BeginHorizontal();
-				if (GUILayout.Button(leftBtnTexture, "ImageButton")){
-		        	_currentYear --;
-		        if (_currentYear < 0)
-		        	_currentYear = 0;	
-		     	}
-		     	GUILayout.EndArea();
-		     	
-		     	GUILayout.BeginArea (Rect (areaWidth*0.4, areaHeight*0.205, areaWidth*0.05, _labelHeight));
-				GUILayout.Label(_yearLabels[_currentYear]);
-				GUILayout.EndArea();
-		     		
-			    GUILayout.BeginArea (Rect (areaWidth*0.45, areaHeight*0.2, areaWidth*0.05, areaHeight*0.05));
-				  if (GUILayout.Button(rightBtnTexture,"ImageButton")){
-			        _currentYear ++;
-			        if (_currentYear == yearList.Length)
-			        	_currentYear --;	
-			    }
-		     	GUILayout.EndArea();
-				
-				if ( yearList[_currentYear] != yearList[_previousYear])
-				{
-					_previousYear = _currentYear;
-					var  _map : Texture2D = Resources.Load("Images/"+yearList[_currentYear]+"_Location_Map", typeof(Texture2D));
-	       			GetComponent(CurrentPosInMap).mapImage = _map;
-				}
-				GUILayout.BeginArea (Rect (areaWidth*0.85, areaHeight*0.05, areaWidth*0.10, areaHeight*0.15));
-	     		if (GUILayout.Button (startBtnTexture, "ImageButton"))
-				{		
-				    StartGame();
-				    isPlaying = true;
-			        networkView.RPC ("LoadLevelInClient", RPCMode.Others, yearList[_currentYear].ToString()+":"+_yearAgoList[_currentYear].ToString());  
-					GetComponent(BurnedCaloriesGraph).DrawCaloriesGraph();
-				}
-				
-		     	GUILayout.EndArea ();
-		     	/*
-			    GUILayout.BeginArea (Rect (areaWidth*0.75, areaHeight*0.65, areaWidth*0.1, _labelHeight));
-				if (GUILayout.Button("Distance")){
-					GetComponent(BurnedCaloriesGraph).typeGraph = 1 ;
-				}
-				GUILayout.EndArea();
-				GUILayout.BeginArea (Rect (areaWidth*0.85, areaHeight*0.65, areaWidth*0.1, _labelHeight));
-			    if (GUILayout.Button("Time")){
-					GetComponent(BurnedCaloriesGraph).typeGraph = 0;
-				}
-				GUILayout.EndArea();
-			*/
-			}
-			else{
-			// Area rendering the map and it's labels
-				GUILayout.BeginArea (Rect (areaWidth*0.1, areaHeight*0.1, areaWidth*0.1, _labelHeight));
-				GUILayout.Label(_playerName);
-				GUILayout.EndArea();
-			
-		     	GUILayout.BeginArea (Rect (areaWidth*0.4, areaHeight*0.205, areaWidth*0.05, _labelHeight));				
-				GUILayout.Label(yearList[_currentYear].ToString());
-				GUILayout.EndArea();
-			
-			}
-			
 			GUILayout.BeginArea (Rect (areaWidth*0.1, areaHeight*0.205, areaWidth*0.4, _labelHeight));
-				GUILayout.Label("Bird's eye view");	
+			GUILayout.Label("Bird's eye view");	
 			GUILayout.EndArea();		
 			// Area rendering the map and it's labels
 			GUILayout.BeginArea (Rect (areaWidth*0.1,areaHeight*0.25,areaWidth*0.4,areaHeight*0.4));
@@ -349,7 +272,146 @@ function DrawViews(){
 		     SendMessage("ShowSummaryGraph",true);  
 		    }
 		    GUILayout.EndArea();  
-		    
+	
+			_scoresLoaded = false;
+			if (!isPlaying){
+	
+				// Area rendering the map and it's labels 
+				GUILayout.BeginArea (Rect (areaWidth*0.1, areaHeight*0.1, areaWidth*0.1, _labelHeight));
+				GUILayout.Label("Name: ");	
+				GUILayout.EndArea();
+					
+				
+				GUILayout.BeginArea (Rect (areaWidth*0.16, areaHeight*0.105, areaWidth*0.20, _labelHeight+areaHeight*0.01));
+				_playerName = GUILayout.TextField(_playerName,12);
+				GUILayout.EndArea();
+			
+			    GUILayout.BeginArea (Rect (areaWidth*0.1, areaHeight*0.15, areaWidth*0.4, _labelHeight));
+				GUILayout.Label("Interpreter: ");	
+				GUILayout.EndArea();
+				    
+				GUILayout.BeginArea (Rect (areaWidth*0.3, areaHeight*0.205, areaWidth*0.1, _labelHeight));
+				GUILayout.Label("Year");	
+				GUILayout.EndArea();
+				
+				//Area to display the year selection
+				GUILayout.BeginArea (Rect (areaWidth*0.375, areaHeight*0.2, areaWidth*0.05, areaHeight*0.05));
+				//GUILayout.BeginHorizontal();
+				if (GUILayout.Button(leftBtnTexture, "ImageButton")){
+		        	_currentYear --;
+		        if (_currentYear < 0)
+		        	_currentYear = 0;	
+		     	}
+		     	GUILayout.EndArea();
+		     	
+		     	GUILayout.BeginArea (Rect (areaWidth*0.4, areaHeight*0.205, areaWidth*0.05, _labelHeight));
+				GUILayout.Label(_yearLabels[_currentYear]);
+				GUILayout.EndArea();
+		     		
+			    GUILayout.BeginArea (Rect (areaWidth*0.45, areaHeight*0.2, areaWidth*0.05, areaHeight*0.05));
+				  if (GUILayout.Button(rightBtnTexture,"ImageButton")){
+			        _currentYear ++;
+			        if (_currentYear == yearList.Length)
+			        	_currentYear --;	
+			    }
+		     	GUILayout.EndArea();
+				
+				if ( yearList[_currentYear] != yearList[_previousYear])
+				{
+					_previousYear = _currentYear;
+					var  _map : Texture2D = Resources.Load("Images/"+yearList[_currentYear]+"_Location_Map", typeof(Texture2D));
+	       			GetComponent(CurrentPosInMap).mapImage = _map;
+				}
+				GUILayout.BeginArea (Rect (areaWidth*0.85, areaHeight*0.05, areaWidth*0.10, areaHeight*0.15));
+	     		if (GUILayout.Button (startBtnTexture, "ImageButton"))
+				{		
+					if (interpreterName.CompareTo("...")){
+					    StartGame();
+					    isPlaying = true;
+				        networkView.RPC ("LoadLevelInClient", RPCMode.Others, yearList[_currentYear].ToString()+":"+_yearAgoList[_currentYear].ToString());  
+						GetComponent(BurnedCaloriesGraph).DrawCaloriesGraph();
+					}
+					else
+					{
+						Debug.Log("select an interpreter");
+					}
+				}
+				
+		     	GUILayout.EndArea ();
+		     	
+		     	GUILayout.BeginArea (Rect (areaWidth*0.21, areaHeight*0.15, areaWidth*0.15, areaHeight*0.05));
+			    if (GUILayout.Button(interpreterName)){
+					
+    				_showInterpreterList = !_showInterpreterList;
+    			
+   			    }
+   			    GUILayout.EndArea();
+   			    
+   			    if (_showInterpreterList){
+
+				 	for (var cnt:int  = 1; cnt < GetComponent(Interpreters).interpreterNames.Count; cnt++){
+				 
+				 	   GUILayout.BeginArea (Rect (areaWidth*0.21, areaHeight*0.15+_labelHeight*(cnt), areaWidth*0.15, _labelHeight));
+				 	   if (GUILayout.Button(GetComponent(Interpreters).interpreterNames[cnt])){
+				 	   		interpreterName = GetComponent(Interpreters).interpreterNames[cnt];
+				 	   		_showInterpreterList = !_showInterpreterList;
+				 	   		GetComponent(Interpreters).updateInterpreter(cnt);
+				 	   } 
+				 	   GUILayout.EndArea();
+				    }
+			    } 
+			    
+		     	/*
+			    GUILayout.BeginArea (Rect (areaWidth*0.75, areaHeight*0.65, areaWidth*0.1, _labelHeight));
+				if (GUILayout.Button("Distance")){
+					GetComponent(BurnedCaloriesGraph).typeGraph = 1 ;
+				}
+				GUILayout.EndArea();
+				GUILayout.BeginArea (Rect (areaWidth*0.85, areaHeight*0.65, areaWidth*0.1, _labelHeight));
+			    if (GUILayout.Button("Time")){
+					GetComponent(BurnedCaloriesGraph).typeGraph = 0;
+				}
+				GUILayout.EndArea();
+			*/
+			}
+			else{
+		
+				GUILayout.BeginArea (Rect (areaWidth*0.1, areaHeight*0.1, areaWidth*0.1, _labelHeight));
+				GUILayout.Label("Player: " +_playerName);
+				GUILayout.EndArea();
+			
+				GUILayout.BeginArea (Rect (areaWidth*0.1, areaHeight*0.15, areaWidth*0.2, _labelHeight));
+				GUILayout.Label("Hello, my name is ");
+				GUILayout.EndArea();
+				
+				GUILayout.BeginArea (Rect (areaWidth*0.25, areaHeight*0.15, areaWidth*0.15, areaHeight*0.05));
+			    if (GUILayout.Button(interpreterName)){
+					
+    				_showInterpreterList = !_showInterpreterList;
+    			
+   			    }
+   			    GUILayout.EndArea();
+				 if (_showInterpreterList){
+
+				 	for (cnt  = 1; cnt < GetComponent(Interpreters).interpreterNames.Count; cnt++){
+				 
+				 	   GUILayout.BeginArea (Rect (areaWidth*0.31, areaHeight*0.15+_labelHeight*(cnt), areaWidth*0.15, _labelHeight));
+				 	   if (GUILayout.Button(GetComponent(Interpreters).interpreterNames[cnt])){
+				 	   		interpreterName = GetComponent(Interpreters).interpreterNames[cnt];
+				 	   		_showInterpreterList = !_showInterpreterList;
+				 	   		GetComponent(Interpreters).updateInterpreter(cnt);
+				 	   } 
+				 	   GUILayout.EndArea();
+				    }
+			    } 
+				
+		     	GUILayout.BeginArea (Rect (areaWidth*0.4, areaHeight*0.205, areaWidth*0.05, _labelHeight));				
+				GUILayout.Label(yearList[_currentYear].ToString());
+				GUILayout.EndArea();
+			
+			}
+			
+				    
 		  /*  GUILayout.BeginArea(Rect (areaWidth*0.1, areaHeight*0.95, areaWidth*0.3, _labelHeight));
 		    _showInfo = GUILayout.Toggle(_showInfo, "Show polar bear info");
 		    GetComponent(InfoPolarBear).ShowInfo(_showInfo);
