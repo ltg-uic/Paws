@@ -66,7 +66,7 @@ function UpdateInterpreter(_interpreterID: String){
 */
 function SaveSession(_parameters: String[]){
 
-
+  Debug.Log("Save data to log..."+_parameters[0] + " " + _parameters[1]);
 
 }
 
@@ -74,6 +74,9 @@ function SaveSession(_parameters: String[]){
 //_parameters[0] = year , _parameters[1] = number_of_results_to_get
 // If you can figure out the way to return an array is better, if not the format of the data 
 //should be Name1:time|Name2:time|
-function GetScores(_parameters: String[]){
+function GetScores(_parameters: int[]){
 
+	var _scores: String = "JohnS:30|CathyH:60" ;
+   
+    return _interpreters;
 }

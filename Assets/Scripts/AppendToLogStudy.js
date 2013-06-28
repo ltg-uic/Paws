@@ -2,7 +2,7 @@ import System.IO;
 import System;
 
 private var applicationPath:String = "";
-
+// This is for the Lab Study
 function Start (){
 
 	applicationPath = Application.dataPath;

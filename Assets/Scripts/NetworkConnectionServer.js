@@ -370,6 +370,7 @@ function DrawViews(){
 		       else if (GUILayout.Button("Cancel Game")){
 		         GetComponent(InfoPolarBear).ShowInfo(false);
 				 isPlaying = false;  
+				 GetComponent(AppendToLog).AppendDataToLog();
 			     networkView.RPC ("StopGame", RPCMode.Others,burnedCalories); 
 			     Initialize();    
 			   }
@@ -441,9 +442,7 @@ function DrawViews(){
        _timerReached = true; 
        if (!_savedLog){
        	Debug.Log("Saved Log");
- 	    //  GetComponent(AppendToLog).AppendDataToLog();
- 	    var logline = GetComponent(AppendToLog).GetLogLine();
- 	    networkView.RPC ("SaveLog", RPCMode.Others, logline);  
+ 	    GetComponent(AppendToLog).AppendDataToLog();
  	    GetComponent(SummaryGraph).UpdateDataByYear();
  	     // if (_goalReached)
  	      	//	SaveScores();
@@ -462,6 +461,31 @@ function OnPlayerConnected(newPlayer: NetworkPlayer){
                
 }
 
+function LoadScores(){
+ if (!_scoresLoaded){
+ 	_scoresLoaded = true;
+ 	_scoreValues.Clear();
+ 	_scoreNames.Clear();
+ 	_scoresCount = 0;
+
+	GetComponent(DatabaseConnection).GetScores(
+	
+ 	if (File.Exists(applicationPath+"/Scores_"+yearList[_currentYear]+".txt")){
+		var file =  File.ReadAllLines(applicationPath+"/Scores_"+yearList[_currentYear]+".txt");
+		if (file!=null){
+		   	_scoresCount = file.Length;
+	   		//Debug.Log("File --> " + randomCount);
+	   		for (var j: int = 0 ; j < _scoresCount; j++){
+	   		  var values = file[j].Split(":"[0]);
+	   		  _scoreValues.Add(values[0]);
+	   		  _scoreNames.Add(values[1]);
+	   		}
+	   	}	
+   	}   
+  }
+}
+
+/*
 function LoadScores(){
  if (!_scoresLoaded){
  	_scoresLoaded = true;
@@ -516,7 +540,7 @@ function OrderScores(){
 	     _scoresCount++;
 	  }
 }
-
+*/
 public function playerName(){
     return _playerName;
 }
@@ -572,10 +596,7 @@ function ReceivedFinishedLevel (_steps: String ,  info : NetworkMessageInfo)
     //Commented out for iPad demo
     
     if (!_savedLog){
-	 //   GetComponent(AppendToLog).AppendDataToLog();
-	    var logline = GetComponent(AppendToLog).GetLogLine();
- 	    networkView.RPC ("SaveLog", RPCMode.Others, logline);  
- 	
+	    GetComponent(AppendToLog).AppendDataToLog(); 	
 	    GetComponent(SummaryGraph).UpdateDataByYear();
 	    SaveScores();
 	    _savedLog = true;
@@ -604,10 +625,6 @@ function ShowInfoPolarBear (_value: int, info : NetworkMessageInfo)
 }
 @RPC
 function SaveLogDocent (_level: String)
-{
-	 //Called on the Clients
-}
-function SaveLog (_level: String)
 {
 	 //Called on the Clients
 }
