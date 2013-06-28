@@ -53,9 +53,9 @@ public function GetInterpreters() {
     //}
 }
 
-// Mirlanda: Update the database 
+// Mirlanda: Update the database, increased a counter (to monitor use)
 function UpdateInterpreter(_interpreterID: String){
-
+   Debug.Log("Going to update..."+_interpreterID);
 }
 
 //Mirlanda: Create php that save the log (session)
