@@ -4,10 +4,10 @@ private var listenPort: int = 25000;
 private var useNAT = false;
 private var server: boolean = false;
 
-var NumWalkSteps;
-var NumSwimSteps;
+var NumWalkSteps:int;
+var NumSwimSteps:int;
 
-var playerNumber;
+var playerNumber:int;
 private var currentYear: String;
 private var yearsAgo: String;
 
@@ -92,10 +92,8 @@ function OnGUI () {
 
 
 function OnPlayerConnected(newPlayer: NetworkPlayer){
-	
-	    //Called on the server only
-         playerNumber = int.Parse (newPlayer.ToString());
-               
+	//Called on the server only
+    playerNumber = int.Parse (newPlayer.ToString());        
 }
 
 @RPC
@@ -143,7 +141,6 @@ function FinishGame (_calories: float ,  info : NetworkMessageInfo)
 {
 	 //Called on the Clients
 	  SendMessage("GameOver",_calories);
-	  SendMessage("SaveLog");
    
 }
 @RPC
@@ -151,7 +148,6 @@ function StopGame (_calories: float ,  info : NetworkMessageInfo)
 {
 	 //Called on the Clients
 	  SendMessage("GameOver",_calories);
-	  SendMessage("SaveLog");
    
 }
 @RPC

@@ -143,7 +143,6 @@ function FinishGame (_calories: float ,  info : NetworkMessageInfo)
 {
 	 //Called on the Clients
 	  SendMessage("GameOver",_calories);
-	  SendMessage("SaveLog");
    
 }
 @RPC
@@ -151,7 +150,6 @@ function StopGame (_calories: float ,  info : NetworkMessageInfo)
 {
 	 //Called on the Clients
 	  SendMessage("GameOver",_calories);
-	  SendMessage("SaveLog");
    
 }
 @RPC
