@@ -1,3 +1,4 @@
+var TOP_SCORES = 10;
 
 var remoteIP = "127.0.0.1";
 var remotePort = 25000;
@@ -60,7 +61,7 @@ private var _showInterpreterList:boolean = false;
 var yearList = [1975,2010,2045];
 private var _yearAgoList = [-35,0,35];
 private var _yearLabels = ["1975","2010","2045"];
-
+private var _DBParameters;
 var applicationPath:String = "";
 
 private var _innerController : int;			 
@@ -134,6 +135,7 @@ function Initialize(){
 	GetComponent(CurrentPosInMap).mapImage = _map;
 	GetComponent(BurnedCaloriesGraph).DestroyLines();
 	GetComponent(CurrentPosInMap).InitializeMap();
+	GetComponent(DatabaseConnection).GetInterpreters();
 }
 
 function StartGame(){
@@ -482,7 +484,7 @@ function DrawViews(){
 		        var name : String = _scoreNames[i].ToString().Trim();
 		        var min : int = Mathf.CeilToInt(float.Parse(_scoreValues[i]))*0.01666667;
 		    	var sec : int = Mathf.CeilToInt(float.Parse(_scoreValues[i]))%60;
-		    	GUILayout.Label( (i + 1).ToString().PadLeft(2) +"." + name.PadRight(13) + 
+		    	GUILayout.Label( (i + 1).ToString().PadLeft(2) +". " + name.PadRight(13) + 
 		    	min.ToString("00") + ":"+
 		    	sec.ToString("00") + " min","ScoreStyle"); 
 		    	}
@@ -530,20 +532,19 @@ function LoadScores(){
  	_scoreNames.Clear();
  	_scoresCount = 0;
 
-	GetComponent(DatabaseConnection).GetScores(
+	_DBParameters = [_currentYear,TOP_SCORES];
 	
- 	if (File.Exists(applicationPath+"/Scores_"+yearList[_currentYear]+".txt")){
-		var file =  File.ReadAllLines(applicationPath+"/Scores_"+yearList[_currentYear]+".txt");
-		if (file!=null){
-		   	_scoresCount = file.Length;
-	   		//Debug.Log("File --> " + randomCount);
-	   		for (var j: int = 0 ; j < _scoresCount; j++){
-	   		  var values = file[j].Split(":"[0]);
-	   		  _scoreValues.Add(values[0]);
-	   		  _scoreNames.Add(values[1]);
-	   		}
-	   	}	
-   	}   
+	var topScores = GetComponent(DatabaseConnection).GetScores(_DBParameters);
+	
+	var topScoresEntries = topScores.Split('|'[0]);
+	_scoresCount = topScoresEntries.length;
+	
+	for (var entry in topScoresEntries)
+	{
+	   var scoreData : String[]= entry.Split(':'[0]);
+	   _scoreNames.Add(scoreData[ 0 ]);
+	   _scoreValues.Add(scoreData[ 1 ]);
+	}
   }
 }
 
@@ -660,7 +661,7 @@ function ReceivedFinishedLevel (_steps: String ,  info : NetworkMessageInfo)
     if (!_savedLog){
 	    GetComponent(AppendToLog).AppendDataToLog(); 	
 	    GetComponent(SummaryGraph).UpdateDataByYear();
-	    SaveScores();
+	    //SaveScores(); Add later
 	    _savedLog = true;
     }
 }
