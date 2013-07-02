@@ -115,7 +115,7 @@ public class PolarBearControl : MonoBehaviour {
 	float rightStroke = 0;
 	int rightStrokei = 0;
 	int rightStrokej = 0;
-    
+	
 	void Start () {
 
 		Initialize();
@@ -147,9 +147,9 @@ public class PolarBearControl : MonoBehaviour {
 		
 	}
 
-   
 	// Update is called once per frame
 	void Update () {
+		
 		
 		if(Input.GetKeyDown(KeyCode.T))
 			testing = true;
@@ -278,8 +278,7 @@ public class PolarBearControl : MonoBehaviour {
 			
 		    	    // Move the controller
 		     	    _controller.Move(_moveDirection * Time.deltaTime);
-
-					 
+ 
 				}
 			
 			 }	
@@ -308,7 +307,10 @@ public class PolarBearControl : MonoBehaviour {
 					rightStep_cur = Mathf.Abs(positionHC.y - positionRF.y);
 					rightStep_pre = rightStep_index;
 					rightStep_index = Mathf.Abs(positionHC.y - positionRF.y);
-					//f1.WriteLine(positionHC.x + "\t" + positionHC.y + "\t" + positionHC.z  + "\t" + positionRF.x + "\t" + positionRF.y + "\t" + positionRF.z);
+					//Write data to file using a using statment to make sure file closes
+					using(StreamWriter f1 = new StreamWriter("testleftstep.txt",true)){
+					f1.WriteLine(positionHC.x + "\t" + positionHC.y + "\t" + positionHC.z  + "\t" + positionRF.x + "\t" + positionRF.y + "\t" + positionRF.z);
+					}
 					float yRF = positionRF.y;
 					bool speedboolRight = false;
 					if(yHC!=0 && yLF!=0){
