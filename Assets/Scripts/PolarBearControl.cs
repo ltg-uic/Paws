@@ -352,7 +352,7 @@ public class PolarBearControl : MonoBehaviour {
 							leftStepMin = 0;
 							if(_leftStep>0.05){
 								totalLeftStep = totalLeftStep + _leftStep;
-								f.WriteLine(_leftStep + "\t" + totalLeftStep);
+								//f.WriteLine(_leftStep + "\t" + totalLeftStep);
 							}
 						}
 					}

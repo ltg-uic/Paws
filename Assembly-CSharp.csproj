@@ -18,7 +18,7 @@
 	<DebugType>full</DebugType>
 	<Optimize>false</Optimize>
 	<OutputPath>Temp\bin\Debug\</OutputPath>
-	<DefineConstants>DEBUG;TRACE;UNITY_STANDALONE_OSX;ENABLE_MICROPHONE;ENABLE_IMAGEEFFECTS;ENABLE_WEBCAM;ENABLE_AUDIO_FMOD;UNITY_STANDALONE;ENABLE_NETWORK;ENABLE_MONO;ENABLE_PHYSICS;ENABLE_TERRAIN;ENABLE_CACHING;ENABLE_SUBSTANCE;ENABLE_GENERICS;ENABLE_CLOTH;ENABLE_GAMECENTER;ENABLE_MOVIES;ENABLE_AUDIO;ENABLE_WWW;ENABLE_SHADOWS;ENABLE_DUCK_TYPING;UNITY_4_1_5;UNITY_4_1;DEVELOPMENT_BUILD;ENABLE_PROFILER;UNITY_EDITOR</DefineConstants>
+	<DefineConstants>DEBUG;TRACE;UNITY_STANDALONE_OSX;ENABLE_MICROPHONE;ENABLE_IMAGEEFFECTS;ENABLE_WEBCAM;ENABLE_AUDIO_FMOD;UNITY_STANDALONE;ENABLE_NETWORK;ENABLE_MONO;ENABLE_PHYSICS;ENABLE_TERRAIN;ENABLE_CACHING;ENABLE_SUBSTANCE;ENABLE_GENERICS;ENABLE_CLOTH;ENABLE_GAMECENTER;ENABLE_MOVIES;ENABLE_AUDIO;ENABLE_WWW;ENABLE_SHADOWS;ENABLE_DUCK_TYPING;UNITY_4_1_2;UNITY_4_1;DEVELOPMENT_BUILD;ENABLE_PROFILER;UNITY_EDITOR</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
 	<NoWarn>0169</NoWarn>
@@ -45,6 +45,15 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\GUI\Materials\FurShader\Support\SynchronizeLights.cs" />
+     <Compile Include="Assets\OpenNI\Scripts\OpenNIContext.cs" />
+     <Compile Include="Assets\OpenNI\Scripts\OpenNIDepthmapViewer.cs" />
+     <Compile Include="Assets\OpenNI\Scripts\OpenNIImagemapViewer.cs" />
+     <Compile Include="Assets\OpenNI\Scripts\OpenNISessionManager.cs" />
+     <Compile Include="Assets\OpenNI\Scripts\OpenNISingleSkeletonController.cs" />
+     <Compile Include="Assets\OpenNI\Scripts\OpenNISkeleton.cs" />
+     <Compile Include="Assets\OpenNI\Scripts\OpenNISplitScreenSkeletonController.cs" />
+     <Compile Include="Assets\OpenNI\Scripts\OpenNIUserTracker.cs" />
+     <Compile Include="Assets\OpenNI\Scripts\OpenNIUsersRadar.cs" />
      <Compile Include="Assets\Scripts\BearStatus.cs" />
      <Compile Include="Assets\Scripts\Interpreters.cs" />
      <Compile Include="Assets\Scripts\PolarBearControl.cs" />
@@ -73,6 +82,15 @@
      <None Include="Assets\SnowScape\readme.txt" />
      <None Include="Assets\A_Mile_In_My_Paws_Log_Docents.txt" />
      <None Include="Assets\A_Mile_In_My_Paws_Log.txt" />
+ <Reference Include="Assets\OpenNI\Scripts\OpenNI.Net">
+ <HintPath>Assets\OpenNI\Scripts\OpenNI.Net.dll</HintPath>
+ </Reference>
+ <Reference Include="Assets\OpenNI\Scripts\Tao.OpenGl">
+ <HintPath>Assets\OpenNI\Scripts\Tao.OpenGl.dll</HintPath>
+ </Reference>
+ <Reference Include="Assets\OpenNI\Scripts\Tao.OpenGl.ExtensionLoader">
+ <HintPath>Assets\OpenNI\Scripts\Tao.OpenGl.ExtensionLoader.dll</HintPath>
+ </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Assembly-CSharp-firstpass.csproj">
