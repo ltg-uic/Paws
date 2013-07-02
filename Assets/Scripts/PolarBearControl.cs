@@ -31,7 +31,7 @@ public class PolarBearControl : MonoBehaviour {
 	
 	private Vector3 _moveDirection;
 	private Transform _myTransform;
-		
+		//test github update
 	private float _accYR;
 	private float _accYL;
 	private float _accZL;
