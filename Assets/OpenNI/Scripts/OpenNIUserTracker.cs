@@ -8,7 +8,7 @@ public class OpenNIUserTracker : MonoBehaviour
 {
 	public float UserTooCloseDistance = 1.60f;
 	
-	public int MaxCalibratedUsers; 
+	public int MaxCalibratedUsers = 1; 
 	
 	private UserGenerator userGenerator;
 	private SkeletonCapability skeletonCapbility;
