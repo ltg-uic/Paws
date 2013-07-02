@@ -60,6 +60,7 @@
      <Compile Include="Assets\Scripts\InfoPolarBear.js" />
      <Compile Include="Assets\Scripts\InitialMessage.js" />
      <Compile Include="Assets\Scripts\Interpreters.js" />
+     <Compile Include="Assets\Scripts\MessageBox.js" />
      <Compile Include="Assets\Scripts\Network Connection Secondary Display.js" />
      <Compile Include="Assets\Scripts\NetworkConnectionBear.js" />
      <Compile Include="Assets\Scripts\NetworkConnectionServer.js" />

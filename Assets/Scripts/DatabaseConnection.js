@@ -64,8 +64,17 @@ function UpdateInterpreter(_interpreterID: String){
 */
 function SaveSession(_parameters: String[]){
 
-  Debug.Log("Save data to log..."+_parameters[0] + " " + _parameters[1]);
-
+  Debug.Log("Save data to log..."+_parameters[4] + " " + _parameters[3]); 
+ /*
+    var highscore_url = addScoreUrl + "name=" + WWW.EscapeURL(name) + "&score=" + score + "&hash=" + hash;
+ 
+    // Post the URL to the site and create a download object to get the result.
+    hs_post = WWW(highscore_url);
+    yield hs_post; // Wait until the download is done
+    if(hs_post.error) {
+        print("There was an error posting the high score: " + hs_post.error);
+    }
+*/
 }
 
 // Mirlanda: Create php that load scores

@@ -46,7 +46,6 @@
   <ItemGroup>
      <Compile Include="Assets\GUI\Materials\FurShader\Support\SynchronizeLights.cs" />
      <Compile Include="Assets\Scripts\BearStatus.cs" />
-     <Compile Include="Assets\Scripts\Interpreters.cs" />
      <Compile Include="Assets\Scripts\PolarBearControl.cs" />
      <Compile Include="Assets\Scripts\SensorsListener.cs" />
      <Compile Include="Assets\Scripts\SpinObject.cs" />

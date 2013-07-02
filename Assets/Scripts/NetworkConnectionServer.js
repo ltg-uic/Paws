@@ -335,7 +335,7 @@ function DrawViews(){
 					}
 					else
 					{
-						Debug.Log("select an interpreter");
+					    GetComponent(MessageBox).DisplayMessage("Select an interpreter.");
 					}
 				}
 				
@@ -386,7 +386,7 @@ function DrawViews(){
 				GUILayout.Label("Hello, my name is ");
 				GUILayout.EndArea();
 				
-				GUILayout.BeginArea (Rect (areaWidth*0.25, areaHeight*0.15, areaWidth*0.15, areaHeight*0.05));
+				GUILayout.BeginArea (Rect (areaWidth*0.28, areaHeight*0.15, areaWidth*0.15, areaHeight*0.05));
 			    if (GUILayout.Button(interpreterName)){
 					
     				_showInterpreterList = !_showInterpreterList;
@@ -397,7 +397,7 @@ function DrawViews(){
 
 				 	for (cnt  = 1; cnt < GetComponent(Interpreters).interpreterNames.Count; cnt++){
 				 
-				 	   GUILayout.BeginArea (Rect (areaWidth*0.31, areaHeight*0.15+_labelHeight*(cnt), areaWidth*0.15, _labelHeight));
+				 	   GUILayout.BeginArea (Rect (areaWidth*0.28, areaHeight*0.15+_labelHeight*(cnt), areaWidth*0.15, _labelHeight));
 				 	   if (GUILayout.Button(GetComponent(Interpreters).interpreterNames[cnt])){
 				 	   		interpreterName = GetComponent(Interpreters).interpreterNames[cnt];
 				 	   		_showInterpreterList = !_showInterpreterList;
@@ -508,9 +508,7 @@ function DrawViews(){
        	Debug.Log("Saved Log");
  	    GetComponent(AppendToLog).AppendDataToLog();
  	    GetComponent(SummaryGraph).UpdateDataByYear();
- 	     // if (_goalReached)
- 	      	//	SaveScores();
- 	      _savedLog = true;
+ 	    _savedLog = true;
        }
 	}
 	
@@ -548,62 +546,7 @@ function LoadScores(){
   }
 }
 
-/*
-function LoadScores(){
- if (!_scoresLoaded){
- 	_scoresLoaded = true;
- 	_scoreValues.Clear();
- 	_scoreNames.Clear();
- 	_scoresCount = 0;
 
- 	if (File.Exists(applicationPath+"/Scores_"+yearList[_currentYear]+".txt")){
-		var file =  File.ReadAllLines(applicationPath+"/Scores_"+yearList[_currentYear]+".txt");
-		if (file!=null){
-		   	_scoresCount = file.Length;
-	   		//Debug.Log("File --> " + randomCount);
-	   		for (var j: int = 0 ; j < _scoresCount; j++){
-	   		  var values = file[j].Split(":"[0]);
-	   		  _scoreValues.Add(values[0]);
-	   		  _scoreNames.Add(values[1]);
-	   		}
-	   	}	
-   	}   
-  }
-}
-
-function SaveScores(){
-  Debug.Log(" Save Scores");
-  LoadScores();
-  var sw =  new StreamWriter(applicationPath+"/Scores_"+yearList[_currentYear]+".txt");
-  OrderScores();
-  for (var i:int = 0 ; i < _scoresCount && i < 10; i++){
-      sw.WriteLine(_scoreValues[i]+":"+_scoreNames[i]);
-  }
-  sw.Close();
-}
-
-function OrderScores(){
-      var enter: boolean = false;
-      Debug.Log("Entro elapsedTime" + elapsedTime);
-	  for (var i:int = 0 ; i < _scoresCount; i++){
-	      if (elapsedTime < float.Parse(_scoreValues[i])) {
-	        Debug.Log("Entro save scores " + i + " - " + _scoresCount);
-			   _scoreValues.Insert(i,elapsedTime);  
-			   _scoreNames.Insert(i,_playerName);
-			   enter = true;
-			   _scoresCount++;
-			   break;
-		  } 
-	  }
-	  if (!enter){
-	     Debug.Log("No entro save scores " + i + " - " + _scoresCount);
-	 
-	     _scoreValues.Add(elapsedTime);  
-	     _scoreNames.Add(_playerName);
-	     _scoresCount++;
-	  }
-}
-*/
 public function playerName(){
     return _playerName;
 }
@@ -661,7 +604,6 @@ function ReceivedFinishedLevel (_steps: String ,  info : NetworkMessageInfo)
     if (!_savedLog){
 	    GetComponent(AppendToLog).AppendDataToLog(); 	
 	    GetComponent(SummaryGraph).UpdateDataByYear();
-	    //SaveScores(); Add later
 	    _savedLog = true;
     }
 }
