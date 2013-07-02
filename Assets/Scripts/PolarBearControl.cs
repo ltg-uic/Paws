@@ -87,7 +87,6 @@ public class PolarBearControl : MonoBehaviour {
 	float strokeScale  = 1;
 	float strokeLength = 0;
 	//Mike's Variables for Arm Strokes
-		//left
 	float leftStroke_cur = 0;
 	float leftStroke_pre = 0;
 	float leftStroke_index = 0;
@@ -101,7 +100,6 @@ public class PolarBearControl : MonoBehaviour {
 	float leftStroke = 0;
 	int leftStrokei = 0;
 	int leftStrokej = 0;
-		//right
 	float rightStroke_cur = 0;
 	float rightStroke_pre = 0;
 	float rightStroke_index = 0;
@@ -149,7 +147,6 @@ public class PolarBearControl : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		
 		
 		if(Input.GetKeyDown(KeyCode.T))
 			testing = true;
