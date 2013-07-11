@@ -1,11 +1,12 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/OpenNI/Scripts/OpenNIUserTracker.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/SnowScape/SnowScripts/SnowFootprints.js">
     <Files>
-      <File FileName="Assets/Scripts/PolarBearControl.cs" Line="289" Column="47" />
+      <File FileName="Assets/Scripts/PolarBearControl.cs" Line="1" Column="1" />
       <File FileName="Assets/OpenNI/Scripts/OpenNIUserTracker.cs" Line="91" Column="21" />
-      <File FileName="Assets/Scripts/Network Connection Secondary Display.js" Line="154" Column="27" />
-      <File FileName="Assets/OpenNI/Scripts/OpenNISkeleton.cs" Line="239" Column="1" />
+      <File FileName="Assets/Scripts/Network Connection Secondary Display.js" Line="1" Column="1" />
+      <File FileName="Assets/OpenNI/Scripts/OpenNISkeleton.cs" Line="1" Column="1" />
+      <File FileName="Assets/SnowScape/SnowScripts/SnowFootprints.js" Line="36" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
