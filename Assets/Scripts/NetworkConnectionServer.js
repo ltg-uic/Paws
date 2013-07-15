@@ -23,6 +23,7 @@ var gameTime: int;  // Time in minutes to stop the game.
 var meters: float;
 var elapsedTime: float;
 var interpreterName:String;
+var topScores:String = "";
 
 private var _scoresCount: int;
 private var _scoreValues:ArrayList;
@@ -108,11 +109,11 @@ function Start(){
         applicationPath += "/../";
     }
 
-	_scoreValues = new ArrayList();
-	_scoreNames = new ArrayList();
 }
 
 function Initialize(){
+	_scoreValues = new ArrayList();
+	_scoreNames = new ArrayList();
 	interpreterName = "...";
     _displayMinutes = 0;
     elapsedTime = 0;
@@ -131,11 +132,13 @@ function Initialize(){
 	_currentPos = new Vector2(0.0,0.0);
     _savedAvg = false;
     _savedLog = false;
+    topScores = "";
 	var  _map : Texture2D = Resources.Load("Images/"+yearList[_currentYear]+"_Location_Map", typeof(Texture2D));
 	GetComponent(CurrentPosInMap).mapImage = _map;
 	GetComponent(BurnedCaloriesGraph).DestroyLines();
 	GetComponent(CurrentPosInMap).InitializeMap();
 	GetComponent(DatabaseConnection).GetInterpreters();
+	LoadScores();
 }
 
 function StartGame(){
@@ -323,6 +326,7 @@ function DrawViews(){
 					_previousYear = _currentYear;
 					var  _map : Texture2D = Resources.Load("Images/"+yearList[_currentYear]+"_Location_Map", typeof(Texture2D));
 	       			GetComponent(CurrentPosInMap).mapImage = _map;
+	       			LoadScores();
 				}
 				GUILayout.BeginArea (Rect (areaWidth*0.85, areaHeight*0.05, areaWidth*0.10, areaHeight*0.15));
 	     		if (GUILayout.Button (startBtnTexture, "ImageButton"))
@@ -469,31 +473,31 @@ function DrawViews(){
 	     }
 	     GUILayout.EndArea ();
 	     
-	     LoadScores();
+	     
 	
-		    GUILayout.BeginArea (Rect (areaWidth*0.65, areaHeight*0.2, areaWidth*0.3, _labelHeight));
-		  	GUILayout.Label("Top 10 - Year " + yearList[_currentYear]);  
-		    GUILayout.EndArea();
-		    
-		    GUILayout.BeginArea (Rect (areaWidth*0.65, areaHeight*0.25, areaWidth*0.3, areaHeight*0.50));
-		    GUILayout.BeginVertical(GUI.skin.box, GUILayout.Height(areaHeight*0.50), GUILayout.Width(areaWidth*0.3));
-	
-		    
-		    for (var i:int = 0; i < 10 ; i++){
-		       if (i<_scoresCount){
-		        var name : String = _scoreNames[i].ToString().Trim();
-		        var min : int = Mathf.CeilToInt(float.Parse(_scoreValues[i]))*0.01666667;
-		    	var sec : int = Mathf.CeilToInt(float.Parse(_scoreValues[i]))%60;
-		    	GUILayout.Label( (i + 1).ToString().PadLeft(2) +". " + name.PadRight(13) + 
-		    	min.ToString("00") + ":"+
-		    	sec.ToString("00") + " min","ScoreStyle"); 
-		    	}
-		    	else
-		    		GUILayout.Label("   " );
-		    }
-		    
-		    GUILayout.EndVertical();
-			GUILayout.EndArea();
+	    GUILayout.BeginArea (Rect (areaWidth*0.65, areaHeight*0.2, areaWidth*0.3, _labelHeight));
+	  	GUILayout.Label("Top 10 - Year " + yearList[_currentYear]);  
+	    GUILayout.EndArea();
+	    
+	    GUILayout.BeginArea (Rect (areaWidth*0.65, areaHeight*0.25, areaWidth*0.3, areaHeight*0.50));
+	    GUILayout.BeginVertical(GUI.skin.box, GUILayout.Height(areaHeight*0.50), GUILayout.Width(areaWidth*0.3));
+
+	    
+	    for (var i:int = 0; i < 10 ; i++){
+	       if (_scoresCount > 0 && i<_scoresCount){
+	        var name : String = _scoreNames[i].ToString().Trim();
+	        var min : int = Mathf.CeilToInt(float.Parse(_scoreValues[i]))*0.01666667;
+	    	var sec : int = Mathf.CeilToInt(float.Parse(_scoreValues[i]))%60;
+	    	GUILayout.Label( (i + 1).ToString().PadLeft(2) +". " + name.PadRight(13) + 
+	    	min.ToString("00") + ":"+
+	    	sec.ToString("00") + " min","ScoreStyle"); 
+	    	}
+	    	else
+	    		GUILayout.Label("   " );
+	    }
+	    
+	    GUILayout.EndVertical();
+		GUILayout.EndArea();
 		
   	}	
   	  	
@@ -524,26 +528,34 @@ function OnPlayerConnected(newPlayer: NetworkPlayer){
 }
 
 function LoadScores(){
- if (!_scoresLoaded){
- 	_scoresLoaded = true;
- 	_scoreValues.Clear();
+	_scoreValues.Clear();
  	_scoreNames.Clear();
  	_scoresCount = 0;
+ 	
+	_DBParameters = [yearList[_currentYear],TOP_SCORES];
+	
+    GetComponent(DatabaseConnection).GetScores(_DBParameters);
+}
 
-	_DBParameters = [_currentYear,TOP_SCORES];
-	
-	var topScores = GetComponent(DatabaseConnection).GetScores(_DBParameters);
-	
-	var topScoresEntries = topScores.Split('|'[0]);
-	_scoresCount = topScoresEntries.length;
-	
+function SetScores(){
+
+	_scoreValues.Clear();
+ 	_scoreNames.Clear();
+ 	_scoresCount = 0;
+ 	
+    var topScoresEntries = topScores.Split('|'[0]);
+	_scoresCount = topScoresEntries.length-1;
+
 	for (var entry in topScoresEntries)
 	{
 	   var scoreData : String[]= entry.Split(':'[0]);
-	   _scoreNames.Add(scoreData[ 0 ]);
-	   _scoreValues.Add(scoreData[ 1 ]);
+	   	Debug.Log(scoreData);
+	   if (scoreData.Length > 1){
+		   _scoreNames.Add(scoreData[ 0 ]);
+		   _scoreValues.Add(scoreData[ 1 ]);
+	   }
 	}
-  }
+	Debug.Log("Scores count"+_scoresCount);
 }
 
 

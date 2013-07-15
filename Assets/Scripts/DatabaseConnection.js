@@ -4,7 +4,7 @@ private var secretKey=""; // Edit this value and make sure it's the same as the 
 //var addScoreUrl="http://localhost/unity_test/addscore.php?"; //be sure to add a ? to your url
 private var hs_get;
 var getInterpreters ="http://paws.evl.uic.edu/getInterpreters.php"; 
-
+var getTopScores="http://paws.evl.uic.edu/getTopScores.php";
  /* 
 function postScore(name, score) {
     //This connects to a server side php script that will add the name and score to a MySQL DB.
@@ -38,17 +38,17 @@ function GetPrompts() {
 // Mirlanda: Create php(s) that load Interpreters Id and name. (1) order alphabetically (2) order by the last used
 function GetInterpreters() {
     
-  /*  hs_get = WWW(getInterpreters);
+    hs_get = WWW(getInterpreters);
     yield hs_get;
  
     if(hs_get.error) {
     	print("There was an error getting the interpreters: " + hs_get.error);
     } else {
-     */
-	   // GetComponent(Interpreters).interpreters = hs_get.text; 
-	   GetComponent(Interpreters).interpreters = "JohnS:John|CathyH:Cathy";
+     
+	   GetComponent(Interpreters).interpreters = hs_get.text; 
+	//   GetComponent(Interpreters).interpreters = "JohnS:John|CathyH:Cathy";
 	   GetComponent(Interpreters).SetInterpreters();
-   // }
+    }
 }
 
 // Mirlanda: Update the database, increased a counter (to monitor use).  Add in the database a field that keep the counter
@@ -82,9 +82,18 @@ function SaveSession(_parameters: String[]){
 // If you can figure out the way to return an array is better, if not the format of the data 
 //should be Name1:time|Name2:time|
 function GetScores(_parameters: int[]){
-
-	Debug.Log("Get scores for parameters "+_parameters[0]+" " +_parameters[1]);
-	var _scores: String = "JohnS:30|CathyH:60" ;
-    
-    return _scores;
+    Debug.Log("Get scores for parameters "+_parameters[0]+" " +_parameters[1]);
+    var _url = getTopScores + "?year=" + _parameters[0] + "&top="+_parameters[1];
+    var hs_get = WWW(_url);
+    yield hs_get; // Wait until the download is done
+    if(hs_get.error) {
+        print("There was an error getting the scores: " + hs_get.error);
+    }
+    else{
+	    if (hs_get.text.Length>0){
+	      Debug.Log("Get scores for parameters "+_parameters[0]+" " +_parameters[1] + "--"+ hs_get.text);
+			GetComponent(NetworkConnectionServer).topScores = hs_get.text;
+			GetComponent(NetworkConnectionServer).SetScores();
+		}
+	}
 }

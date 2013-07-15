@@ -1,11 +1,8 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Interpreters.js">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/DatabaseConnection.js">
     <Files>
-      <File FileName="Assets/Scripts/NetworkConnectionServer.js" Line="338" Column="73" />
-      <File FileName="Assets/Scripts/AppendToLog.js" Line="62" Column="3" />
-      <File FileName="Assets/Scripts/MessageBox.js" Line="15" Column="22" />
-      <File FileName="Assets/Scripts/Interpreters.js" Line="27" Column="4" />
+      <File FileName="Assets/Scripts/DatabaseConnection.js" Line="6" Column="23" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
