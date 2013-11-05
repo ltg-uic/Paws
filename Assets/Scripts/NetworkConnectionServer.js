@@ -359,7 +359,7 @@ function DrawViews(){
 				 	for (var cnt:int  = 1; cnt < GetComponent(Interpreters).interpreterNames.Count; cnt++){
 				 
 				 	   GUILayout.BeginArea (Rect (areaWidth*0.21, areaHeight*0.15+_labelHeight*(cnt), areaWidth*0.15, _labelHeight));
-				 	   if (GUILayout.Button(GetComponent(Interpreters).interpreterNames[cnt])){
+				 	   if (GUILayout.Button((GetComponent(Interpreters).interpreterNames[cnt].ToString()))){
 				 	   		interpreterName = GetComponent(Interpreters).interpreterNames[cnt];
 				 	   		_showInterpreterList = !_showInterpreterList;
 				 	   		GetComponent(Interpreters).updateInterpreter(cnt);
@@ -403,7 +403,7 @@ function DrawViews(){
 				 	for (cnt  = 1; cnt < GetComponent(Interpreters).interpreterNames.Count; cnt++){
 				 
 				 	   GUILayout.BeginArea (Rect (areaWidth*0.28, areaHeight*0.15+_labelHeight*(cnt), areaWidth*0.15, _labelHeight));
-				 	   if (GUILayout.Button(GetComponent(Interpreters).interpreterNames[cnt])){
+				 	   if (GUILayout.Button(GetComponent(Interpreters).interpreterNames[cnt].ToString())){
 				 	   		interpreterName = GetComponent(Interpreters).interpreterNames[cnt];
 				 	   		_showInterpreterList = !_showInterpreterList;
 				 	   		GetComponent(Interpreters).updateInterpreter(cnt);
