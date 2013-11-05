@@ -195,6 +195,7 @@ function OnGUI () {
    if ( _serverReady){
 		
 	     DrawViews();
+	     GetComponent(MessageBox).ShowOnGUI();
    }
 	
 	if (Event.current.type == EventType.Layout)
@@ -498,6 +499,7 @@ function DrawViews(){
 	    
 	    GUILayout.EndVertical();
 		GUILayout.EndArea();
+		
 		
   	}	
   	  	

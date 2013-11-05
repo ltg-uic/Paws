@@ -42,7 +42,7 @@ function GetInterpreters() {
     yield hs_get;
  
     if(hs_get.error) {
-    	print("There was an error getting the interpreters: " + hs_get.error);
+    	print("DatabaseConnection::There was an error getting the interpreters: " + hs_get.error);
     } else {
      
 	   GetComponent(Interpreters).interpreters = hs_get.text; 
@@ -53,7 +53,7 @@ function GetInterpreters() {
 
 // Mirlanda: Update the database, increased a counter (to monitor use).  Add in the database a field that keep the counter
 function UpdateInterpreter(_interpreterID: String){
-   Debug.Log("Going to update..."+_interpreterID);
+   Debug.Log("DatabaseConnection::Going to update..."+_interpreterID);
 }
 
 //Mirlanda: Create php that save the log (session)
@@ -64,7 +64,7 @@ function UpdateInterpreter(_interpreterID: String){
 */
 function SaveSession(_parameters: String[]){
 
-  Debug.Log("Save data to log..."+_parameters[4] + " " + _parameters[3]); 
+  Debug.Log("DatabaseConnection::Save data to log..."+_parameters[4] + " " + _parameters[3]); 
  /*
     var highscore_url = addScoreUrl + "name=" + WWW.EscapeURL(name) + "&score=" + score + "&hash=" + hash;
  
@@ -82,16 +82,16 @@ function SaveSession(_parameters: String[]){
 // If you can figure out the way to return an array is better, if not the format of the data 
 //should be Name1:time|Name2:time|
 function GetScores(_parameters: int[]){
-    Debug.Log("Get scores for parameters "+_parameters[0]+" " +_parameters[1]);
+    Debug.Log("DatabaseConnection::Get scores for parameters "+_parameters[0]+" " +_parameters[1]);
     var _url = getTopScores + "?year=" + _parameters[0] + "&top="+_parameters[1];
     var hs_get = WWW(_url);
     yield hs_get; // Wait until the download is done
     if(hs_get.error) {
-        print("There was an error getting the scores: " + hs_get.error);
+        print("DatabaseConnection::There was an error getting the scores: " + hs_get.error);
     }
     else{
 	    if (hs_get.text.Length>0){
-	      Debug.Log("Get scores for parameters "+_parameters[0]+" " +_parameters[1] + "--"+ hs_get.text);
+	      Debug.Log("DatabaseConnection::Get scores for parameters "+_parameters[0]+" " +_parameters[1] + "--"+ hs_get.text);
 			GetComponent(NetworkConnectionServer).topScores = hs_get.text;
 			GetComponent(NetworkConnectionServer).SetScores();
 		}

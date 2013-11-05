@@ -9,7 +9,7 @@ function Start () {
 	areaHeight = GetComponent(NetworkConnectionServer).areaHeight;
 }
 
-function OnGUI () {
+public function ShowOnGUI () {
     GUI.skin = newSkin; 
 	if (message.length > 0){
 	  var x = areaWidth/2-areaWidth*0.2;

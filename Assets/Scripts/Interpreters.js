@@ -19,11 +19,14 @@ public function SetInterpreters(){
 	    interpreterIDs.Add(-1);
 		for (var entry in interpreterEntries)
 		{
-		   var interpreterData : String[]= entry.Split(':'[0]);
-		   interpreterID = interpreterData[ 0 ];
-		   interpreterName = interpreterData[ 1 ] ;
-		   interpreterNames.Add(interpreterName);
-		   interpreterIDs.Add(interpreterID);
+		   if (entry.Length > 1){
+		       var interpreterData : String[]= entry.Split(':'[0]);
+		       	Debug.Log("Interpreters::Received data:"+interpreterData[ 0 ]+"  "+interpreterData[ 1 ]);
+			   interpreterID = interpreterData[ 0 ];
+			   interpreterName = interpreterData[ 1 ] ;
+			   interpreterNames.Add(interpreterName);
+			   interpreterIDs.Add(interpreterID);
+		   }
 		}
 	}
 }
