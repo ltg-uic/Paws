@@ -16,6 +16,7 @@ function Start (){
 }
 
 public function AppendDataToLog(_logLine:String){
+   Debug.Log("AppendToLogDocents::Save data in file docents");
   var sw =  File.AppendText(applicationPath+"/A_Mile_In_My_Paws_Log_Docents.txt");
   sw.WriteLine(_logLine);
   sw.Close(); 

@@ -21,7 +21,7 @@ public function SetInterpreters(){
 		{
 		   if (entry.Length > 1){
 		       var interpreterData : String[]= entry.Split(':'[0]);
-		       	Debug.Log("Interpreters::Received data:"+interpreterData[ 0 ]+"  "+interpreterData[ 1 ]);
+		       //	Debug.Log("Interpreters::Received data:"+interpreterData[ 0 ]+"  "+interpreterData[ 1 ]);
 			   interpreterID = interpreterData[ 0 ];
 			   interpreterName = interpreterData[ 1 ] ;
 			   interpreterNames.Add(interpreterName);
@@ -29,8 +29,4 @@ public function SetInterpreters(){
 		   }
 		}
 	}
-}
-
-function updateInterpreter(_pos:int){
-	GetComponent(DatabaseConnection).UpdateInterpreter(interpreterIDs[_pos].ToString());
 }

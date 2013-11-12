@@ -23,13 +23,12 @@ var gameTime: int;  // Time in minutes to stop the game.
 var meters: float;
 var elapsedTime: float;
 var interpreterName:String;
+var interpreterID:String;
 var topScores:String = "";
 
 private var _scoresCount: int;
 private var _scoreValues:ArrayList;
 private var _scoreNames: ArrayList;
-private var _caloriesXWalkSteps:float;
-private var _caloriesXSwimStesp:float;
 private var _numWalkSteps: int;
 private var _numSwimSteps: int;
 private var _startTime: float;
@@ -361,8 +360,8 @@ function DrawViews(){
 				 	   GUILayout.BeginArea (Rect (areaWidth*0.21, areaHeight*0.15+_labelHeight*(cnt), areaWidth*0.15, _labelHeight));
 				 	   if (GUILayout.Button((GetComponent(Interpreters).interpreterNames[cnt].ToString()))){
 				 	   		interpreterName = GetComponent(Interpreters).interpreterNames[cnt];
+				 	   		interpreterID = GetComponent(Interpreters).interpreterIDs[cnt];
 				 	   		_showInterpreterList = !_showInterpreterList;
-				 	   		GetComponent(Interpreters).updateInterpreter(cnt);
 				 	   } 
 				 	   GUILayout.EndArea();
 				    }
@@ -406,7 +405,6 @@ function DrawViews(){
 				 	   if (GUILayout.Button(GetComponent(Interpreters).interpreterNames[cnt].ToString())){
 				 	   		interpreterName = GetComponent(Interpreters).interpreterNames[cnt];
 				 	   		_showInterpreterList = !_showInterpreterList;
-				 	   		GetComponent(Interpreters).updateInterpreter(cnt);
 				 	   } 
 				 	   GUILayout.EndArea();
 				    }
@@ -551,7 +549,6 @@ function SetScores(){
 	for (var entry in topScoresEntries)
 	{
 	   var scoreData : String[]= entry.Split(':'[0]);
-	   	Debug.Log(scoreData);
 	   if (scoreData.Length > 1){
 		   _scoreNames.Add(scoreData[ 0 ]);
 		   _scoreValues.Add(scoreData[ 1 ]);
@@ -570,11 +567,27 @@ public function reachedGoal(){
 }
 
 public function timeElapsed(){
-      return _displayMinutes.ToString("00") + ":"+ _displaySeconds.ToString("00");
+      return "00:"+_displayMinutes.ToString("00") + ":"+ _displaySeconds.ToString("00");
 }
 
 public function numberSteps(){
       return _numSwimSteps.ToString() +"|"+ _numWalkSteps.ToString();
+}
+
+public function swimSteps(){
+	 return "350";
+}
+
+public function walkSteps(){
+	return "250";
+}
+public function swimCalories(){
+//_numSwimSteps
+	return (_numSwimSteps* 1.15583174).ToString();
+}
+public function walkCalories(){
+//_numWalkSteps
+	return (_numWalkSteps * 0.4445).ToString();
 }
 public function currentYear(){
 
