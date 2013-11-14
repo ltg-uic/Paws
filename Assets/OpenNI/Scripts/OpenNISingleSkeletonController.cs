@@ -19,7 +19,7 @@ public class OpenNISingleSkeletonController : MonoBehaviour
 	{
 		if (null == UserTracker) return;
 		if (!UserTracker.enabled) UserTracker.enabled = true;
-		UserTracker.MaxCalibratedUsers = 1;
+		UserTracker.MaxCalibratedUsers = 2;
 	}
 	
 	void Start()

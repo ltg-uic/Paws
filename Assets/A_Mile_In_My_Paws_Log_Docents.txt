@@ -22,3 +22,7 @@ TestA|Displayed info|....|2010|6|09/24/2012 17:51:42
 TestA|Close Info|....|2010|6|09/24/2012 17:51:44
 TestA|Displayed info|....|2010|15|09/24/2012 17:52:02
 TestA|Close Info|....|2010|15|09/24/2012 17:52:09
+TestB|Show Info|....wdqwd|1975|1|11/14/2013 14:34:17
+TestB|Show Info|....wdqwd|1975|4|11/14/2013 14:34:22
+TestB|Show Info|....wdqwd|1975|3|11/14/2013 14:34:30
+TestB|Close Info|....|1975|3|11/14/2013 14:34:33
