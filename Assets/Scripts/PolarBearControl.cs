@@ -1,6 +1,8 @@
 
 using UnityEngine;
 using System.Collections;
+using System.IO;
+using OpenNI;
 
 public class PolarBearControl : MonoBehaviour {
  
@@ -29,7 +31,7 @@ public class PolarBearControl : MonoBehaviour {
 	
 	private Vector3 _moveDirection;
 	private Transform _myTransform;
-		
+		//test github update
 	private float _accYR;
 	private float _accYL;
 	private float _accZL;
@@ -51,12 +53,71 @@ public class PolarBearControl : MonoBehaviour {
 	public bool _firstStep;
 	private bool startScene = false;
     public GameObject other;
-    private bool updatedValues = false;
 	
-    
+	//Mike's Variables for Kinect
+	float leftStep_cur = 0;
+	float rightStep_cur = 0;
+	float leftStep_pre = 0;
+	float rightStep_pre = 0;
+	float leftStep_index = 0;
+	float rightStep_index = 0;
+	float leftStepMax = 0;
+	float rightStepMax = 0;
+	float leftStepMin_saved = 0;
+	float rightStepMin_saved = 0;
+	float leftStepMin = 0;
+	float rightStepMin = 0;
+	float totalLeftStep = 0;
+	float totalRightStep = 0;
+	int leftA = 0;
+	int rightA = 0;
+	int leftB = 0;
+	int rightB = 0;
+	int leftC = 0;
+	int rightC = 0;
+	float _leftStep = 0;
+	float _rightStep = 0;
+	int lefti = 0;
+	int leftj = 0;
+	int righti = 0;
+	int rightj = 0;
+	float step_distance = 0;
+	//Scale factors for Step and Stroke
+	float stepScale = 20;
+	float strokeScale  = 1;
+	float strokeLength = 0;
+	//Mike's Variables for Arm Strokes
+	float leftStroke_cur = 0;
+	float leftStroke_pre = 0;
+	float leftStroke_index = 0;
+	float leftStrokeMax = 0;
+	float leftStrokeMax_saved = 0;
+	float leftStrokeMin = 0;
+	float totalLeftStroke = 0;
+	int leftStrokeA = 0;
+	int leftStrokeB = 0;
+	int leftStrokeC = 0;
+	float leftStroke = 0;
+	int leftStrokei = 0;
+	int leftStrokej = 0;
+	float rightStroke_cur = 0;
+	float rightStroke_pre = 0;
+	float rightStroke_index = 0;
+	float rightStrokeMax = 0;
+	float rightStrokeMax_saved = 0;
+	float rightStrokeMin = 0;
+	float totalRightStroke = 0;
+	int rightStrokeA = 0;
+	int rightStrokeB = 0;
+	int rightStrokeC = 0;
+	float rightStroke = 0;
+	int rightStrokei = 0;
+	int rightStrokej = 0;
+	
 	void Start () {
-	   
+
 		Initialize();
+
 	}
 	
 	void Initialize(){
@@ -84,7 +145,6 @@ public class PolarBearControl : MonoBehaviour {
 		
 	}
 
-   
 	// Update is called once per frame
 	void Update () {
 		
@@ -158,33 +218,34 @@ public class PolarBearControl : MonoBehaviour {
 						if (Input.GetKeyDown(KeyCode.UpArrow)){
 						//	Debug.Log("Test - Caminando...");
 						    
-							MoveForward("Walk");
-
+							
+							//MoveForward("Walk");
+							
 							_moveDirection = new Vector3(0, 0, 1);
 							_moveDirection = transform.TransformDirection(_moveDirection);
 			                _moveDirection *= moveSpeed;
-			                 
+			               
 			                   
 								if (_changeStepsSound)
 								{
 									if (!bs.touchingWater){
-							      	  bs.setAudioClip("leftStep");
+							      	  //bs.setAudioClip("leftStep");
 									}
 									else {
-										bs.setAudioClip("waterLeftStep");
+										//bs.setAudioClip("waterLeftStep");
 									}
 							    }
 								else {
 									if (!bs.touchingWater){
-							      	  bs.setAudioClip("rightStep");
+							      	 // bs.setAudioClip("rightStep");
 									}
 									else {
-										bs.setAudioClip("waterRightStep");
+										//bs.setAudioClip("waterRightStep");
 									}
 							    }
 							
 					
-				             	_changeStepsSound = !_changeStepsSound;
+				             	//_changeStepsSound = !_changeStepsSound;
 				             	
 									
 						}
@@ -201,8 +262,7 @@ public class PolarBearControl : MonoBehaviour {
 			
 					  if (Input.GetKeyDown(KeyCode.UpArrow)){
 						 //  Debug.Log("Nadando");
-				 		   
-	   					    MoveForward("Swim");
+	   					    //MoveForward("Swim");
 	   					    
 	   					    bs.setAudioClip("inWater");
 	   					    _moveDirection = new Vector3(0, 0, 1);
@@ -215,49 +275,166 @@ public class PolarBearControl : MonoBehaviour {
 			
 		    	    // Move the controller
 		     	    _controller.Move(_moveDirection * Time.deltaTime);
-
-					 
+ 
 				}
 			
 			 }	
-			 else{  // Wii as input control
+			 else{  // Kinect as input control
+				
+				
 				if (!inWater){
-					_maxAccY[LEFT] = _maxAccY[RIGHT] = _minAccY[LEFT] = _minAccY[RIGHT] = MIN_MAX_VALUE;
-					_getDir[LEFT] = _getDir[RIGHT] = false;
+					//Mike's Added Code for Left Step
+					//string path = "testleftStep.txt";
+					//TextWriter f = new StreamWriter(path, true);
+					var HipCenter = GameObject.Find("Torso");
+					var FootLeft = GameObject.Find("LeftFoot");
+					Vector3 positionLF = FootLeft.GetComponent<UnityEngine.Transform>().position;
+					Vector3 positionHC = HipCenter.GetComponent<UnityEngine.Transform>().position;
+					leftStep_cur = Mathf.Abs(positionHC.y - positionLF.y);
+					leftStep_pre = leftStep_index;
+					leftStep_index = Mathf.Abs(positionHC.y - positionLF.y);
+					//f.WriteLine(positionHC.x + "\t" + positionHC.y + "\t" + positionHC.z  + "\t" + positionLF.x + "\t" + positionLF.y + "\t" + positionLF.z);
+					float yHC = positionHC.y;
+					float yLF = positionLF.y;
+					bool speedbool = false;
+					//string pathright = "testrightStep.txt";
+					//TextWriter f1 = new StreamWriter(pathright, true);
+					var FootRight = GameObject.Find("RightFoot");
+					Vector3 positionRF = FootRight.GetComponent<UnityEngine.Transform>().position;
+					rightStep_cur = Mathf.Abs(positionHC.y - positionRF.y);
+					rightStep_pre = rightStep_index;
+					rightStep_index = Mathf.Abs(positionHC.y - positionRF.y);
+					//Write data to file using a using statment to make sure file closes
+					using(StreamWriter f1 = new StreamWriter("testleftstep.txt",true)){
+					f1.WriteLine(positionHC.x + "\t" + positionHC.y + "\t" + positionHC.z  + "\t" + positionRF.x + "\t" + positionRF.y + "\t" + positionRF.z);
+					}
+					float yRF = positionRF.y;
+					bool speedboolRight = false;
+					if(yHC!=0 && yLF!=0){
+						speedbool = true;
+					}
+					if(speedbool){
+						//test for decreasing
+						if(leftStep_cur<leftStep_pre){
+							lefti++;
+							if(lefti>1){
+								//flag as decreasing and set current stroke to step min
+								leftA = 1;
+								leftj = 0;
+								leftStepMin = leftStep_cur;
+							}
+						}
+						//test for increasing
+						if(leftStep_cur>leftStep_pre){
+							leftj++;
+							if (leftj>1){
+								//flag as increasing and set current stroke to step max
+								leftB = 1;
+								lefti = 0;
+								leftStepMax = leftStep_cur;
+							}
+						}
+						//if user has gone from decreasing to increasing save strokemax and flag A as zero (not increasing)
+						if (leftA==1 && leftB==1 && leftC==0){
+							leftA = 0;
+							leftC = 1;
+							leftStepMin_saved = leftStepMin;
+						}
+						//user has switched from decreasing back to increasing and therefore completed a stroke
+						if (leftA==1 && leftB==1 && leftC==1){
+							_leftStep = Mathf.Abs(leftStepMin_saved-leftStepMax);
+							leftA = 0;
+							leftB = 0;
+							leftC = 0;
+							leftStepMax = 0;
+							leftStepMin_saved = 0;
+							leftStepMin = 0;
+							if(_leftStep>0.05){
+								totalLeftStep = totalLeftStep + _leftStep;
+								//f.WriteLine(_leftStep + "\t" + totalLeftStep);
+							}
+						}
+					}
+					//Mike's Added Code for Right Step
+					if(yHC!=0 && yRF!=0){
+						speedboolRight = true;
+					}
+					if(speedboolRight){
+						//test for decreasing
+						if(rightStep_cur<rightStep_pre){
+							righti++;
+							if(righti>1){
+								//flag as decreasing and set current stroke to step min
+								rightA = 1;
+								rightj = 0;
+								rightStepMin = rightStep_cur;
+							}
+						}
+						//test for increasing
+						if(rightStep_cur>rightStep_pre){
+							rightj++;
+							if (rightj>1){
+								//flag as increasing and set current stroke to step max
+								rightB = 1;
+								righti = 0;
+								rightStepMax = rightStep_cur;
+							}
+						}
+						//if user has gone from decreasing to increasing save strokemax and flag A as zero (not increasing)
+						if (rightA==1 && rightB==1 && rightC==0){
+							rightA = 0;
+							rightC = 1;
+							rightStepMin_saved = rightStepMin;
+						}
+						//user has switched from decreasing back to increasing and therefore completed a stroke
+						if (rightA==1 && rightB==1 && rightC==1){
+							_rightStep = Mathf.Abs(rightStepMin_saved-rightStepMax);
+							rightA = 0;
+							rightB = 0;
+							rightC = 0;
+							rightStepMax = 0;
+							rightStepMin_saved = 0;
+							rightStepMin = 0;
+							if(_rightStep>0.05){
+								totalRightStep = totalRightStep + _rightStep;
+								//f1.WriteLine(_rightStep + "\t" + totalRightStep);
+							}
+						}
+					}
+					
+
+					if(totalLeftStep>=0.15 || totalRightStep>=0.15){
+						if(totalLeftStep>=0.15){
+							step_distance = totalLeftStep*stepScale;
+							totalLeftStep = 0;	
+						}
+						if(totalRightStep>=0.15){
+							step_distance = totalRightStep*stepScale;
+							totalRightStep = 0;
+						}
+						MoveForward("Walk");
+						//I changed the move from 0,0,1 to 0,0,5 because 1 seemed very slow
+						_moveDirection = new Vector3(0, 0, step_distance);
+						_moveDirection = transform.TransformDirection(_moveDirection);
+						_moveDirection *= moveSpeed;
+						if (_changeStepsSound)
+							bs.setAudioClip("leftStep");
+						else 
+							bs.setAudioClip("rightStep");
+						_changeStepsSound = !_changeStepsSound;
+					}
 				
 					if (_controller.isGrounded){
 						if (!startScene){
 							startScene = true;
 							SendMessage("HideInitialMessage");
 						}
-				       // Debug.Log(leftStep + " " + rightStep);
-						
-					   // if (!(rightStep == 1 && leftStep == 1) && (leftStep != previousStep[LEFT] || rightStep != previousStep[RIGHT])){
-				       if (rightStep != leftStep && updatedValues){
-				   			updatedValues = false;
-							MoveForward("Walk");
-	
-							_moveDirection = new Vector3(0, 0, 1);
-							_moveDirection = transform.TransformDirection(_moveDirection);
-			                _moveDirection *= moveSpeed;
-					                 
-						    
-							if (_changeStepsSound)
-						        bs.setAudioClip("leftStep");
-					      	else 
-						        bs.setAudioClip("rightStep");
-									
-							
-						    _changeStepsSound = !_changeStepsSound;
-										
-						    previousStep[LEFT] = leftStep;
-							previousStep[RIGHT] = rightStep;
-						}
+
 						
 					}
-			
-					
-		
+					//f.Close();
+					//f1.Close();
+
 			        _moveDirection.y -= _gravity * Time.deltaTime;
 			
 	    			 // Move the controller
@@ -266,42 +443,143 @@ public class PolarBearControl : MonoBehaviour {
 					
 				}
 				else if (inWater){
-				
-					SensingLeftPaw();
-					SensingRightPaw();
-					
-					if (_getDir[LEFT] && Mathf.Abs(_minAccY[LEFT]) < MIN_MAX_VALUE && Mathf.Abs(_maxAccY[LEFT]) < MIN_MAX_VALUE) {
+				//Code for Left Stroke
+					//string path2 = "testleftStroke.txt";
+					//string path3 = "testrightStroke.txt";
+					//TextWriter f2 = new StreamWriter(path2, true);
+					//TextWriter f3 = new StreamWriter(path3, true);
+					var HipCenter = GameObject.Find("Torso");
+					var HandLeft = GameObject.Find("LeftHand");
+					var HandRight = GameObject.Find("RightHand");
+					Vector3 positionLH = HandLeft.GetComponent<UnityEngine.Transform>().position;
+					Vector3 positionRH = HandRight.GetComponent<UnityEngine.Transform>().position;
+					Vector3 positionHC = HipCenter.GetComponent<UnityEngine.Transform>().position;
+		
+					leftStroke_cur = (-1*positionHC.z - (-1*positionLH.z));
+					leftStroke_pre = leftStroke_index;
+					leftStroke_index = (-1*positionHC.z - (-1*positionLH.z));
+					rightStroke_cur = (-1*positionHC.z - (-1*positionRH.z));
+					rightStroke_pre = rightStroke_index;
+					rightStroke_index = (-1*positionHC.z - (-1*positionRH.z));
 
-							Debug.Log("Nadando.. direction L " + _stroke[LEFT] +" min "+_minAccY[LEFT] + " max " + _maxAccY[LEFT] );
-						    				
-						    MoveForward("Swim");
-   					    
-   						   _moveDirection = new Vector3(0, 0, 1);
-		                   _moveDirection = transform.TransformDirection(_moveDirection);
-  				           _moveDirection *= swimSpeed;
-
-						   _getDir[LEFT]  = false;
+					//f2.WriteLine(positionHC.x + "\t" + positionHC.y + "\t" + positionHC.z  + "\t" + positionLH.x + "\t" + positionLH.y + "\t" + positionLH.z);
+					//f3.WriteLine(positionHC.x + "\t" + positionHC.y + "\t" + positionHC.z  + "\t" + positionRH.x + "\t" + positionRH.y + "\t" + positionRH.z);
+					float zHC = positionHC.z;
+					float zLH = positionLH.z;
+					float zRH = positionRH.z;
+					bool speedboolStroke1 = false;
+					bool speedboolStroke2 = false;
+					if(zHC!=0 && zLH!=0){
+						speedboolStroke1 = true;
+			
+					}
+					if(speedboolStroke1){
+						//test for increasing
+						if(leftStroke_cur>leftStroke_pre){
+							leftStrokei++;
+							if(leftStrokei>1){
+								//flag as increasing and set current stroke to stroke max
+								leftStrokeA = 1;
+								leftStrokej = 0;
+								leftStrokeMax = leftStroke_cur;
+							}
+						}
+						//test for decreasing
+						if(leftStroke_cur<leftStroke_pre){
+							leftStrokej++;
+							if (leftStrokej>1){
+								//flag as decreasing and set current stroke to stroke min
+								leftStrokeB = 1;
+								leftStrokei = 0;
+								leftStrokeMin = leftStroke_cur;
+							}
+						}
+						//if user has gone from increasing to decreasing save strokemax and flag A as zero (not increasing)
+						if (leftStrokeA==1 && leftStrokeB==1 && leftStrokeC==0){
+							leftStrokeB = 0;
+							leftStrokeC = 1;
+							leftStrokeMax_saved = leftStrokeMax;
+						}
+						//user has switched from decreasing back to increasing and therefore completed a stroke
+						if (leftStrokeA==1 && leftStrokeB==1 && leftStrokeC==1){
+							leftStroke = Mathf.Abs(leftStrokeMax_saved-leftStrokeMin);
+							leftStrokeA = 0;
+							leftStrokeB = 0;
+							leftStrokeC = 0;
+							leftStrokeMax = 0;
+							leftStrokeMax_saved = 0;
+							leftStrokeMin = 0;
+							if(leftStroke>0.1){
+								totalLeftStroke = totalLeftStroke + leftStroke;
+								//f2.WriteLine(leftStroke + "\t" + totalLeftStroke);
+							}
+						}
+					}
+					//f2.Close();	
+					//Right Stroke Code
+					if(zHC!=0 && zRH!=0){
+						speedboolStroke2 = true;
+			
+					}
+					if(speedboolStroke2){
+						//test for increasing
+						if(rightStroke_cur>rightStroke_pre){
+							rightStrokei++;
+							if(rightStrokei>1){
+								//flag as increasing and set current stroke to stroke max
+								rightStrokeA = 1;
+								rightStrokej = 0;
+								rightStrokeMax = rightStroke_cur;
+							}
+						}
+						//test for decreasing
+						if(rightStroke_cur<rightStroke_pre){
+							rightStrokej++;
+							if (rightStrokej>1){
+								//flag as decreasing and set current stroke to stroke min
+								rightStrokeB = 1;
+								rightStrokei = 0;
+								rightStrokeMin = rightStroke_cur;
+							}
+						}
+						//if user has gone from increasing to decreasing save strokemax and flag A as zero (not increasing)
+						if (rightStrokeA==1 && rightStrokeB==1 && rightStrokeC==0){
+							rightStrokeB = 0;
+							rightStrokeC = 1;
+							rightStrokeMax_saved = rightStrokeMax;
+						}
+						//user has switched from decreasing back to increasing and therefore completed a stroke
+						if (rightStrokeA==1 && rightStrokeB==1 && rightStrokeC==1){
+							rightStroke = Mathf.Abs(rightStrokeMax_saved-rightStrokeMin);
+							rightStrokeA = 0;
+							rightStrokeB = 0;
+							rightStrokeC = 0;
+							rightStrokeMax = 0;
+							rightStrokeMax_saved = 0;
+							rightStrokeMin = 0;
+							if(rightStroke>0.1){
+								totalRightStroke = totalRightStroke + rightStroke;
+								//f3.WriteLine(rightStroke + "\t" + totalRightStroke);
+							}
+						}
+					}
+					//f3.Close();	
+					if(totalLeftStroke>=0.1 || totalRightStroke>=0.1){
+						if(totalLeftStroke>=0.1){
+							strokeLength = totalLeftStroke*strokeScale;
+							totalLeftStroke=0;
+						}
+						if(totalRightStroke>=0.1){
+							strokeLength = totalRightStroke*strokeScale;
+							totalRightStroke=0;
+						}
+						MoveForward("Swim");
+						_moveDirection = new Vector3(0, 0, strokeLength);
+						_moveDirection = transform.TransformDirection(_moveDirection);
+						_moveDirection *= swimSpeed;
+					}
 						    bs.setAudioClip("inWater");
-							
-							Debug.Log("Move left");
-		                
-					 }
-	    			else if (_getDir[RIGHT] && Mathf.Abs(_minAccY[RIGHT]) < MIN_MAX_VALUE && Mathf.Abs(_maxAccY[RIGHT]) < MIN_MAX_VALUE) {
-
-							Debug.Log("Nadando.. direction R " + _stroke[RIGHT] +" min "+_minAccY[RIGHT] + " max " + _maxAccY[RIGHT] );
-						    				
-						    MoveForward("Swim");
-   					    
-   						   _moveDirection = new Vector3(0, 0, 1);
-		                   _moveDirection = transform.TransformDirection(_moveDirection);
-  				           _moveDirection *= swimSpeed;
-
-						   _getDir[RIGHT]  = false;
-						    bs.setAudioClip("inWater");
-							Debug.Log("Move Right");
-		                
-					 }
-					
+						
 				    _moveDirection.y = Mathf.Sin(Time.time*4)/4;
 		    	    // Move the controller
 		     	    _controller.Move(_moveDirection * Time.deltaTime);    
@@ -332,15 +610,7 @@ public class PolarBearControl : MonoBehaviour {
 	   _accZR = _value;
     }
     
-    public void setRightStep(int _value) {
-		rightStep = _value;
-		updatedValues = true;
-    }
 
-    public void setLeftStep(int _value) {
-		leftStep = _value;
-		updatedValues = true;
-    }
 	
 	public void GameOver(float _value){
 	   _gameOver = true;
@@ -429,7 +699,6 @@ public class PolarBearControl : MonoBehaviour {
 			}
 		}
 	}
-	
     private void SensingRightPaw(){
 	 var prev = _pAccYR;
 	 var accY = _accYR;
