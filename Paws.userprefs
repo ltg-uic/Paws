@@ -1,13 +1,9 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/1975.txt">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/NetworkConnectionServer.js">
     <Files>
-      <File FileName="Assets/Scripts/AppendToLog.js" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/NetworkConnectionServer.js" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/DatabaseConnection.js" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Interpreters.js" Line="1" Column="1" />
-      <File FileName="Assets/2010.txt" Line="1" Column="1" />
-      <File FileName="Assets/1975.txt" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/GameParameters.js" Line="53" Column="56" />
+      <File FileName="Assets/Scripts/NetworkConnectionServer.js" Line="486" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

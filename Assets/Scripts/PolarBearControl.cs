@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Collections;
 using System.IO;
 using OpenNI;
+using System;
 
 public class PolarBearControl : MonoBehaviour {
  
@@ -45,6 +46,8 @@ public class PolarBearControl : MonoBehaviour {
 	private float[] _maxAccY;
 	private float[] _minAccY;
 	private bool[] _getDir;
+	private string trialNumber;
+	private TextWriter logFile;
 	
 	private float[] _stroke;
 	private bool _changeStepsSound;
@@ -140,8 +143,9 @@ public class PolarBearControl : MonoBehaviour {
 	   polarBearTag = "PolarBear(Clone)";
 	   polarBear = GameObject.Find(polarBearTag);
 	   _controller = polarBear.GetComponent<CharacterController>();		
-       _gameOver = false;
+       _gameOver = true;
 	   _firstStep = false;
+		trialNumber = DateTime.Now.ToString("dd-MM-yyyy_hh-mm-ss");
 		
 	}
 
@@ -284,30 +288,28 @@ public class PolarBearControl : MonoBehaviour {
 				
 				if (!inWater){
 					//Mike's Added Code for Left Step
-					//string path = "testleftStep.txt";
-					//TextWriter f = new StreamWriter(path, true);
+					
 					var HipCenter = GameObject.Find("Torso");
 					var FootLeft = GameObject.Find("LeftFoot");
+					
+					
 					Vector3 positionLF = FootLeft.GetComponent<UnityEngine.Transform>().position;
 					Vector3 positionHC = HipCenter.GetComponent<UnityEngine.Transform>().position;
+					LogMovementData();
 					leftStep_cur = Mathf.Abs(positionHC.y - positionLF.y);
 					leftStep_pre = leftStep_index;
 					leftStep_index = Mathf.Abs(positionHC.y - positionLF.y);
-					//f.WriteLine(positionHC.x + "\t" + positionHC.y + "\t" + positionHC.z  + "\t" + positionLF.x + "\t" + positionLF.y + "\t" + positionLF.z);
-					float yHC = positionHC.y;
+			    	float yHC = positionHC.y;
 					float yLF = positionLF.y;
 					bool speedbool = false;
-					//string pathright = "testrightStep.txt";
-					//TextWriter f1 = new StreamWriter(pathright, true);
+	
 					var FootRight = GameObject.Find("RightFoot");
 					Vector3 positionRF = FootRight.GetComponent<UnityEngine.Transform>().position;
+					
 					rightStep_cur = Mathf.Abs(positionHC.y - positionRF.y);
 					rightStep_pre = rightStep_index;
 					rightStep_index = Mathf.Abs(positionHC.y - positionRF.y);
-					//Write data to file using a using statment to make sure file closes
-					using(StreamWriter f1 = new StreamWriter("testleftstep.txt",true)){
-					f1.WriteLine(positionHC.x + "\t" + positionHC.y + "\t" + positionHC.z  + "\t" + positionRF.x + "\t" + positionRF.y + "\t" + positionRF.z);
-					}
+			
 					float yRF = positionRF.y;
 					bool speedboolRight = false;
 					if(yHC!=0 && yLF!=0){
@@ -444,17 +446,14 @@ public class PolarBearControl : MonoBehaviour {
 				}
 				else if (inWater){
 				//Code for Left Stroke
-					//string path2 = "testleftStroke.txt";
-					//string path3 = "testrightStroke.txt";
-					//TextWriter f2 = new StreamWriter(path2, true);
-					//TextWriter f3 = new StreamWriter(path3, true);
+				
 					var HipCenter = GameObject.Find("Torso");
 					var HandLeft = GameObject.Find("LeftHand");
 					var HandRight = GameObject.Find("RightHand");
 					Vector3 positionLH = HandLeft.GetComponent<UnityEngine.Transform>().position;
 					Vector3 positionRH = HandRight.GetComponent<UnityEngine.Transform>().position;
 					Vector3 positionHC = HipCenter.GetComponent<UnityEngine.Transform>().position;
-		
+					LogMovementData();
 					leftStroke_cur = (-1*positionHC.z - (-1*positionLH.z));
 					leftStroke_pre = leftStroke_index;
 					leftStroke_index = (-1*positionHC.z - (-1*positionLH.z));
@@ -462,8 +461,6 @@ public class PolarBearControl : MonoBehaviour {
 					rightStroke_pre = rightStroke_index;
 					rightStroke_index = (-1*positionHC.z - (-1*positionRH.z));
 
-					//f2.WriteLine(positionHC.x + "\t" + positionHC.y + "\t" + positionHC.z  + "\t" + positionLH.x + "\t" + positionLH.y + "\t" + positionLH.z);
-					//f3.WriteLine(positionHC.x + "\t" + positionHC.y + "\t" + positionHC.z  + "\t" + positionRH.x + "\t" + positionRH.y + "\t" + positionRH.z);
 					float zHC = positionHC.z;
 					float zLH = positionLH.z;
 					float zRH = positionRH.z;
@@ -615,20 +612,62 @@ public class PolarBearControl : MonoBehaviour {
 	public void GameOver(float _value){
 	   _gameOver = true;
 	   startScene = false;
+	  
+	   logFile.Close();
 	}
     	
 	public void StartGame(){
-	Debug.Log("Starting game");
-		 SendMessage("StartLog");
-	  _gameOver = false;
-	  _firstStep = false;
+	  Debug.Log("Starting game");
+	  SendMessage("StartLog");
 	  Initialize();
+	  _firstStep = false;
+	  _gameOver = false;
 	 
 	}
 	
 	public void SaveLog(){
 	  var logline = "W="+NumWalkSteps.ToString() + "|S=" + NumSwimSteps.ToString();
 	  SendMessage("ClientAppendDataToLog", logline);	
+	}
+	
+	public void LogMovementData(){
+	    string logPath = "LogMovement_"+trialNumber+".txt";
+		logFile = new StreamWriter(logPath, true);
+		
+		var HipCenter = GameObject.Find("Torso");
+		var FootLeft = GameObject.Find("LeftFoot");
+		var FootRight = GameObject.Find("RightFoot");
+		var KneeLeft = GameObject.Find("LeftKnee");
+		var KneeRight = GameObject.Find("RightKnee");
+		var Head = GameObject.Find ("Head");
+		var HandLeft = GameObject.Find ("LeftHand");
+		var HandRight = GameObject.Find ("RightHand");
+		
+		Vector3 positionLF = FootLeft.GetComponent<UnityEngine.Transform>().position;
+		Vector3 positionHC = HipCenter.GetComponent<UnityEngine.Transform>().position;
+		Vector3 positionRF = FootRight.GetComponent<UnityEngine.Transform>().position;
+		Vector3 positionKL = KneeLeft.GetComponent<UnityEngine.Transform>().position;
+		Vector3 positionKR = KneeRight.GetComponent<UnityEngine.Transform>().position;
+		Vector3 positionH = Head.GetComponent<UnityEngine.Transform>().position;
+		Vector3 positionHL = HandLeft.GetComponent<UnityEngine.Transform>().position;
+		Vector3 positionHR = HandRight.GetComponent<UnityEngine.Transform>().position;
+			
+	    logFile.WriteLine(positionH.x + "\t" + positionH.y + "\t" + positionH.z  + "\t" + 
+							positionHC.x + "\t" + positionHC.y + "\t" + positionHC.z + "\t" + 
+							positionHL.x + "\t" + positionHL.y + "\t" + positionHL.z + "\t" + 
+							positionHR.x + "\t" + positionHR.y + "\t" + positionHR.z + "\t" + 
+							positionKL.x + "\t" + positionKL.y + "\t" + positionKL.z + "\t" + 
+							positionKR.x + "\t" + positionKR.y + "\t" + positionKR.z + "\t" + 
+							positionLF.x + "\t" + positionLF.y + "\t" + positionLF.z + "\t" +
+							positionRF.x + "\t" + positionRF.y + "\t" + positionRF.z + "\t" );
+	   Debug.Log("Writing at log..."+positionH.x + "\t" + positionH.y + "\t" + positionH.z  + "\t" + 
+							positionHC.x + "\t" + positionHC.y + "\t" + positionHC.z + "\t" + 
+							positionHL.x + "\t" + positionHL.y + "\t" + positionHL.z + "\t" + 
+							positionHR.x + "\t" + positionHR.y + "\t" + positionHR.z + "\t" + 
+							positionKL.x + "\t" + positionKL.y + "\t" + positionKL.z + "\t" + 
+							positionKR.x + "\t" + positionKR.y + "\t" + positionKR.z + "\t" + 
+							positionLF.x + "\t" + positionLF.y + "\t" + positionLF.z + "\t" +
+							positionRF.x + "\t" + positionRF.y + "\t" + positionRF.z + "\t");
 	}
 	
 	private void MoveForward(string _str){
@@ -659,7 +698,7 @@ public class PolarBearControl : MonoBehaviour {
 		    networkView.RPC ("ReceivedMovementInput", RPCMode.Server, msgToSend);
 		}
 	}
-	
+
    private void SensingLeftPaw(){
 		var prev = _pAccYL;
 		var accY = _accYL;

@@ -14,8 +14,6 @@ var areaWidth : float;
 var areaHeight : float;
 var backgroundTexture : Texture;
 var startBtnTexture: Texture;
-var leftBtnTexture: Texture;
-var rightBtnTexture: Texture;
 
 var isPlaying: boolean;
 var burnedCalories: float;
@@ -25,6 +23,8 @@ var elapsedTime: float;
 var interpreterName:String;
 var interpreterID:String;
 var topScores:String = "";
+private var ScreenX: float;
+private var ScreenY: float;
 
 private var _scoresCount: int;
 private var _scoreValues:ArrayList;
@@ -36,7 +36,7 @@ private var _metersXWalkSteps:float;
 private var _metersXSwimSteps:float;
 private var _playerNumber: int;
 private var _currentYear:int;
-private var _previousYear:int;
+private var _durationGame:int;
 private var _showGraphView:boolean;
 private var _showSummary:boolean;
 private var _goalReached:boolean;
@@ -53,14 +53,15 @@ private var _displayMinutes: int;
 private var _savedAvg: boolean;
 private var _savedLog: boolean;
 private var _scoresLoaded: boolean;
-private var ScreenX: float;
-private var ScreenY: float;
 private var _showInfo:boolean;
+private var _showMap:boolean;
+private var _showCurrentGraph:boolean;
 private var _showInterpreterList:boolean = false;
 
-var yearList = [1975,2010,2045];
-private var _yearAgoList = [-35,0,35];
-private var _yearLabels = ["1975","2010","2045"];
+var yearList : int[] = [1975,2010,2045];
+private var _yearAgoList : int[]= [-35,0,35];
+private var _yearLabels : String[]= ["1975","2010","2045"];
+var gameDurationList: int[] = [1,3,5];
 private var _DBParameters;
 var applicationPath:String = "";
 
@@ -75,6 +76,10 @@ function Start(){
     ScreenY = ((Screen.height * 0.5) - (areaHeight * 0.5));
 	
 	_labelHeight = areaHeight*0.04;
+	
+	GetComponent(GameParameters).labelHeight = _labelHeight;
+	GetComponent(GameParameters).posX = areaWidth*0.5;       
+	GetComponent(GameParameters).posY = areaHeight*0.12 + _labelHeight ;
 	
     GetComponent(BurnedCaloriesGraph).posX = ScreenX + areaWidth*0.575;       
 	GetComponent(BurnedCaloriesGraph).posY = Screen.height - (ScreenY + areaHeight*0.625);
@@ -113,18 +118,17 @@ function Start(){
 function Initialize(){
 	_scoreValues = new ArrayList();
 	_scoreNames = new ArrayList();
-	interpreterName = "...";
+	interpreterName = "Interpreter...";
     _displayMinutes = 0;
     elapsedTime = 0;
 	_currentYear = _minYear;
-	_previousYear = _currentYear;
 	_showGraphView = false;
 	isPlaying = false;
 	_innerController = 1;
 	_serverReady = false;	
 	_numSwimSteps = _numWalkSteps = _playerNumber = 0;
 	burnedCalories = meters = _displaySeconds = _displayMinutes = 0;
-	_playerName = "....";
+	_playerName = "Player name ...";
 	_goalReached = false;
 	_timerReached = false;
 	_initialPos = new Vector2(0.0,0.0);
@@ -141,8 +145,12 @@ function Initialize(){
 }
 
 function StartGame(){
+	_currentYear = GetComponent(GameParameters).getCurrentYearIndex();
+	_durationGame = GetComponent(GameParameters).getDurationGameIndex();
 	_startTime = Time.realtimeSinceStartup;
 	GetComponent(SummaryGraph).SetCurrentYear(_currentYear);
+    isPlaying = true;
+    networkView.RPC ("LoadLevelInClient", RPCMode.Others, yearList[_currentYear].ToString()+":"+_yearAgoList[_currentYear].ToString());  
 }
 
 function OnConnectedToServer () {
@@ -225,46 +233,56 @@ function DrawViews(){
   		
   	if (!_showSummary)
   	{  // Draw the main view.
-			// Area containing the year slider and selection
-			GUILayout.BeginArea (Rect (areaWidth*0.1, areaHeight*0.205, areaWidth*0.4, _labelHeight));
-			GUILayout.Label("Bird's eye view");	
-			GUILayout.EndArea();		
-			// Area rendering the map and it's labels
-			GUILayout.BeginArea (Rect (areaWidth*0.1,areaHeight*0.25,areaWidth*0.4,areaHeight*0.4));
-			if (!isPlaying)
-				GetComponent(CurrentPosInMap).SetCurrentYear(_currentYear);
-			GetComponent(CurrentPosInMap).DrawMap();
-			GUILayout.EndArea();
-		
-		
-			GUILayout.BeginArea (Rect (areaWidth*0.55, areaHeight*0.205, areaWidth*0.4, _labelHeight));
+
+			GUILayout.BeginArea (Rect (areaWidth*0.3, areaHeight*0.18, areaWidth*0.4, _labelHeight));
 			GUILayout.Label("Bear calories burned: " + (Mathf.Round(burnedCalories*100)/100) + " Calories");  
 		    GUILayout.EndArea();
 		    
-		    GUILayout.BeginArea(Rect (areaWidth*0.55, areaHeight*0.25, areaWidth*0.4, areaHeight*0.4));
-		    GUILayout.BeginVertical(GUI.skin.box, GUILayout.Height(areaHeight*0.4), GUILayout.Width(areaWidth*0.4));
-		    GUILayout.Space(areaHeight*0.4);
-		    GUILayout.EndVertical();
-		    GUILayout.EndArea();
-		    
-			
-		    GUILayout.BeginArea (Rect (areaWidth*0.1, areaHeight*0.7, areaWidth*0.4, _labelHeight));
+			GUILayout.BeginArea (Rect (areaWidth*0.1, areaHeight*0.22, areaWidth*0.4, _labelHeight));
 			//Disntance in meters
 			//GUILayout.Label("Distance covered: "+ (Mathf.Round(meters*100)/100) + " meters");
 			//Distance in feet
 			GUILayout.Label("Distance covered: "+ (Mathf.Round(meters*3.2808*100)/100) + " Ft.");
 			GUILayout.EndArea();
 			
-			GUILayout.BeginArea (Rect (areaWidth*0.55, areaHeight*0.7, areaWidth*0.4, _labelHeight));
 			if (isPlaying){
 				_displaySeconds = Mathf.CeilToInt(elapsedTime)%60;
 				_displayMinutes = Mathf.CeilToInt(elapsedTime)*0.01666667;
 			}
-			
-			GUILayout.Label("Elapsed time: "+ _displayMinutes.ToString("00") + " min "+ _displaySeconds.ToString("00") + " sec");
+			GUILayout.BeginArea (Rect (areaWidth*0.55, areaHeight*0.22, areaWidth*0.4, _labelHeight));
+  		    GUILayout.Label("Elapsed time: "+ _displayMinutes.ToString("00") + " min "+ _displaySeconds.ToString("00") + " sec");
 			GUILayout.EndArea ();
+		    // Local and Remote View Panels
+		    
+		    GUILayout.BeginArea(Rect (areaWidth*0.08, areaHeight*0.3, areaWidth*0.4, areaHeight*0.4));
+		    GUILayout.BeginVertical(GUI.skin.box, GUILayout.Height(areaHeight*0.4), GUILayout.Width(areaWidth*0.4));
+		    GUILayout.Space(areaHeight*0.4);
+		    GUILayout.EndVertical();
+		    GUILayout.EndArea();
+		    
+		    GUILayout.BeginArea(Rect (areaWidth*0.52, areaHeight*0.3, areaWidth*0.4, areaHeight*0.4));
+		    GUILayout.BeginVertical(GUI.skin.box, GUILayout.Height(areaHeight*0.4), GUILayout.Width(areaWidth*0.4));
+		    GUILayout.Space(areaHeight*0.4);
+		    GUILayout.EndVertical();
+		    GUILayout.EndArea();
+		    
+		    if (_showMap && isPlaying){
+				// Area containing the year slider and selection
+				GUILayout.BeginArea (Rect (areaWidth*0.1, areaHeight*0.205, areaWidth*0.4, _labelHeight));
+				GUILayout.Label("Bird's eye view");	
+				GUILayout.EndArea();		
+				// Area rendering the map and it's labels
+				GUILayout.BeginArea (Rect (areaWidth*0.1,areaHeight*0.25,areaWidth*0.4,areaHeight*0.4));
+				//GetComponent(CurrentPosInMap).SetCurrentYear(_currentYear);  --- Game Parameters
+				GetComponent(CurrentPosInMap).DrawMap();
+				GUILayout.EndArea();
+			}
+			if (_showCurrentGraph && isPlaying){
+				GetComponent(BurnedCaloriesGraph).DrawCaloriesGraph();
+			}
 			
-			GUILayout.BeginArea (Rect (areaWidth*0.8, areaHeight*0.85, areaWidth*0.15, _labelHeight));
+			//Hide until later
+		    /*	GUILayout.BeginArea (Rect (areaWidth*0.8, areaHeight*0.85, areaWidth*0.15, _labelHeight));
 		    if (GUILayout.Button("Show scores")){
 			   
 			 _showGraphView = true;
@@ -277,75 +295,17 @@ function DrawViews(){
 		     SendMessage("ShowSummaryGraph",true);  
 		    }
 		    GUILayout.EndArea();  
-	
+	      */
+	      
 			_scoresLoaded = false;
 			if (!isPlaying){
 	
-				// Area rendering the map and it's labels 
-				GUILayout.BeginArea (Rect (areaWidth*0.1, areaHeight*0.1, areaWidth*0.1, _labelHeight));
-				GUILayout.Label("Name: ");	
-				GUILayout.EndArea();
-					
-				
-				GUILayout.BeginArea (Rect (areaWidth*0.16, areaHeight*0.105, areaWidth*0.20, _labelHeight+areaHeight*0.01));
+				// Area rendering the UI elements 
+				GUILayout.BeginArea (Rect (areaWidth*0.1, areaHeight*0.12, areaWidth*0.15, _labelHeight+areaHeight*0.01));
 				_playerName = GUILayout.TextField(_playerName,12);
 				GUILayout.EndArea();
-			
-			    GUILayout.BeginArea (Rect (areaWidth*0.1, areaHeight*0.15, areaWidth*0.4, _labelHeight));
-				GUILayout.Label("Interpreter: ");	
-				GUILayout.EndArea();
-				    
-				GUILayout.BeginArea (Rect (areaWidth*0.3, areaHeight*0.205, areaWidth*0.1, _labelHeight));
-				GUILayout.Label("Year");	
-				GUILayout.EndArea();
-				
-				//Area to display the year selection
-				GUILayout.BeginArea (Rect (areaWidth*0.375, areaHeight*0.2, areaWidth*0.05, areaHeight*0.05));
-				//GUILayout.BeginHorizontal();
-				if (GUILayout.Button(leftBtnTexture, "ImageButton")){
-		        	_currentYear --;
-		        if (_currentYear < 0)
-		        	_currentYear = 0;	
-		     	}
-		     	GUILayout.EndArea();
 		     	
-		     	GUILayout.BeginArea (Rect (areaWidth*0.4, areaHeight*0.205, areaWidth*0.05, _labelHeight));
-				GUILayout.Label(_yearLabels[_currentYear]);
-				GUILayout.EndArea();
-		     		
-			    GUILayout.BeginArea (Rect (areaWidth*0.45, areaHeight*0.2, areaWidth*0.05, areaHeight*0.05));
-				  if (GUILayout.Button(rightBtnTexture,"ImageButton")){
-			        _currentYear ++;
-			        if (_currentYear == yearList.Length)
-			        	_currentYear --;	
-			    }
-		     	GUILayout.EndArea();
-				
-				if ( yearList[_currentYear] != yearList[_previousYear])
-				{
-					_previousYear = _currentYear;
-					var  _map : Texture2D = Resources.Load("Images/"+yearList[_currentYear]+"_Location_Map", typeof(Texture2D));
-	       			GetComponent(CurrentPosInMap).mapImage = _map;
-	       			LoadScores();
-				}
-				GUILayout.BeginArea (Rect (areaWidth*0.85, areaHeight*0.05, areaWidth*0.10, areaHeight*0.15));
-	     		if (GUILayout.Button (startBtnTexture, "ImageButton"))
-				{		
-					if (interpreterName.CompareTo("...")){
-					    StartGame();
-					    isPlaying = true;
-				        networkView.RPC ("LoadLevelInClient", RPCMode.Others, yearList[_currentYear].ToString()+":"+_yearAgoList[_currentYear].ToString());  
-						GetComponent(BurnedCaloriesGraph).DrawCaloriesGraph();
-					}
-					else
-					{
-					    GetComponent(MessageBox).DisplayMessage("Select an interpreter.");
-					}
-				}
-				
-		     	GUILayout.EndArea ();
-		     	
-		     	GUILayout.BeginArea (Rect (areaWidth*0.21, areaHeight*0.15, areaWidth*0.15, areaHeight*0.05));
+		     	GUILayout.BeginArea (Rect (areaWidth*0.3, areaHeight*0.12, areaWidth*0.15, areaHeight*0.05));
 			    if (GUILayout.Button(interpreterName)){
 					
     				_showInterpreterList = !_showInterpreterList;
@@ -357,7 +317,7 @@ function DrawViews(){
 
 				 	for (var cnt:int  = 1; cnt < GetComponent(Interpreters).interpreterNames.Count; cnt++){
 				 
-				 	   GUILayout.BeginArea (Rect (areaWidth*0.21, areaHeight*0.15+_labelHeight*(cnt), areaWidth*0.15, _labelHeight));
+				 	   GUILayout.BeginArea (Rect (areaWidth*0.3, areaHeight*0.12+_labelHeight*(cnt), areaWidth*0.15, _labelHeight));
 				 	   if (GUILayout.Button((GetComponent(Interpreters).interpreterNames[cnt].ToString()))){
 				 	   		interpreterName = GetComponent(Interpreters).interpreterNames[cnt];
 				 	   		interpreterID = GetComponent(Interpreters).interpreterIDs[cnt];
@@ -365,53 +325,46 @@ function DrawViews(){
 				 	   } 
 				 	   GUILayout.EndArea();
 				    }
-			    } 
+			    }
 			    
-		     	/*
-			    GUILayout.BeginArea (Rect (areaWidth*0.75, areaHeight*0.65, areaWidth*0.1, _labelHeight));
-				if (GUILayout.Button("Distance")){
-					GetComponent(BurnedCaloriesGraph).typeGraph = 1 ;
+			    GUILayout.BeginArea (Rect (areaWidth*0.5, areaHeight*0.12, areaWidth*0.1, _labelHeight));
+				if (GUILayout.Button("Settings")){	// Game Parameters
+				     GetComponent(GameParameters).showGameParameters(true);
 				}
 				GUILayout.EndArea();
-				GUILayout.BeginArea (Rect (areaWidth*0.85, areaHeight*0.65, areaWidth*0.1, _labelHeight));
-			    if (GUILayout.Button("Time")){
-					GetComponent(BurnedCaloriesGraph).typeGraph = 0;
-				}
-				GUILayout.EndArea();
-			*/
+				 
+				 
 			}
 			else{
 		
-				GUILayout.BeginArea (Rect (areaWidth*0.1, areaHeight*0.1, areaWidth*0.1, _labelHeight));
+				GUILayout.BeginArea (Rect (areaWidth*0.1, areaHeight*0.12, areaWidth*0.20, _labelHeight));
 				GUILayout.Label("Player: " +_playerName);
 				GUILayout.EndArea();
-			
-				GUILayout.BeginArea (Rect (areaWidth*0.1, areaHeight*0.15, areaWidth*0.2, _labelHeight));
-				GUILayout.Label("Hello, my name is ");
-				GUILayout.EndArea();
 				
-				GUILayout.BeginArea (Rect (areaWidth*0.28, areaHeight*0.15, areaWidth*0.15, areaHeight*0.05));
+				GUILayout.BeginArea (Rect (areaWidth*0.3, areaHeight*0.12, areaWidth*0.15, areaHeight*0.05));
 			    if (GUILayout.Button(interpreterName)){
 					
     				_showInterpreterList = !_showInterpreterList;
     			
    			    }
    			    GUILayout.EndArea();
-				 if (_showInterpreterList){
-
-				 	for (cnt  = 1; cnt < GetComponent(Interpreters).interpreterNames.Count; cnt++){
-				 
-				 	   GUILayout.BeginArea (Rect (areaWidth*0.28, areaHeight*0.15+_labelHeight*(cnt), areaWidth*0.15, _labelHeight));
-				 	   if (GUILayout.Button(GetComponent(Interpreters).interpreterNames[cnt].ToString())){
-				 	   		interpreterName = GetComponent(Interpreters).interpreterNames[cnt];
-				 	   		_showInterpreterList = !_showInterpreterList;
-				 	   } 
-				 	   GUILayout.EndArea();
-				    }
-			    } 
+				if (_showInterpreterList){
+	
+					 	for (cnt  = 1; cnt < GetComponent(Interpreters).interpreterNames.Count; cnt++){
+					 
+					 	   GUILayout.BeginArea (Rect (areaWidth*0.3, areaHeight*0.12+_labelHeight*(cnt), areaWidth*0.15, _labelHeight));
+					 	   if (GUILayout.Button((GetComponent(Interpreters).interpreterNames[cnt].ToString()))){
+					 	   		interpreterName = GetComponent(Interpreters).interpreterNames[cnt];
+					 	   		interpreterID = GetComponent(Interpreters).interpreterIDs[cnt];
+					 	   		_showInterpreterList = !_showInterpreterList;
+					 	   } 
+					 	   GUILayout.EndArea();
+					    }
+				}
+			   
 				
-		     	GUILayout.BeginArea (Rect (areaWidth*0.4, areaHeight*0.205, areaWidth*0.05, _labelHeight));				
-				GUILayout.Label(yearList[_currentYear].ToString());
+		     	GUILayout.BeginArea (Rect (areaWidth*0.5, areaHeight*0.12, areaWidth*0.3, _labelHeight));				
+				GUILayout.Label("Year: "+yearList[_currentYear].ToString() + " Goal time: " + gameDurationList[_durationGame]+" min");
 				GUILayout.EndArea();
 			
 			}
@@ -424,15 +377,14 @@ function DrawViews(){
 		    */
 		    // Game will stop by user request	
 		    if (isPlaying){
-		       GUILayout.BeginArea (Rect (areaWidth*0.6, areaHeight*0.85, areaWidth*0.15, _labelHeight));
+		       GUILayout.BeginArea (Rect (areaWidth*0.8, areaHeight*0.12, areaWidth*0.15, _labelHeight));
 		       if (_goalReached || _timerReached ){
 		       		Debug.Log("Reached the max time");
 			       if (GUILayout.Button("Play Again")){
 					 isPlaying = false;  
 					 GetComponent(InfoPolarBear).ShowInfo(false);
 				     Initialize();    
-				   }
-				   
+				   }	   
 		       }
 		       else if (GUILayout.Button("Cancel Game")){
 		         GetComponent(InfoPolarBear).ShowInfo(false);
@@ -444,6 +396,7 @@ function DrawViews(){
 			   GUILayout.EndArea();  
 		
 			}
+			
 	}
 	else{  // Draw the Summary Graph
 	
@@ -515,9 +468,26 @@ function DrawViews(){
  	    _savedLog = true;
        }
 	}
-	
+	GetComponent(GameParameters).ShowOnGUI();
 	GUILayout.EndArea();
 
+	
+}
+
+function Update() {
+
+    if(iPhoneInput.touchCount > 0)
+    {
+	     var count : int = Input.touchCount;
+	     for(var i: int = 0;i < count; i++)//for multi touch
+	     {
+	        var touch : Touch = Input.GetTouch(i);
+	        if(guiTexture.HitTest(touch.position) && touch.phase == TouchPhase.Began)
+	        {
+	            print("Red Button Clicked or EVEN BETTER AWESOME STUFF!");
+	        }
+	     }
+	}
 }
 
 function OnPlayerConnected(newPlayer: NetworkPlayer){
@@ -533,7 +503,6 @@ function LoadScores(){
  	_scoresCount = 0;
  	
 	_DBParameters = [yearList[_currentYear],TOP_SCORES];
-	
     GetComponent(DatabaseConnection).GetScores(_DBParameters);
 }
 
@@ -554,7 +523,7 @@ function SetScores(){
 		   _scoreValues.Add(scoreData[ 1 ]);
 	   }
 	}
-	Debug.Log("Scores count"+_scoresCount);
+	//Debug.Log("NetworkConnectionServer::Scores count"+_scoresCount);
 }
 
 
@@ -575,11 +544,11 @@ public function numberSteps(){
 }
 
 public function swimSteps(){
-	 return "350";
+	 return _numSwimSteps.ToString();
 }
 
 public function walkSteps(){
-	return "250";
+	return _numWalkSteps.ToString();
 }
 public function swimCalories(){
 //_numSwimSteps

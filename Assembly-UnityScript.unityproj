@@ -56,6 +56,7 @@
      <Compile Include="Assets\Scripts\EmmitterToggle.js" />
      <Compile Include="Assets\Scripts\Follow.js" />
      <Compile Include="Assets\Scripts\GameOver.js" />
+     <Compile Include="Assets\Scripts\GameParameters.js" />
      <Compile Include="Assets\Scripts\InfoEventTriggers.js" />
      <Compile Include="Assets\Scripts\InfoPolarBear.js" />
      <Compile Include="Assets\Scripts\InitialMessage.js" />

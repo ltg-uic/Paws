@@ -3,6 +3,7 @@ private var message: String = " ";
 var newSkin: GUISkin;
 var areaWidth : float;
 var areaHeight : float;
+
 function Start () {
 	message = "";
 	areaWidth = GetComponent(NetworkConnectionServer).areaWidth;
