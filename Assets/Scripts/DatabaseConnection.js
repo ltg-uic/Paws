@@ -75,7 +75,7 @@ function GetScores(_parameters: int[]){
     }
     else{
 	    if (hs_get.text.Length>0){
-	      Debug.Log("DatabaseConnection::Get scores for parameters "+_parameters[0]+" " +_parameters[1] + "--"+ hs_get.text);
+	      //Debug.Log("DatabaseConnection::Get scores for parameters "+_parameters[0]+" " +_parameters[1] + "--"+ hs_get.text);
 			GetComponent(NetworkConnectionServer).topScores = hs_get.text;
 			GetComponent(NetworkConnectionServer).SetScores();
 		}

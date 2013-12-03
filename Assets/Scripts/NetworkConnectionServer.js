@@ -70,6 +70,7 @@ private var _innerController : int;
 //variable for the heigh of the lable text
 private var _labelHeight :float;
 			       
+ 
 function Start(){
   // BL added for screen distribution of elements
     ScreenX = ((Screen.width * 0.5) - (areaWidth * 0.5));
@@ -136,12 +137,15 @@ function Initialize(){
     _savedAvg = false;
     _savedLog = false;
     topScores = "";
+    
 	var  _map : Texture2D = Resources.Load("Images/"+yearList[_currentYear]+"_Location_Map", typeof(Texture2D));
 	GetComponent(CurrentPosInMap).mapImage = _map;
 	GetComponent(BurnedCaloriesGraph).DestroyLines();
 	GetComponent(CurrentPosInMap).InitializeMap();
 	GetComponent(DatabaseConnection).GetInterpreters();
+	GetComponent(Prompts).ShowPrompts(false);
 	LoadScores();
+	
 }
 
 function StartGame(){
@@ -151,6 +155,7 @@ function StartGame(){
 	GetComponent(SummaryGraph).SetCurrentYear(_currentYear);
     isPlaying = true;
     networkView.RPC ("LoadLevelInClient", RPCMode.Others, yearList[_currentYear].ToString()+":"+_yearAgoList[_currentYear].ToString());  
+    GetComponent(Prompts).ShowPrompts(true);
 }
 
 function OnConnectedToServer () {
@@ -195,10 +200,29 @@ function Update(){
 			GetComponent(InfoPolarBear).ShowInfo(false);
 	else if(Input.GetKeyDown(KeyCode.S))
 			GetComponent(InfoPolarBear).ShowInfo(true);	
+			
+	if(Input.touchCount > 0)
+    {Debug.Log("Paso");
+	     for (var touch: Touch in Input.touches)
+	     {
+	     Debug.Log("Entro");
+	        for(var _prompt : GameObject in GameObject.FindObjectsOfType(GameObject))
+			{
+			    if(_prompt.name == "Prompt")
+			    {
+			        if(_prompt.HitTest(touch.position) && touch.phase == TouchPhase.Began)
+			        {
+			            Debug.Log("Red Button Clicked or EVEN BETTER AWESOME STUFF!");
+			        } 
+			    }
+			}
+	        
+	     }
+	}
 }
 
 function OnGUI () {
-
+   
    if ( _serverReady){
 		
 	     DrawViews();
@@ -226,7 +250,7 @@ function OnGUI () {
 function DrawViews(){
 	
   	GUI.skin = newSkin;
-  	
+  	GUI.depth = 0;	
 	    
 	GUILayout.BeginArea(Rect(ScreenX,ScreenY, areaWidth, areaHeight));
   	GUI.DrawTexture (Rect (0, 0, areaWidth, areaHeight), backgroundTexture);
@@ -472,22 +496,6 @@ function DrawViews(){
 	GUILayout.EndArea();
 
 	
-}
-
-function Update() {
-
-    if(iPhoneInput.touchCount > 0)
-    {
-	     var count : int = Input.touchCount;
-	     for(var i: int = 0;i < count; i++)//for multi touch
-	     {
-	        var touch : Touch = Input.GetTouch(i);
-	        if(guiTexture.HitTest(touch.position) && touch.phase == TouchPhase.Began)
-	        {
-	            print("Red Button Clicked or EVEN BETTER AWESOME STUFF!");
-	        }
-	     }
-	}
 }
 
 function OnPlayerConnected(newPlayer: NetworkPlayer){

@@ -66,6 +66,7 @@
      <Compile Include="Assets\Scripts\NetworkConnectionBear.js" />
      <Compile Include="Assets\Scripts\NetworkConnectionServer.js" />
      <Compile Include="Assets\Scripts\PlayerCollider.js" />
+     <Compile Include="Assets\Scripts\Prompts.js" />
      <Compile Include="Assets\Scripts\ReachGoal.js" />
      <Compile Include="Assets\Scripts\Seagull.js" />
      <Compile Include="Assets\Scripts\SeagullFlightPath.js" />
