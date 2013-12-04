@@ -117,7 +117,7 @@ public function DestroyLines(){
 	_currentPos = 0;
 	_calories = 0;
 	_currentXValue = 0;
-    _xAxisPos.Clear();
+    _xAxisPos.clear();
 	_xAxisValue.Clear();
     showGraph = false; 
 	_spanBtwXPoints = 0;

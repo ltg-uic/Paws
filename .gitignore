@@ -17,3 +17,7 @@ Temp
 build
 Paws-csharp.sln
 testleftstep.txt
+
+*.csproj
+
+*.csproj
