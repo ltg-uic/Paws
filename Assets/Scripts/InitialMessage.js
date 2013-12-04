@@ -54,7 +54,7 @@ function OnGUI(){
   if (startGame){
   
   		var index: int = Application.loadedLevel;
-  		var yearsAgo : int = (yearList[index] - refYear);
+  		var yearsAgo : int = System.Convert.ToInt32(yearList[index]) - refYear;
 
 		
 		GUI.BeginGroup (new Rect (ScreenX, ScreenY, areaWidth, areaHeight));

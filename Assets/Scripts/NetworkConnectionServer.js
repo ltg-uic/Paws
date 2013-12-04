@@ -268,7 +268,7 @@ function DrawViews(){
 		    
 		    GUILayout.BeginArea(Rect (areaWidth*0.08, areaHeight*0.28, areaWidth*0.4, areaHeight*0.42));
 		    if (_localPromptIndex >=0)
-		        GUILayout.Box(GetComponent(Prompts)._prompts[GetComponent(Prompts).promptCurrentList[_localPromptIndex]]);
+		        GUILayout.Box(GetComponent(Prompts).prompts[GetComponent(Prompts).promptCurrentList[_localPromptIndex]]);
 		    else
 		  	    GUILayout.Box("");
 		    if (_selectedPromptIndex >=0 && Event.current.type == EventType.MouseUp && GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
@@ -281,7 +281,7 @@ function DrawViews(){
 		    
 		    GUILayout.BeginArea(Rect (areaWidth*0.52, areaHeight*0.28, areaWidth*0.4, areaHeight*0.42));
 		      if (_remotePromptIndex >=0)
-		        GUILayout.Box(GetComponent(Prompts)._prompts[GetComponent(Prompts).promptCurrentList[_remotePromptIndex]]);
+		        GUILayout.Box(GetComponent(Prompts).prompts[GetComponent(Prompts).promptCurrentList[_remotePromptIndex]]);
 		    else
 		  	    GUILayout.Box("");
  			if (_selectedPromptIndex >=0 && Event.current.type == EventType.MouseUp && GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
@@ -414,8 +414,8 @@ function DrawViews(){
 				///Show prompts
 			  for (var _p:int = 0; _p < promptsXScreen; _p++){
 			    GUILayout.BeginArea (Rect (areaWidth*0.16*_p+areaWidth*0.1, areaHeight*0.72, areaWidth*0.15, areaHeight*0.15));
-		
-				  GUILayout.Box(GetComponent(Prompts)._prompts[GetComponent(Prompts).promptCurrentList[_p]]);
+				  Debug.Log("All " + promptsXScreen + " Index "+_p+" Index in array: "+GetComponent(Prompts).promptCurrentList.Length);
+				  GUILayout.Box(GetComponent(Prompts).prompts[GetComponent(Prompts).promptCurrentList[_p]]);
 				  if (Event.current.type == EventType.MouseDown && GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
 				  {
 				    Debug.Log("logging down");
