@@ -23,6 +23,8 @@ var elapsedTime: float;
 var interpreterName:String;
 var interpreterID:String;
 var topScores:String = "";
+var promptsXScreen = 5;
+
 private var ScreenX: float;
 private var ScreenY: float;
 
@@ -57,6 +59,9 @@ private var _showInfo:boolean;
 private var _showMap:boolean;
 private var _showCurrentGraph:boolean;
 private var _showInterpreterList:boolean = false;
+private var _localPromptIndex:int = -1;
+private var _remotePromptIndex:int = -1;
+private var _selectedPromptIndex:int = -1;
 
 var yearList : int[] = [1975,2010,2045];
 private var _yearAgoList : int[]= [-35,0,35];
@@ -137,13 +142,14 @@ function Initialize(){
     _savedAvg = false;
     _savedLog = false;
     topScores = "";
+    _remotePromptIndex = -1;
+    _localPromptIndex = -1;
     
 	var  _map : Texture2D = Resources.Load("Images/"+yearList[_currentYear]+"_Location_Map", typeof(Texture2D));
 	GetComponent(CurrentPosInMap).mapImage = _map;
 	GetComponent(BurnedCaloriesGraph).DestroyLines();
 	GetComponent(CurrentPosInMap).InitializeMap();
 	GetComponent(DatabaseConnection).GetInterpreters();
-	GetComponent(Prompts).ShowPrompts(false);
 	LoadScores();
 	
 }
@@ -155,7 +161,6 @@ function StartGame(){
 	GetComponent(SummaryGraph).SetCurrentYear(_currentYear);
     isPlaying = true;
     networkView.RPC ("LoadLevelInClient", RPCMode.Others, yearList[_currentYear].ToString()+":"+_yearAgoList[_currentYear].ToString());  
-    GetComponent(Prompts).ShowPrompts(true);
 }
 
 function OnConnectedToServer () {
@@ -200,25 +205,7 @@ function Update(){
 			GetComponent(InfoPolarBear).ShowInfo(false);
 	else if(Input.GetKeyDown(KeyCode.S))
 			GetComponent(InfoPolarBear).ShowInfo(true);	
-			
-	if(Input.touchCount > 0)
-    {Debug.Log("Paso");
-	     for (var touch: Touch in Input.touches)
-	     {
-	     Debug.Log("Entro");
-	        for(var _prompt : GameObject in GameObject.FindObjectsOfType(GameObject))
-			{
-			    if(_prompt.name == "Prompt")
-			    {
-			        if(_prompt.HitTest(touch.position) && touch.phase == TouchPhase.Began)
-			        {
-			            Debug.Log("Red Button Clicked or EVEN BETTER AWESOME STUFF!");
-			        } 
-			    }
-			}
-	        
-	     }
-	}
+
 }
 
 function OnGUI () {
@@ -244,7 +231,7 @@ function OnGUI () {
 		_showSummary = _showGraphView;
 		_innerController = 0;
 	}
-	   
+	
 }
 
 function DrawViews(){
@@ -276,18 +263,33 @@ function DrawViews(){
 			GUILayout.BeginArea (Rect (areaWidth*0.55, areaHeight*0.22, areaWidth*0.4, _labelHeight));
   		    GUILayout.Label("Elapsed time: "+ _displayMinutes.ToString("00") + " min "+ _displaySeconds.ToString("00") + " sec");
 			GUILayout.EndArea ();
+			
 		    // Local and Remote View Panels
 		    
-		    GUILayout.BeginArea(Rect (areaWidth*0.08, areaHeight*0.3, areaWidth*0.4, areaHeight*0.4));
-		    GUILayout.BeginVertical(GUI.skin.box, GUILayout.Height(areaHeight*0.4), GUILayout.Width(areaWidth*0.4));
-		    GUILayout.Space(areaHeight*0.4);
-		    GUILayout.EndVertical();
+		    GUILayout.BeginArea(Rect (areaWidth*0.08, areaHeight*0.28, areaWidth*0.4, areaHeight*0.42));
+		    if (_localPromptIndex >=0)
+		        GUILayout.Box(GetComponent(Prompts)._prompts[GetComponent(Prompts).promptCurrentList[_localPromptIndex]]);
+		    else
+		  	    GUILayout.Box("");
+		    if (_selectedPromptIndex >=0 && Event.current.type == EventType.MouseUp && GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
+		    {
+		       Debug.Log("Local view");
+		       _localPromptIndex = _selectedPromptIndex;
+		       _selectedPromptIndex = -1;
+		    }
 		    GUILayout.EndArea();
 		    
-		    GUILayout.BeginArea(Rect (areaWidth*0.52, areaHeight*0.3, areaWidth*0.4, areaHeight*0.4));
-		    GUILayout.BeginVertical(GUI.skin.box, GUILayout.Height(areaHeight*0.4), GUILayout.Width(areaWidth*0.4));
-		    GUILayout.Space(areaHeight*0.4);
-		    GUILayout.EndVertical();
+		    GUILayout.BeginArea(Rect (areaWidth*0.52, areaHeight*0.28, areaWidth*0.4, areaHeight*0.42));
+		      if (_remotePromptIndex >=0)
+		        GUILayout.Box(GetComponent(Prompts)._prompts[GetComponent(Prompts).promptCurrentList[_remotePromptIndex]]);
+		    else
+		  	    GUILayout.Box("");
+ 			if (_selectedPromptIndex >=0 && Event.current.type == EventType.MouseUp && GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
+		    {
+		       Debug.Log("Remote view");
+		        _remotePromptIndex = _selectedPromptIndex;
+		       _selectedPromptIndex = -1;
+		    }
 		    GUILayout.EndArea();
 		    
 		    if (_showMap && isPlaying){
@@ -390,18 +392,8 @@ function DrawViews(){
 		     	GUILayout.BeginArea (Rect (areaWidth*0.5, areaHeight*0.12, areaWidth*0.3, _labelHeight));				
 				GUILayout.Label("Year: "+yearList[_currentYear].ToString() + " Goal time: " + gameDurationList[_durationGame]+" min");
 				GUILayout.EndArea();
-			
-			}
-			
-				    
-		  /*  GUILayout.BeginArea(Rect (areaWidth*0.1, areaHeight*0.95, areaWidth*0.3, _labelHeight));
-		    _showInfo = GUILayout.Toggle(_showInfo, "Show polar bear info");
-		    GetComponent(InfoPolarBear).ShowInfo(_showInfo);
-		    GUILayout.EndArea();
-		    */
-		    // Game will stop by user request	
-		    if (isPlaying){
-		       GUILayout.BeginArea (Rect (areaWidth*0.8, areaHeight*0.12, areaWidth*0.15, _labelHeight));
+				
+			   GUILayout.BeginArea (Rect (areaWidth*0.8, areaHeight*0.12, areaWidth*0.15, _labelHeight));
 		       if (_goalReached || _timerReached ){
 		       		Debug.Log("Reached the max time");
 			       if (GUILayout.Button("Play Again")){
@@ -418,8 +410,31 @@ function DrawViews(){
 			     Initialize();    
 			   }
 			   GUILayout.EndArea();  
+			   
+				///Show prompts
+			  for (var _p:int = 0; _p < promptsXScreen; _p++){
+			    GUILayout.BeginArea (Rect (areaWidth*0.16*_p+areaWidth*0.1, areaHeight*0.72, areaWidth*0.15, areaHeight*0.15));
 		
+				  GUILayout.Box(GetComponent(Prompts)._prompts[GetComponent(Prompts).promptCurrentList[_p]]);
+				  if (Event.current.type == EventType.MouseDown && GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
+				  {
+				    Debug.Log("logging down");
+				    _selectedPromptIndex = GetComponent(Prompts).promptCurrentList[_p];
+				  }
+				GUILayout.EndArea();	
+			  }
+			  
+						
 			}
+			
+				    
+		  /*  GUILayout.BeginArea(Rect (areaWidth*0.1, areaHeight*0.95, areaWidth*0.3, _labelHeight));
+		    _showInfo = GUILayout.Toggle(_showInfo, "Show polar bear info");
+		    GetComponent(InfoPolarBear).ShowInfo(_showInfo);
+		    GUILayout.EndArea();
+		    */
+		    // Game will stop by user request	
+	
 			
 	}
 	else{  // Draw the Summary Graph

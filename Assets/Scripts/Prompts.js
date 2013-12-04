@@ -1,41 +1,16 @@
-﻿var _prompts : GUITexture[];
-var url = "http://paws.evl.uic.edu/PawsImages/clock_3min.png";
+﻿var _prompts : Texture2D[];
+var url = "http://paws.evl.uic.edu/PawsImages/";
+var promptCurrentList: int[] = [0,3,2,5,1];
 			
 function Start () {
-	_prompts = new GUITexture[5];
-	var www : WWW = new WWW (url);
-	yield www;
-	
-	_prompt = new GameObject("Prompt");
-    _prompt.transform.position = Vector3(0.2,0.2,1);
-    _prompt.AddComponent('GUITexture');  
-    _prompt.transform.localScale = Vector3(0.1f,0.1f,0.1f);
-    _prompt.guiTexture.texture = www.texture;
-	_prompt.guiTexture.enabled= false;
-	
-	_prompt = new GameObject("Prompt");
-    _prompt.transform.position = Vector3(0.3,0.2,1);
-    _prompt.AddComponent('GUITexture');  
-    _prompt.transform.localScale = Vector3(0.1f,0.1f,0.1f);
-    _prompt.guiTexture.texture = www.texture;
-	_prompt.guiTexture.enabled= false;
-	
-}
-
-function Update () {
-	 
-
-}
-
-function ShowPrompts(_value: boolean){
-
-    for(var _prompt : GameObject in GameObject.FindObjectsOfType(GameObject))
-	{
-	    if(_prompt.name == "Prompt")
-	    {
-	        _prompt.guiTexture.enabled = _value;  
-	    }
-	    
+	_prompts = new Texture2D[6];
+	var www : WWW;
+	for (var i:int = 0; i < 6;i++)
+	{ 
+		_prompts[i] = new Texture2D(80,60);
+	    www = new WWW (url+(i+1).ToString()+".png");
+	    Debug.Log(url+(i+1).ToString()+".png");
+		yield www;
+		_prompts[i] = www.texture;
 	}
-			
 }
