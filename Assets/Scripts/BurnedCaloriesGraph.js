@@ -39,6 +39,7 @@ private var _currentXValue:int;
 function Start(){
 	_xAxisPos = new Array();
 	_xAxisValue = new Array();
+	Debug.Log(_xAxisValue.length);
 	if (maxBurnedCalories <= 0)
 		maxBurnedCalories = 100;
 	_currentPos = 0;
@@ -112,13 +113,13 @@ function OnGUI(){
 }
 
 public function DestroyLines(){
+	_xAxisPos = new Array();
+	_xAxisValue = new Array();
 	Vector.DestroyLine(_axesLine);
 	Vector.DestroyLine(_lineLine);
 	_currentPos = 0;
 	_calories = 0;
 	_currentXValue = 0;
-    _xAxisPos.clear();
-	_xAxisValue.Clear();
     showGraph = false; 
 	_spanBtwXPoints = 0;
 	_percentageXPoint = _percentageYPoint = 0;

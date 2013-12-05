@@ -17,7 +17,6 @@ var startBtnTexture: Texture;
 
 var isPlaying: boolean;
 var burnedCalories: float;
-var gameTime: int;  // Time in minutes to stop the game.
 var meters: float;
 var elapsedTime: float;
 var interpreterName:String;
@@ -52,6 +51,7 @@ private var _initialPos : Vector2;
 private var _currentPos : Vector2;
 private var _displaySeconds: int;
 private var _displayMinutes: int;
+private var _leftTime:float;
 private var _savedAvg: boolean;
 private var _savedLog: boolean;
 private var _scoresLoaded: boolean;
@@ -62,6 +62,8 @@ private var _showInterpreterList:boolean = false;
 private var _localPromptIndex:int = -1;
 private var _remotePromptIndex:int = -1;
 private var _selectedPromptIndex:int = -1;
+
+private var _getRandomPrompts: boolean = false;
 
 var yearList : int[] = [1975,2010,2045];
 private var _yearAgoList : int[]= [-35,0,35];
@@ -75,6 +77,9 @@ private var _innerController : int;
 //variable for the heigh of the lable text
 private var _labelHeight :float;
 			       
+//variable for testing different versions of the server
+var serverTest:int = 0; //  0 mouseDown, mouseUp with only 5 prompts at a time
+						//  1 mouseDown, mouseUp with buttons to navigate prompts	
  
 function Start(){
   // BL added for screen distribution of elements
@@ -127,6 +132,7 @@ function Initialize(){
 	interpreterName = "Interpreter...";
     _displayMinutes = 0;
     elapsedTime = 0;
+    _leftTime = 0;
 	_currentYear = _minYear;
 	_showGraphView = false;
 	isPlaying = false;
@@ -144,12 +150,14 @@ function Initialize(){
     topScores = "";
     _remotePromptIndex = -1;
     _localPromptIndex = -1;
+    _getRandomPrompts = false;
     
 	var  _map : Texture2D = Resources.Load("Images/"+yearList[_currentYear]+"_Location_Map", typeof(Texture2D));
 	GetComponent(CurrentPosInMap).mapImage = _map;
 	GetComponent(BurnedCaloriesGraph).DestroyLines();
 	GetComponent(CurrentPosInMap).InitializeMap();
 	GetComponent(DatabaseConnection).GetInterpreters();
+	GetComponent(Prompts).ResetPrompts();
 	LoadScores();
 	
 }
@@ -192,12 +200,13 @@ function Update(){
 	   
 	if (isPlaying && !_goalReached && !_timerReached)
 	{
-	  if (_displayMinutes < gameTime){
+	  if (_displayMinutes < gameDurationList[_durationGame]){
 	    burnedCalories =  (_numWalkSteps * 0.4445) + (_numSwimSteps * 1.15583174);
    //     Debug.Log("Current pos: " +_currentPos + " initial pos: " + _initialPos);
 		meters = Vector2.Distance(_initialPos,_currentPos);
 
 		elapsedTime =  Time.realtimeSinceStartup - _startTime;
+		_leftTime = gameDurationList[_durationGame]*60-elapsedTime;
 	  }			
 	}
 	
@@ -241,34 +250,21 @@ function DrawViews(){
 	    
 	GUILayout.BeginArea(Rect(ScreenX,ScreenY, areaWidth, areaHeight));
   	GUI.DrawTexture (Rect (0, 0, areaWidth, areaHeight), backgroundTexture);
-  		
+    		
   	if (!_showSummary)
-  	{  // Draw the main view.
-
-			GUILayout.BeginArea (Rect (areaWidth*0.3, areaHeight*0.18, areaWidth*0.4, _labelHeight));
-			GUILayout.Label("Bear calories burned: " + (Mathf.Round(burnedCalories*100)/100) + " Calories");  
-		    GUILayout.EndArea();
-		    
-			GUILayout.BeginArea (Rect (areaWidth*0.1, areaHeight*0.22, areaWidth*0.4, _labelHeight));
-			//Disntance in meters
-			//GUILayout.Label("Distance covered: "+ (Mathf.Round(meters*100)/100) + " meters");
-			//Distance in feet
-			GUILayout.Label("Distance covered: "+ (Mathf.Round(meters*3.2808*100)/100) + " Ft.");
-			GUILayout.EndArea();
-			
-			if (isPlaying){
-				_displaySeconds = Mathf.CeilToInt(elapsedTime)%60;
-				_displayMinutes = Mathf.CeilToInt(elapsedTime)*0.01666667;
+  	{  
+  	
+  	        // Draw the main view.
+			GUILayout.BeginArea (Rect (areaWidth*0.05, areaHeight*0.12, _labelHeight, _labelHeight));
+			if (GUILayout.Button((serverTest%3).ToString())){	
+				serverTest++;
 			}
-			GUILayout.BeginArea (Rect (areaWidth*0.55, areaHeight*0.22, areaWidth*0.4, _labelHeight));
-  		    GUILayout.Label("Elapsed time: "+ _displayMinutes.ToString("00") + " min "+ _displaySeconds.ToString("00") + " sec");
-			GUILayout.EndArea ();
-			
+		    GUILayout.EndArea();
 		    // Local and Remote View Panels
 		    
 		    GUILayout.BeginArea(Rect (areaWidth*0.08, areaHeight*0.28, areaWidth*0.4, areaHeight*0.42));
 		    if (_localPromptIndex >=0)
-		        GUILayout.Box(GetComponent(Prompts).prompts[GetComponent(Prompts).promptCurrentList[_localPromptIndex]]);
+		        GUILayout.Box(GetComponent(Prompts).prompts[_localPromptIndex]);
 		    else
 		  	    GUILayout.Box("");
 		    if (_selectedPromptIndex >=0 && Event.current.type == EventType.MouseUp && GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
@@ -281,7 +277,7 @@ function DrawViews(){
 		    
 		    GUILayout.BeginArea(Rect (areaWidth*0.52, areaHeight*0.28, areaWidth*0.4, areaHeight*0.42));
 		      if (_remotePromptIndex >=0)
-		        GUILayout.Box(GetComponent(Prompts).prompts[GetComponent(Prompts).promptCurrentList[_remotePromptIndex]]);
+		        GUILayout.Box(GetComponent(Prompts).prompts[_remotePromptIndex]);
 		    else
 		  	    GUILayout.Box("");
  			if (_selectedPromptIndex >=0 && Event.current.type == EventType.MouseUp && GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
@@ -390,8 +386,29 @@ function DrawViews(){
 			   
 				
 		     	GUILayout.BeginArea (Rect (areaWidth*0.5, areaHeight*0.12, areaWidth*0.3, _labelHeight));				
-				GUILayout.Label("Year: "+yearList[_currentYear].ToString() + " Goal time: " + gameDurationList[_durationGame]+" min");
+				GUILayout.Label("Year: "+yearList[_currentYear].ToString());
 				GUILayout.EndArea();
+				
+				// Draw the main view.
+				GUILayout.BeginArea (Rect (areaWidth*0.3, areaHeight*0.18, areaWidth*0.4, _labelHeight));
+				GUILayout.Label("Bear calories burned: " + (Mathf.Round(burnedCalories*100)/100) + " Calories");  
+			    GUILayout.EndArea();
+			    
+				//Disntance in meters
+				//GUILayout.Label("Distance covered: "+ (Mathf.Round(meters*100)/100) + " meters");
+				//Distance in feet
+			
+			    GUILayout.BeginArea (Rect (areaWidth*0.1, areaHeight*0.22, areaWidth*0.4, _labelHeight));
+			    GUILayout.Label("Distance covered: "+ (Mathf.Round(meters*3.2808*100)/100) + " Ft.");
+				GUILayout.EndArea();
+				
+				_displaySeconds = Mathf.CeilToInt(elapsedTime)%60;
+				_displayMinutes = Mathf.CeilToInt(elapsedTime)/60;		
+			
+				GUILayout.BeginArea (Rect (areaWidth*0.55, areaHeight*0.22, areaWidth*0.4, _labelHeight));
+	  		    //GUILayout.Label("Elapsed time: "+ _displayMinutes.ToString("00") + " min "+ _displaySeconds.ToString("00") + " sec");
+				GUILayout.Label("Remaining time: "+ (Mathf.FloorToInt(_leftTime)/60).ToString("00") + " min "+ (Mathf.FloorToInt(_leftTime)%60).ToString("00") + " sec");
+				GUILayout.EndArea ();
 				
 			   GUILayout.BeginArea (Rect (areaWidth*0.8, areaHeight*0.12, areaWidth*0.15, _labelHeight));
 		       if (_goalReached || _timerReached ){
@@ -411,14 +428,42 @@ function DrawViews(){
 			   }
 			   GUILayout.EndArea();  
 			   
+			   if (serverTest == 1)
+			   {
+			        GUILayout.BeginArea (Rect (areaWidth*0.05, areaHeight*0.74, _labelHeight, _labelHeight*3));
+			   		if (GUILayout.Button("\n<\n")){
+			   		    Debug.Log("Past");
+					    GetComponent(Prompts).GetPrompts(-1);
+				    }
+				    GUILayout.EndArea();  
+				    GUILayout.BeginArea (Rect (areaWidth*0.9, areaHeight*0.74, _labelHeight, _labelHeight*3));
+				    if (GUILayout.Button("\n>\n")){
+				         Debug.Log("Future");
+					     GetComponent(Prompts).GetPrompts(1);
+				    }
+				    GUILayout.EndArea(); 
+			   }
+			   else if (serverTest == 0)
+			   {
+			   		if ((_displaySeconds == 30 || _displaySeconds == 0) && !_getRandomPrompts)
+			   		{
+			   		    _getRandomPrompts = true;
+			   			GetComponent(Prompts).GetPrompts(0);
+			   		}
+			   		else if (_displaySeconds != 30 && _displaySeconds != 0 )
+			   		{
+			   	     	_getRandomPrompts = false;
+			   		}
+			   }
+			   
 				///Show prompts
 			  for (var _p:int = 0; _p < promptsXScreen; _p++){
 			    GUILayout.BeginArea (Rect (areaWidth*0.16*_p+areaWidth*0.1, areaHeight*0.72, areaWidth*0.15, areaHeight*0.15));
-				  Debug.Log("All " + promptsXScreen + " Index "+_p+" Index in array: "+GetComponent(Prompts).promptCurrentList.Length);
+				 
 				  GUILayout.Box(GetComponent(Prompts).prompts[GetComponent(Prompts).promptCurrentList[_p]]);
 				  if (Event.current.type == EventType.MouseDown && GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
 				  {
-				    Debug.Log("logging down");
+				    Debug.Log("logging down "+ GetComponent(Prompts).promptCurrentList[_p]);
 				    _selectedPromptIndex = GetComponent(Prompts).promptCurrentList[_p];
 				  }
 				GUILayout.EndArea();	
@@ -464,8 +509,6 @@ function DrawViews(){
 	     }
 	     GUILayout.EndArea ();
 	     
-	     
-	
 	    GUILayout.BeginArea (Rect (areaWidth*0.65, areaHeight*0.2, areaWidth*0.3, _labelHeight));
 	  	GUILayout.Label("Top 10 - Year " + yearList[_currentYear]);  
 	    GUILayout.EndArea();
@@ -477,7 +520,7 @@ function DrawViews(){
 	    for (var i:int = 0; i < 10 ; i++){
 	       if (_scoresCount > 0 && i<_scoresCount){
 	        var name : String = _scoreNames[i].ToString().Trim();
-	        var min : int = Mathf.CeilToInt(float.Parse(_scoreValues[i]))*0.01666667;
+	        var min : int = Mathf.CeilToInt(float.Parse(_scoreValues[i]))/60;
 	    	var sec : int = Mathf.CeilToInt(float.Parse(_scoreValues[i]))%60;
 	    	GUILayout.Label( (i + 1).ToString().PadLeft(2) +". " + name.PadRight(13) + 
 	    	min.ToString("00") + ":"+
@@ -490,25 +533,23 @@ function DrawViews(){
 	    GUILayout.EndVertical();
 		GUILayout.EndArea();
 		
-		
   	}	
   	  	
   	//End Area for the entire GUI
+   GUILayout.EndArea();
   
 	///  Game will stop when reach timer    
-    if ((isPlaying && _displayMinutes == gameTime) || _goalReached ){
-       Debug.Log("reachgoal");
+    if ((isPlaying && _displayMinutes == gameDurationList[_durationGame]) || _goalReached ){
        networkView.RPC ("FinishGame", RPCMode.Others,burnedCalories);  
        _timerReached = true; 
        if (!_savedLog){
-       	Debug.Log("Saved Log");
  	    GetComponent(AppendToLog).AppendDataToLog();
  	    GetComponent(SummaryGraph).UpdateDataByYear();
  	    _savedLog = true;
        }
 	}
 	GetComponent(GameParameters).ShowOnGUI();
-	GUILayout.EndArea();
+	
 
 	
 }
@@ -521,6 +562,7 @@ function OnPlayerConnected(newPlayer: NetworkPlayer){
 }
 
 function LoadScores(){
+    
 	_scoreValues.Clear();
  	_scoreNames.Clear();
  	_scoresCount = 0;

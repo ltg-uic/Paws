@@ -87,7 +87,7 @@ public function SetGoalBearInMap(_xyValues: String){
 	_endPos[POS_X] = parseFloat(values[4])*mapWidth/_terrainMaxX;
 	_endPos[POS_Y] = mapHeight - parseFloat(values[5])*mapHeight/_terrainMaxY;
 		
-	_trail.Clear();
+	_trail = new ArrayList();
 	
 //	Debug.Log("Meters : " + _startPos[POS_Y] + " " + _endPos[POS_Y]);
 
@@ -129,6 +129,6 @@ public function InitializeMap(){
    _bearPreviousPos = [-1,-1];
    _startPos = [-1,-1];
    _endPos = [-1,-1];
-   _trail.Clear();
+   _trail = new ArrayList();
    
    }

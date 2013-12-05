@@ -38,7 +38,7 @@ function GetInterpreters() {
 
 function SaveSession(_parameters: String[]){
 
-    Debug.Log("DatabaseConnection::Save data to log..."+dbURL+"SaveSession.php"+_parameters[3]); 
+    Debug.Log("DatabaseConnection::Save data to log..."+dbURL+"SaveSession.php"); 
     var session_url:String;
     var session_data: WWWForm = new WWWForm();
     
@@ -54,6 +54,7 @@ function SaveSession(_parameters: String[]){
     session_data.AddField("Meters",_parameters[9]);
     session_data.AddField("InterpreterID",_parameters[10]);
     session_data.AddField("TypeGraph",_parameters[11]);    
+    session_data.AddField("GameDuration",_parameters[12]);
     
     var web_request:WWW = new WWW(dbURL+"SaveSession.php",session_data);
 
@@ -74,7 +75,7 @@ function GetScores(_parameters: int[]){
         print("DatabaseConnection::There was an error getting the scores: " + hs_get.error);
     }
     else{
-	    if (hs_get.text.Length>0){
+	    if (hs_get.text.Length > 0){
 	      //Debug.Log("DatabaseConnection::Get scores for parameters "+_parameters[0]+" " +_parameters[1] + "--"+ hs_get.text);
 			GetComponent(NetworkConnectionServer).topScores = hs_get.text;
 			GetComponent(NetworkConnectionServer).SetScores();

@@ -26,7 +26,7 @@ public function ShowOnGUI () {
 		GUILayout.EndArea();
 
 		for (var cnt:int  = 0; cnt < yearBtnTexture.Length; cnt++){
-	 	   GUILayout.BeginArea (Rect (posX+85*(cnt),posY+labelHeight, 80, 80));
+	 	   GUILayout.BeginArea (Rect (posX+95*(cnt),posY+labelHeight, 90, 90));
 	 	   if (GUILayout.Button(yearBtnTexture[cnt])){
 	 	   		_currentYearIndex = cnt;
 	 	   } 
@@ -39,7 +39,7 @@ public function ShowOnGUI () {
 		GUILayout.EndArea();
 	
 		for (var cnt2:int  = 0; cnt2 < durationBtnTexture.Length; cnt2++){
-	 	   GUILayout.BeginArea (Rect (posX+85*(cnt2),posY+(2*labelHeight)+80, 80, 80));
+	 	   GUILayout.BeginArea (Rect (posX+95*(cnt2),posY+(2*labelHeight)+90, 90, 90));
 	 	   if (GUILayout.Button(durationBtnTexture[cnt2])){
 	 	   		_gameDurationIndex = cnt2;
 	 	   } 
