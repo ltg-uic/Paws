@@ -20,13 +20,13 @@ function Start () {
 public function ShowOnGUI () {
 
 	if (_showGameParameters){
-	        
+	   // Debug.Log("Positions "+posX+" " +posY);
 	    GUILayout.BeginArea (Rect (posX, posY, areaWidth, labelHeight));
 		GUILayout.Label("Year: "+GetComponent(NetworkConnectionServer).yearList[_currentYearIndex]);
 		GUILayout.EndArea();
 
 		for (var cnt:int  = 0; cnt < yearBtnTexture.Length; cnt++){
-	 	   GUILayout.BeginArea (Rect (posX+95*(cnt),posY+labelHeight, 90, 90));
+	 	   GUILayout.BeginArea (Rect (posX+105*(cnt),posY+labelHeight, 100, 100));
 	 	   if (GUILayout.Button(yearBtnTexture[cnt])){
 	 	   		_currentYearIndex = cnt;
 	 	   } 
@@ -34,12 +34,12 @@ public function ShowOnGUI () {
 	    }
 				   
 				    
-		GUILayout.BeginArea (Rect (posX, posY+labelHeight+80, areaWidth, labelHeight));
+		GUILayout.BeginArea (Rect (posX, posY+labelHeight+100, areaWidth, labelHeight));
 		GUILayout.Label("Game duration: "+GetComponent(NetworkConnectionServer).gameDurationList[_gameDurationIndex]+" min");
 		GUILayout.EndArea();
 	
 		for (var cnt2:int  = 0; cnt2 < durationBtnTexture.Length; cnt2++){
-	 	   GUILayout.BeginArea (Rect (posX+95*(cnt2),posY+(2*labelHeight)+90, 90, 90));
+	 	   GUILayout.BeginArea (Rect (posX+105*(cnt2),posY+(2*labelHeight)+100, 100, 100));
 	 	   if (GUILayout.Button(durationBtnTexture[cnt2])){
 	 	   		_gameDurationIndex = cnt2;
 	 	   } 
@@ -70,7 +70,7 @@ public function ShowOnGUI () {
 	   }
 				
 	   GUILayout.EndArea ();
-      
+     
     }
 }
 

@@ -88,10 +88,6 @@ function Start(){
 	
 	_labelHeight = areaHeight*0.04;
 	
-	GetComponent(GameParameters).labelHeight = _labelHeight;
-	GetComponent(GameParameters).posX = areaWidth*0.5;       
-	GetComponent(GameParameters).posY = areaHeight*0.12 + _labelHeight ;
-	
     GetComponent(BurnedCaloriesGraph).posX = ScreenX + areaWidth*0.575;       
 	GetComponent(BurnedCaloriesGraph).posY = Screen.height - (ScreenY + areaHeight*0.625);
 	
@@ -114,6 +110,12 @@ function Start(){
 	GetComponent(InfoPolarBear).infoWidth = areaWidth*0.8;
 	GetComponent(InfoPolarBear).infoHeight = areaHeight*0.8;
 	
+	//Debug.Log("Positions main screen "+areaWidth*0.5+" " +areaHeight*0.1);
+	GetComponent(GameParameters).labelHeight = _labelHeight;
+	GetComponent(GameParameters).posX = areaWidth*0.47;       
+	GetComponent(GameParameters).posY = 50;//areaHeight*0.1;
+	
+	
     Initialize();
     
     applicationPath = Application.dataPath;
@@ -124,6 +126,7 @@ function Start(){
         applicationPath += "/../";
     }
 
+    GetComponent(DatabaseConnection).GetInterpreters();
 }
 
 function Initialize(){
@@ -156,7 +159,6 @@ function Initialize(){
 	GetComponent(CurrentPosInMap).mapImage = _map;
 	GetComponent(BurnedCaloriesGraph).DestroyLines();
 	GetComponent(CurrentPosInMap).InitializeMap();
-	GetComponent(DatabaseConnection).GetInterpreters();
 	GetComponent(Prompts).ResetPrompts();
 	LoadScores();
 	
@@ -348,7 +350,7 @@ function DrawViews(){
 				 	   GUILayout.EndArea();
 				    }
 			    }
-			    
+			  //  Debug.Log("Positions main screen settings"+areaWidth*0.5+" " +areaHeight*0.12);
 			    GUILayout.BeginArea (Rect (areaWidth*0.5, areaHeight*0.12, areaWidth*0.1, _labelHeight));
 				if (GUILayout.Button("Settings")){	// Game Parameters
 				     GetComponent(GameParameters).showGameParameters(true);
@@ -428,22 +430,36 @@ function DrawViews(){
 			   }
 			   GUILayout.EndArea();  
 			   
-			   if (serverTest == 1)
+			   if (serverTest%3 == 1)
 			   {
+			   
+			        if ((_displaySeconds == 30 || _displaySeconds == 0) && !_getRandomPrompts)
+			   		{
+			   		    _getRandomPrompts = true;
+			   			GetComponent(Prompts).GetPrompts(1);
+			   		}
+			   		else if (_displaySeconds != 30 && _displaySeconds != 0 )
+			   		{
+			   	     	_getRandomPrompts = false;
+			   		}
+			   		
 			        GUILayout.BeginArea (Rect (areaWidth*0.05, areaHeight*0.74, _labelHeight, _labelHeight*3));
 			   		if (GUILayout.Button("\n<\n")){
-			   		    Debug.Log("Past");
+			   		    //Debug.Log("Past");
 					    GetComponent(Prompts).GetPrompts(-1);
+					    GetComponent(DatabaseConnection).AppendDataToUILog('B',0,"<",DateTime.Now.ToString());
 				    }
 				    GUILayout.EndArea();  
 				    GUILayout.BeginArea (Rect (areaWidth*0.9, areaHeight*0.74, _labelHeight, _labelHeight*3));
 				    if (GUILayout.Button("\n>\n")){
-				         Debug.Log("Future");
+				        // Debug.Log("Future");
 					     GetComponent(Prompts).GetPrompts(1);
+					     GetComponent(DatabaseConnection).AppendDataToUILog('B',0,">",DateTime.Now.ToString());
 				    }
 				    GUILayout.EndArea(); 
+				
 			   }
-			   else if (serverTest == 0)
+			   else if (serverTest%3 == 0)
 			   {
 			   		if ((_displaySeconds == 30 || _displaySeconds == 0) && !_getRandomPrompts)
 			   		{
@@ -463,8 +479,9 @@ function DrawViews(){
 				  GUILayout.Box(GetComponent(Prompts).prompts[GetComponent(Prompts).promptCurrentList[_p]]);
 				  if (Event.current.type == EventType.MouseDown && GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
 				  {
-				    Debug.Log("logging down "+ GetComponent(Prompts).promptCurrentList[_p]);
+				   // Debug.Log("logging down "+ GetComponent(Prompts).promptCurrentList[_p]);
 				    _selectedPromptIndex = GetComponent(Prompts).promptCurrentList[_p];
+				    GetComponent(DatabaseConnection).AppendDataToUILog('P',0,_selectedPromptIndex.ToString(),DateTime.Now.ToString());
 				  }
 				GUILayout.EndArea();	
 			  }
@@ -624,8 +641,11 @@ public function walkCalories(){
 	return (_numWalkSteps * 0.4445).ToString();
 }
 public function currentYear(){
-
-      return yearList[_currentYear];
+     return yearList[_currentYear];
+}
+public function currentGameDuration(){
+    Debug.Log("Current Game duration"+gameDurationList[_durationGame].ToString());
+	return gameDurationList[_durationGame].ToString();
 }
 @RPC
 function ReceivedMovementInput (_steps: String ,  info : NetworkMessageInfo)

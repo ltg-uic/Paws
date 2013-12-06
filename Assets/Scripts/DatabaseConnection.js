@@ -55,6 +55,7 @@ function SaveSession(_parameters: String[]){
     session_data.AddField("InterpreterID",_parameters[10]);
     session_data.AddField("TypeGraph",_parameters[11]);    
     session_data.AddField("GameDuration",_parameters[12]);
+    session_data.AddField("ServerTest",_parameters[13]);
     
     var web_request:WWW = new WWW(dbURL+"SaveSession.php",session_data);
 
@@ -81,4 +82,22 @@ function GetScores(_parameters: int[]){
 			GetComponent(NetworkConnectionServer).SetScores();
 		}
 	}
+}
+
+function AppendDataToUILog(_parameter1:String,_parameter2:int,_parameter3:String,_parameter4:String){
+
+    Debug.Log("DatabaseConnection::Save data to UI log..."+dbURL+"SaveUILog.php "+_parameter1+ " " +_parameter2+ " "+_parameter3+ " "+_parameter4); 
+    var session_url:String;
+    var session_data: WWWForm = new WWWForm();
+    
+    session_data.AddField("ui_type",_parameter1);
+    session_data.AddField("interaction",_parameter2); // 0 down, 1 up
+    session_data.AddField("observation",_parameter3);
+    session_data.AddField("date_time",_parameter4);
+ 	session_data.AddField("interpreter",GetComponent(NetworkConnectionServer).interpreterID);
+ 	
+    var web_request:WWW = new WWW(dbURL+"SaveUILog.php",session_data);
+
+    yield web_request;
+    
 }

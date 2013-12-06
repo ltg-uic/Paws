@@ -1,5 +1,3 @@
-import System.IO;
-import System;
 
 /*  
 function Start (){
@@ -48,7 +46,7 @@ public function GetLogLine(){
 //Save log to database
 public function AppendDataToLog(){
   
-  var logData = new String[13];
+  var logData = new String[14];
   
   logData[0] = DateTime.Now.ToString();
   logData[1] = GetComponent(NetworkConnectionServer).playerName();
@@ -62,9 +60,11 @@ public function AppendDataToLog(){
   logData[9] = GetComponent(NetworkConnectionServer).meters.ToString();
   logData[10] = GetComponent(NetworkConnectionServer).interpreterID;
   logData[11] = GetComponent(BurnedCaloriesGraph).typeGraph.ToString(); //0 time 1 distance
-  logData[12] = (GetComponent(NetworkConnectionServer).serverTest%3).ToString();
+  logData[12] = GetComponent(NetworkConnectionServer).currentGameDuration();
+  logData[13] = (GetComponent(NetworkConnectionServer).serverTest%3).ToString();
+  
  
-  Debug.Log("AppendToLog::Send data to log");
+  Debug.Log("AppendToLog::Send data to log"+logData[12]+" "+logData[13]);
   StartCoroutine(GetComponent(DatabaseConnection).SaveSession(logData));
   
       
