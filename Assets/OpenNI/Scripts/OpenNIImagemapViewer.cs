@@ -3,7 +3,6 @@ using System;
 using System.Collections;
 using System.Runtime.InteropServices;
 using OpenNI;
-using Tao.OpenGl;
 
 public class OpenNIImagemapViewer : MonoBehaviour 
 {
@@ -61,11 +60,13 @@ public class OpenNIImagemapViewer : MonoBehaviour
         // NOTE: This method only works when unity is rendering with OpenGL ("unity.exe -force-opengl"). This is *much* faster
         // then Texture2D::SetPixels32 which we would have to use otherwise
         // NOTE: The native texture id needs a +1 if we are rendering to GUI
-        if (openGl) {
-            Gl.glBindTexture(Gl.GL_TEXTURE_2D, (null == target) ? tex.GetNativeTextureID() + 1 : tex.GetNativeTextureID());
-            Gl.glTexSubImage2D(Gl.GL_TEXTURE_2D, 0, 0, 0, (int)inputSize.x, (int)inputSize.y, Gl.GL_RGB, Gl.GL_UNSIGNED_BYTE, Image.ImageMapPtr);
+      /*  if (openGl) {
+            //Gl.glBindTexture(Gl.GL_TEXTURE_2D, (null == target) ? tex.GetNativeTextureID() + 1 : tex.GetNativeTextureID());
+            //Gl.glTexSubImage2D(Gl.GL_TEXTURE_2D, 0, 0, 0, (int)inputSize.x, (int)inputSize.y, Gl.GL_RGB, Gl.GL_UNSIGNED_BYTE, Image.ImageMapPtr);
+            GL.BindTexture(GL.TEXTURE_2D, (null == target) ? tex.GetNativeTextureID() + 1 : tex.GetNativeTextureID());
+            GL.TexSubImage2D(GL.TEXTURE_2D, 0, 0, 0, (int)inputSize.x, (int)inputSize.y, GL.RGB, GL.UNSIGNED_BYTE, Image.ImageMapPtr);
             return;
-        }
+        }*/
 
         // The slow method: copy image map data to a manager buffer, and then create a Color32
         // for each pixel

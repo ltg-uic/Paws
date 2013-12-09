@@ -612,8 +612,8 @@ public class PolarBearControl : MonoBehaviour {
 	public void GameOver(float _value){
 	   _gameOver = true;
 	   startScene = false;
-	  
-	   logFile.Close();
+	   if (logFile!=null)
+	   	   logFile.Close();
 	}
     	
 	public void StartGame(){

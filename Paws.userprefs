@@ -2,7 +2,13 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/DatabaseConnection.js">
     <Files>
-      <File FileName="Assets/Scripts/DatabaseConnection.js" Line="1" Column="1" />
+      <File FileName="Assets/OpenNI/Scripts/OpenNIContext.cs" Line="1" Column="1" />
+      <File FileName="Assets/OpenNI/Scripts/OpenNIDepthmapViewer.cs" Line="1" Column="1" />
+      <File FileName="Assets/OpenNI/Scripts/OpenNIUserTracker.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/InitialMessage.js" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/InfoEventTriggers.js" Line="116" Column="1" />
+      <File FileName="Assets/Scripts/NetworkConnectionServer.js" Line="467" Column="1" />
+      <File FileName="Assets/Scripts/DatabaseConnection.js" Line="30" Column="42" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

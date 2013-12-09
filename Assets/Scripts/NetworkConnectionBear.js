@@ -34,7 +34,7 @@ function UpdateIPServer(){
    PlayerPrefs.SetString("remotePort",remotePort.ToString());
    PlayerPrefs.SetString("listenPort",listenPort.ToString());
    PlayerPrefs.Save();
-   Debug.Log("Updated network settings..");  
+   Debug.Log("NetworkConnectionBear::Updated network settings..");  
 }
 
 function OnConnectedToServer () {
