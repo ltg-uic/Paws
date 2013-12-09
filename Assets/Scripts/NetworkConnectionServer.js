@@ -8,12 +8,12 @@ var yourIP = "";
 var yourPort = "";
 
 var newSkin: GUISkin;
-
-//BLs
 var areaWidth : float;
 var areaHeight : float;
 var backgroundTexture : Texture;
 var startBtnTexture: Texture;
+var localViewTexture: Texture;
+var remoteViewTexture: Texture;
 
 var isPlaying: boolean;
 var burnedCalories: float;
@@ -70,7 +70,6 @@ private var _yearAgoList : int[]= [-35,0,35];
 private var _yearLabels : String[]= ["1975","2010","2045"];
 var gameDurationList: int[] = [1,3,5];
 private var _DBParameters;
-var applicationPath:String = "";
 
 private var _innerController : int;			 
 			       
@@ -114,18 +113,8 @@ function Start(){
 	GetComponent(GameParameters).labelHeight = _labelHeight;
 	GetComponent(GameParameters).posX = areaWidth*0.47;       
 	GetComponent(GameParameters).posY = 50;//areaHeight*0.1;
-	
-	
-    Initialize();
-    
-    applicationPath = Application.dataPath;
-    if (Application.platform == RuntimePlatform.OSXPlayer) {
-        applicationPath += "/../../";
-    }
-    else if (Application.platform == RuntimePlatform.WindowsPlayer) {
-        applicationPath += "/../";
-    }
 
+    Initialize();
     GetComponent(DatabaseConnection).GetInterpreters();
 }
 
@@ -222,12 +211,11 @@ function Update(){
 function OnGUI () {
    
    if ( _serverReady){
-		
 	     DrawViews();
 	     GetComponent(MessageBox).ShowOnGUI();
    }
 	
-	if (Event.current.type == EventType.Layout)
+/*	if (Event.current.type == EventType.Layout)
 	{
 		_innerController = 1;
 	}
@@ -242,7 +230,7 @@ function OnGUI () {
 		_showSummary = _showGraphView;
 		_innerController = 0;
 	}
-	
+	*/
 }
 
 function DrawViews(){
@@ -257,7 +245,7 @@ function DrawViews(){
   	{  
   	
   	        // Draw the main view.
-			GUILayout.BeginArea (Rect (areaWidth*0.05, areaHeight*0.12, _labelHeight, _labelHeight));
+			GUILayout.BeginArea (Rect (areaWidth*0.05, areaHeight*0.22, _labelHeight, _labelHeight));
 			if (GUILayout.Button((serverTest%3).ToString())){	
 				serverTest++;
 			}
@@ -268,11 +256,12 @@ function DrawViews(){
 		    if (_localPromptIndex >=0)
 		        GUILayout.Box(GetComponent(Prompts).prompts[_localPromptIndex]);
 		    else
-		  	    GUILayout.Box("");
+		  	    GUILayout.Box(localViewTexture);
 		    if (_selectedPromptIndex >=0 && Event.current.type == EventType.MouseUp && GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
 		    {
-		       Debug.Log("Local view");
+		       Debug.Log("Local view"); 
 		       _localPromptIndex = _selectedPromptIndex;
+		       GetComponent(DatabaseConnection).AppendDataToUILog('L',1,_localPromptIndex.ToString(),DateTime.Now.ToString());
 		       _selectedPromptIndex = -1;
 		    }
 		    GUILayout.EndArea();
@@ -281,11 +270,12 @@ function DrawViews(){
 		      if (_remotePromptIndex >=0)
 		        GUILayout.Box(GetComponent(Prompts).prompts[_remotePromptIndex]);
 		    else
-		  	    GUILayout.Box("");
+		  	    GUILayout.Box(remoteViewTexture);
  			if (_selectedPromptIndex >=0 && Event.current.type == EventType.MouseUp && GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
 		    {
 		       Debug.Log("Remote view");
 		        _remotePromptIndex = _selectedPromptIndex;
+		         GetComponent(DatabaseConnection).AppendDataToUILog('R',1,_remotePromptIndex.ToString(),DateTime.Now.ToString());
 		       _selectedPromptIndex = -1;
 		    }
 		    GUILayout.EndArea();
@@ -323,13 +313,13 @@ function DrawViews(){
 	      
 			_scoresLoaded = false;
 			if (!isPlaying){
-	
+				
 				// Area rendering the UI elements 
-				GUILayout.BeginArea (Rect (areaWidth*0.1, areaHeight*0.12, areaWidth*0.15, _labelHeight+areaHeight*0.01));
+				GUILayout.BeginArea (Rect (areaWidth*0.1, areaHeight*0.2, areaWidth*0.15, _labelHeight+areaHeight*0.01));
 				_playerName = GUILayout.TextField(_playerName,12);
 				GUILayout.EndArea();
 		     	
-		     	GUILayout.BeginArea (Rect (areaWidth*0.3, areaHeight*0.12, areaWidth*0.15, areaHeight*0.05));
+		     	GUILayout.BeginArea (Rect (areaWidth*0.3, areaHeight*0.2, areaWidth*0.15, areaHeight*0.05));
 			    if (GUILayout.Button(interpreterName)){
 					
     				_showInterpreterList = !_showInterpreterList;
@@ -341,7 +331,7 @@ function DrawViews(){
 
 				 	for (var cnt:int  = 1; cnt < GetComponent(Interpreters).interpreterNames.Count; cnt++){
 				 
-				 	   GUILayout.BeginArea (Rect (areaWidth*0.3, areaHeight*0.12+_labelHeight*(cnt), areaWidth*0.15, _labelHeight));
+				 	   GUILayout.BeginArea (Rect (areaWidth*0.3, areaHeight*0.2+_labelHeight*(cnt), areaWidth*0.15, _labelHeight));
 				 	   if (GUILayout.Button((GetComponent(Interpreters).interpreterNames[cnt].ToString()))){
 				 	   		interpreterName = GetComponent(Interpreters).interpreterNames[cnt];
 				 	   		interpreterID = GetComponent(Interpreters).interpreterIDs[cnt];
@@ -351,7 +341,7 @@ function DrawViews(){
 				    }
 			    }
 			  //  Debug.Log("Positions main screen settings"+areaWidth*0.5+" " +areaHeight*0.12);
-			    GUILayout.BeginArea (Rect (areaWidth*0.5, areaHeight*0.12, areaWidth*0.1, _labelHeight));
+			    GUILayout.BeginArea (Rect (areaWidth*0.5, areaHeight*0.2, areaWidth*0.1, _labelHeight));
 				if (GUILayout.Button("Settings")){	// Game Parameters
 				     GetComponent(GameParameters).showGameParameters(true);
 				}
@@ -567,7 +557,9 @@ function DrawViews(){
 	}
 	GetComponent(GameParameters).ShowOnGUI();
 	
-
+	if (Event.current.type == EventType.MouseUp && serverTest%3 != 2){
+		_selectedPromptIndex = -1;
+	}
 	
 }
 

@@ -188,6 +188,7 @@ public function UpdateAverageValues(){
 
 public function UpdateDataByYear()
 {
+/*
   applicationPath = GetComponent(NetworkConnectionServer).applicationPath;
   var sw =  new StreamWriter(applicationPath+"/"+_currentYear+".txt");
   sw.WriteLine(_calories);
@@ -196,6 +197,7 @@ public function UpdateDataByYear()
       sw.WriteLine(_randomValues[i]);
   }
   sw.Close();
+  */
 }
 
 function PrintSummaryGraph(){
