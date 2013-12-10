@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Collections;
 using System.IO;
 using OpenNI;
+using System;
 
 public class PolarBearControl : MonoBehaviour {
  
@@ -45,6 +46,10 @@ public class PolarBearControl : MonoBehaviour {
 	private float[] _maxAccY;
 	private float[] _minAccY;
 	private bool[] _getDir;
+	private string trialNumber;
+	private TextWriter logFile;
+	private int ticksForLog = 10; // Unity updates 60frames per second
+	private long ticksCounter = 0;
 	
 	private float[] _stroke;
 	private bool _changeStepsSound;
@@ -142,28 +147,19 @@ public class PolarBearControl : MonoBehaviour {
 	   _controller = polarBear.GetComponent<CharacterController>();		
        _gameOver = false;
 	   _firstStep = false;
+		trialNumber = DateTime.Now.ToString("dd-MM-yyyy_hh-mm-ss");
+		ticksCounter = 0;
 		
 	}
 
 	// Update is called once per frame
 	void Update () {
 		
+		ticksCounter++;
 		if(Input.GetKeyDown(KeyCode.T))
 			testing = true;
 		else if(Input.GetKeyDown(KeyCode.R))
 				testing = false;
-				
-		if (inWater){
-		  if (Mathf.Abs(Camera.mainCamera.transform.rotation.eulerAngles.x - inWRotation) > 1){
-	           Camera.mainCamera.transform.Rotate(new Vector3(inWRotation-Camera.mainCamera.transform.rotation.eulerAngles.x,0,0));
-		   }
-		}
-		else{
-			if (Mathf.Abs(Camera.mainCamera.transform.rotation.eulerAngles.x - outWRotation) > 1){
-			   
-				Camera.mainCamera.transform.Rotate(outWRotation-Camera.mainCamera.transform.rotation.eulerAngles.x,0,0);
-			}
-		}
 		
 		
 		if (!_gameOver){
@@ -201,7 +197,17 @@ public class PolarBearControl : MonoBehaviour {
 					 SendMessage("AppendDataToLog",("|"+typeActivity+"|"+(typeActivity.Equals("S")?NumSwimSteps:NumWalkSteps)));	
 				}
 			}
-			
+			if (inWater){
+			  if (Mathf.Abs(Camera.mainCamera.transform.rotation.eulerAngles.x - inWRotation) > 1){
+		           Camera.mainCamera.transform.Rotate(new Vector3(inWRotation-Camera.mainCamera.transform.rotation.eulerAngles.x,0,0));
+			   }
+			}
+			else{
+				if (Mathf.Abs(Camera.mainCamera.transform.rotation.eulerAngles.x - outWRotation) > 1){
+				   
+					Camera.mainCamera.transform.Rotate(outWRotation-Camera.mainCamera.transform.rotation.eulerAngles.x,0,0);
+				}
+			}
 			if (testing){//Utiliza las teclas direccionales
 				
 				_maxAccY[LEFT] = _maxAccY[RIGHT] = _minAccY[RIGHT] = _minAccY[RIGHT] = MIN_MAX_VALUE;
@@ -290,6 +296,10 @@ public class PolarBearControl : MonoBehaviour {
 					var FootLeft = GameObject.Find("LeftFoot");
 					Vector3 positionLF = FootLeft.GetComponent<UnityEngine.Transform>().position;
 					Vector3 positionHC = HipCenter.GetComponent<UnityEngine.Transform>().position;
+					
+					if (ticksCounter%ticksForLog==0)
+						LogMovementData();
+
 					leftStep_cur = Mathf.Abs(positionHC.y - positionLF.y);
 					leftStep_pre = leftStep_index;
 					leftStep_index = Mathf.Abs(positionHC.y - positionLF.y);
@@ -454,7 +464,10 @@ public class PolarBearControl : MonoBehaviour {
 					Vector3 positionLH = HandLeft.GetComponent<UnityEngine.Transform>().position;
 					Vector3 positionRH = HandRight.GetComponent<UnityEngine.Transform>().position;
 					Vector3 positionHC = HipCenter.GetComponent<UnityEngine.Transform>().position;
-		
+					
+					if (ticksCounter%ticksForLog==0)
+						LogMovementData();
+
 					leftStroke_cur = (-1*positionHC.z - (-1*positionLH.z));
 					leftStroke_pre = leftStroke_index;
 					leftStroke_index = (-1*positionHC.z - (-1*positionLH.z));
@@ -615,6 +628,8 @@ public class PolarBearControl : MonoBehaviour {
 	public void GameOver(float _value){
 	   _gameOver = true;
 	   startScene = false;
+	   if (logFile!=null)
+			logFile.Close();
 	}
     	
 	public void StartGame(){
@@ -630,7 +645,51 @@ public class PolarBearControl : MonoBehaviour {
 	  var logline = "W="+NumWalkSteps.ToString() + "|S=" + NumSwimSteps.ToString();
 	  SendMessage("ClientAppendDataToLog", logline);	
 	}
-	
+	public void LogMovementData(){
+		string logPath = "LogMovement_"+trialNumber+".txt";
+
+		var HipCenter = GameObject.Find("Torso");
+		var FootLeft = GameObject.Find("LeftFoot");
+		var FootRight = GameObject.Find("RightFoot");
+		var KneeLeft = GameObject.Find("LeftKnee");
+		var KneeRight = GameObject.Find("RightKnee");
+		var Head = GameObject.Find ("Head");
+		var HandLeft = GameObject.Find ("LeftHand");
+		var HandRight = GameObject.Find ("RightHand");
+		
+		Vector3 positionLF = FootLeft.GetComponent<UnityEngine.Transform>().position;
+		Vector3 positionHC = HipCenter.GetComponent<UnityEngine.Transform>().position;
+		Vector3 positionRF = FootRight.GetComponent<UnityEngine.Transform>().position;
+		Vector3 positionKL = KneeLeft.GetComponent<UnityEngine.Transform>().position;
+		Vector3 positionKR = KneeRight.GetComponent<UnityEngine.Transform>().position;
+		Vector3 positionH = Head.GetComponent<UnityEngine.Transform>().position;
+		Vector3 positionHL = HandLeft.GetComponent<UnityEngine.Transform>().position;
+		Vector3 positionHR = HandRight.GetComponent<UnityEngine.Transform>().position;
+
+		using(logFile = new StreamWriter(logPath, true)){
+			logFile.WriteLine(positionH.x + "\t" + positionH.y + "\t" + positionH.z  + "\t" + 
+			                  positionHC.x + "\t" + positionHC.y + "\t" + positionHC.z + "\t" + 
+			                  positionHL.x + "\t" + positionHL.y + "\t" + positionHL.z + "\t" + 
+			                  positionHR.x + "\t" + positionHR.y + "\t" + positionHR.z + "\t" + 
+			                  positionKL.x + "\t" + positionKL.y + "\t" + positionKL.z + "\t" + 
+			                  positionKR.x + "\t" + positionKR.y + "\t" + positionKR.z + "\t" + 
+			                  positionLF.x + "\t" + positionLF.y + "\t" + positionLF.z + "\t" +
+			                  positionRF.x + "\t" + positionRF.y + "\t" + positionRF.z + "\t" );
+			
+			Debug.Log("Writing at log..."+positionH.x + "\t" + positionH.y + "\t" + positionH.z  + "\t" + 
+		          positionHC.x + "\t" + positionHC.y + "\t" + positionHC.z + "\t" + 
+		          positionHL.x + "\t" + positionHL.y + "\t" + positionHL.z + "\t" + 
+		          positionHR.x + "\t" + positionHR.y + "\t" + positionHR.z + "\t" + 
+		          positionKL.x + "\t" + positionKL.y + "\t" + positionKL.z + "\t" + 
+		          positionKR.x + "\t" + positionKR.y + "\t" + positionKR.z + "\t" + 
+		          positionLF.x + "\t" + positionLF.y + "\t" + positionLF.z + "\t" +
+		          positionRF.x + "\t" + positionRF.y + "\t" + positionRF.z + "\t");
+			
+			
+		}
+
+		
+	}
 	private void MoveForward(string _str){
 		if (_str.Equals("Walk"))
 				NumWalkSteps++;

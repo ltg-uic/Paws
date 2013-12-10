@@ -34,8 +34,8 @@ function Start ()
 	terrainSize = terrainData.size;
 	col = Terrain.activeTerrain.collider;
 	myT = transform;
-	player = gameObject.FindWithTag("BearPlayer").transform;
-	MainRoutine();	
+	//player = gameObject.FindWithTag("BearPlayer").transform;
+	//MainRoutine();	
 }
 
 function MainRoutine ()

@@ -133,9 +133,9 @@ function LoadLevelInClient (_level: String ,  info : NetworkMessageInfo)
 	
 	 //Called on the Clients only
     Debug.Log("Load level "+ currentYear);  
-    Application.LoadLevel(currentYear);
+  //  Application.LoadLevel(currentYear);
 
-    //SendMessage("StartGame");   	  	
+    SendMessage("StartGame");   	  	
 }
 
 @RPC
