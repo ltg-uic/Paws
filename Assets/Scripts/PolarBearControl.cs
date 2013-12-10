@@ -48,7 +48,7 @@ public class PolarBearControl : MonoBehaviour {
 	private bool[] _getDir;
 	private string trialNumber;
 	private TextWriter logFile;
-	private int ticksForLog = 10; // Unity updates 60frames per second
+	private int ticksForLog = 5; // Unity updates 60frames per second
 	private long ticksCounter = 0;
 	
 	private float[] _stroke;
@@ -120,7 +120,7 @@ public class PolarBearControl : MonoBehaviour {
 	int rightStrokej = 0;
 	
 	void Start () {
-
+		Instantiate (polarBearTransform,transform.position,transform.rotation);
 		Initialize();
 
 	}
@@ -140,11 +140,11 @@ public class PolarBearControl : MonoBehaviour {
 		previousStep[LEFT] = -1;
 		previousStep[RIGHT] = -1;
 		NumSwimSteps = NumWalkSteps = 0;
-	   
-	   Instantiate (polarBearTransform,transform.position,transform.rotation);
+	  	
 	   polarBearTag = "PolarBear(Clone)";
 	   polarBear = GameObject.Find(polarBearTag);
 	   _controller = polarBear.GetComponent<CharacterController>();		
+		_controller.transform.position = new Vector3(904,11,620);	
        _gameOver = false;
 	   _firstStep = false;
 		trialNumber = DateTime.Now.ToString("dd-MM-yyyy_hh-mm-ss");
@@ -298,7 +298,7 @@ public class PolarBearControl : MonoBehaviour {
 					Vector3 positionHC = HipCenter.GetComponent<UnityEngine.Transform>().position;
 					
 					if (ticksCounter%ticksForLog==0)
-						LogMovementData();
+						LogMovementData("L");
 
 					leftStep_cur = Mathf.Abs(positionHC.y - positionLF.y);
 					leftStep_pre = leftStep_index;
@@ -466,7 +466,7 @@ public class PolarBearControl : MonoBehaviour {
 					Vector3 positionHC = HipCenter.GetComponent<UnityEngine.Transform>().position;
 					
 					if (ticksCounter%ticksForLog==0)
-						LogMovementData();
+						LogMovementData("W");
 
 					leftStroke_cur = (-1*positionHC.z - (-1*positionLH.z));
 					leftStroke_pre = leftStroke_index;
@@ -645,7 +645,7 @@ public class PolarBearControl : MonoBehaviour {
 	  var logline = "W="+NumWalkSteps.ToString() + "|S=" + NumSwimSteps.ToString();
 	  SendMessage("ClientAppendDataToLog", logline);	
 	}
-	public void LogMovementData(){
+	public void LogMovementData(String _environment){
 		string logPath = "LogMovement_"+trialNumber+".txt";
 
 		var HipCenter = GameObject.Find("Torso");
@@ -667,7 +667,7 @@ public class PolarBearControl : MonoBehaviour {
 		Vector3 positionHR = HandRight.GetComponent<UnityEngine.Transform>().position;
 
 		using(logFile = new StreamWriter(logPath, true)){
-			logFile.WriteLine(positionH.x + "\t" + positionH.y + "\t" + positionH.z  + "\t" + 
+			logFile.WriteLine(_environment+"\t"+positionH.x + "\t" + positionH.y + "\t" + positionH.z  + "\t" + 
 			                  positionHC.x + "\t" + positionHC.y + "\t" + positionHC.z + "\t" + 
 			                  positionHL.x + "\t" + positionHL.y + "\t" + positionHL.z + "\t" + 
 			                  positionHR.x + "\t" + positionHR.y + "\t" + positionHR.z + "\t" + 
@@ -676,7 +676,7 @@ public class PolarBearControl : MonoBehaviour {
 			                  positionLF.x + "\t" + positionLF.y + "\t" + positionLF.z + "\t" +
 			                  positionRF.x + "\t" + positionRF.y + "\t" + positionRF.z + "\t" );
 			
-			Debug.Log("Writing at log..."+positionH.x + "\t" + positionH.y + "\t" + positionH.z  + "\t" + 
+		/*	Debug.Log("Writing at log..."+positionH.x + "\t" + positionH.y + "\t" + positionH.z  + "\t" + 
 		          positionHC.x + "\t" + positionHC.y + "\t" + positionHC.z + "\t" + 
 		          positionHL.x + "\t" + positionHL.y + "\t" + positionHL.z + "\t" + 
 		          positionHR.x + "\t" + positionHR.y + "\t" + positionHR.z + "\t" + 
@@ -685,7 +685,7 @@ public class PolarBearControl : MonoBehaviour {
 		          positionLF.x + "\t" + positionLF.y + "\t" + positionLF.z + "\t" +
 		          positionRF.x + "\t" + positionRF.y + "\t" + positionRF.z + "\t");
 			
-			
+			*/
 		}
 
 		
