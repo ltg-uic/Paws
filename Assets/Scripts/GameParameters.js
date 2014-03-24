@@ -49,16 +49,16 @@ public function ShowOnGUI () {
       GUILayout.BeginArea (Rect (posX, posY + areaHeight - 60, 140, 60));
 	  if (GUILayout.Button ("Start"))
 	  {		
-			if (GetComponent(NetworkConnectionServer).interpreterName.CompareTo("Interpreter...")){
+		//	if (GetComponent(NetworkConnectionServer).interpreterName.CompareTo("Interpreter...")){
 			    //GetComponent(CurrentPosInMap).mapImage = _map;
 			    showGameParameters(false);
 			    GetComponent(NetworkConnectionServer).LoadScores();
 			    GetComponent(NetworkConnectionServer).StartGame();
-			}
-			else
-			{
-			    GetComponent(MessageBox).DisplayMessage("Select an interpreter.");
-			}
+		//	}
+		//	else
+		//	{
+		//	    GetComponent(MessageBox).DisplayMessage("Select an interpreter.");
+		//	}
 	   }
 				
 	   GUILayout.EndArea ();
