@@ -122,7 +122,10 @@ public class PolarBearControl : MonoBehaviour {
 		Initialize();
 
 	}
-	
+	/*
+	void Awake(){
+		DontDestroyOnLoad(GameObject.Find("Sensor"));
+	}*/
 	void Initialize(){
 	    _moveDirection = Vector3.zero;
 		_getDir = new bool[2];
