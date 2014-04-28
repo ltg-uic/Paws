@@ -118,6 +118,7 @@ public class PolarBearControl : MonoBehaviour {
 	int rightStrokej = 0;
 	
 	void Start () {
+		Instantiate (polarBearTransform,transform.position,transform.rotation);
 
 		Initialize();
 
@@ -142,8 +143,7 @@ public class PolarBearControl : MonoBehaviour {
 		previousStep[RIGHT] = -1;
 		NumSwimSteps = NumWalkSteps = 0;
 	   
-	   Instantiate (polarBearTransform,transform.position,transform.rotation);
-	   polarBearTag = "PolarBear(Clone)";
+	    polarBearTag = "PolarBear(Clone)";
 	   polarBear = GameObject.Find(polarBearTag);
 	   _controller = polarBear.GetComponent<CharacterController>();		
        _gameOver = true;
@@ -216,11 +216,6 @@ public class PolarBearControl : MonoBehaviour {
 				
 				if (!inWater){
 					if (_controller.isGrounded){
-					   
-						if (!startScene){
-							startScene = true;
-							SendMessage("HideInitialMessage");
-						}
 						//Debug.Log("Test - Esta en tierra");
 						if (Input.GetKeyDown(KeyCode.UpArrow)){
 						//	Debug.Log("Test - Caminando...");
@@ -298,7 +293,7 @@ public class PolarBearControl : MonoBehaviour {
 					
 					Vector3 positionLF = FootLeft.GetComponent<UnityEngine.Transform>().position;
 					Vector3 positionHC = HipCenter.GetComponent<UnityEngine.Transform>().position;
-					LogMovementData();
+					LogMovementData("W");
 					leftStep_cur = Mathf.Abs(positionHC.y - positionLF.y);
 					leftStep_pre = leftStep_index;
 					leftStep_index = Mathf.Abs(positionHC.y - positionLF.y);
@@ -428,15 +423,7 @@ public class PolarBearControl : MonoBehaviour {
 							bs.setAudioClip("rightStep");
 						_changeStepsSound = !_changeStepsSound;
 					}
-				
-					if (_controller.isGrounded){
-						if (!startScene){
-							startScene = true;
-							SendMessage("HideInitialMessage");
-						}
-
-						
-					}
+			
 					//f.Close();
 					//f1.Close();
 
@@ -456,7 +443,7 @@ public class PolarBearControl : MonoBehaviour {
 					Vector3 positionLH = HandLeft.GetComponent<UnityEngine.Transform>().position;
 					Vector3 positionRH = HandRight.GetComponent<UnityEngine.Transform>().position;
 					Vector3 positionHC = HipCenter.GetComponent<UnityEngine.Transform>().position;
-					LogMovementData();
+					LogMovementData("S");
 					leftStroke_cur = (-1*positionHC.z - (-1*positionLH.z));
 					leftStroke_pre = leftStroke_index;
 					leftStroke_index = (-1*positionHC.z - (-1*positionLH.z));
@@ -614,14 +601,16 @@ public class PolarBearControl : MonoBehaviour {
 	
 	public void GameOver(float _value){
 	   _gameOver = true;
-	   startScene = false;
+	 
 	   if (logFile!=null)
 	   	   logFile.Close();
 	}
     	
 	public void StartGame(){
 	  Debug.Log("Starting game");
-	  SendMessage("StartLog");
+	   string logPath = "LogMovement_"+trialNumber+".txt";
+	  logFile = new StreamWriter(logPath, true);
+	//  SendMessage("StartLog");
 	  Initialize();
 	  _firstStep = false;
 	  _gameOver = false;
@@ -633,7 +622,7 @@ public class PolarBearControl : MonoBehaviour {
 	  SendMessage("ClientAppendDataToLog", logline);	
 	}
 	
-	public void LogMovementData(){
+	public void LogMovementData(String _str){
 	    string logPath = "LogMovement_"+trialNumber+".txt";
 		logFile = new StreamWriter(logPath, true);
 		
@@ -655,7 +644,7 @@ public class PolarBearControl : MonoBehaviour {
 		Vector3 positionHL = HandLeft.GetComponent<UnityEngine.Transform>().position;
 		Vector3 positionHR = HandRight.GetComponent<UnityEngine.Transform>().position;
 			
-	    logFile.WriteLine(positionH.x + "\t" + positionH.y + "\t" + positionH.z  + "\t" + 
+		logFile.WriteLine(_str+"\t"+positionH.x + "\t" + positionH.y + "\t" + positionH.z  + "\t" + 
 							positionHC.x + "\t" + positionHC.y + "\t" + positionHC.z + "\t" + 
 							positionHL.x + "\t" + positionHL.y + "\t" + positionHL.z + "\t" + 
 							positionHR.x + "\t" + positionHR.y + "\t" + positionHR.z + "\t" + 
@@ -663,14 +652,14 @@ public class PolarBearControl : MonoBehaviour {
 							positionKR.x + "\t" + positionKR.y + "\t" + positionKR.z + "\t" + 
 							positionLF.x + "\t" + positionLF.y + "\t" + positionLF.z + "\t" +
 							positionRF.x + "\t" + positionRF.y + "\t" + positionRF.z + "\t" );
-	   Debug.Log("Writing at log..."+positionH.x + "\t" + positionH.y + "\t" + positionH.z  + "\t" + 
+	 /*  Debug.Log("Writing at log..."+positionH.x + "\t" + positionH.y + "\t" + positionH.z  + "\t" + 
 							positionHC.x + "\t" + positionHC.y + "\t" + positionHC.z + "\t" + 
 							positionHL.x + "\t" + positionHL.y + "\t" + positionHL.z + "\t" + 
 							positionHR.x + "\t" + positionHR.y + "\t" + positionHR.z + "\t" + 
 							positionKL.x + "\t" + positionKL.y + "\t" + positionKL.z + "\t" + 
 							positionKR.x + "\t" + positionKR.y + "\t" + positionKR.z + "\t" + 
 							positionLF.x + "\t" + positionLF.y + "\t" + positionLF.z + "\t" +
-							positionRF.x + "\t" + positionRF.y + "\t" + positionRF.z + "\t");
+							positionRF.x + "\t" + positionRF.y + "\t" + positionRF.z + "\t");*/
 	}
 	
 	private void MoveForward(string _str){

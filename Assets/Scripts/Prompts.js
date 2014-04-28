@@ -1,5 +1,5 @@
 ﻿var prompts : Texture2D[];
-var url = "http://paws.evl.uic.edu/PawsImages/";
+var url = "http://10.0.1.113/~Priscilla/PawsImages/";
 var promptCurrentList: int[] = [0,1,2,3,4];
 			
 function Start () {

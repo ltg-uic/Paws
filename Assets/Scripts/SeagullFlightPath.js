@@ -16,6 +16,7 @@ var offset : Vector3;
 
 private var myT : Transform;
 private var player : Transform;
+private var goPlayer: GameObject;
 private var awayDir : Vector3;
 private var flyHeight = 0.00;
 private var col : Collider;
@@ -34,7 +35,7 @@ function Start ()
 	terrainSize = terrainData.size;
 	col = Terrain.activeTerrain.collider;
 	myT = transform;
-	player = gameObject.FindWithTag("BearPlayer").transform;
+	
 	MainRoutine();	
 }
 
@@ -42,9 +43,17 @@ function MainRoutine ()
 {
 	while(true)
 	{
-		yield ReturnToPlayer();
-		yield CirclePlayer();
-		yield FlyAway();
+	    if (goPlayer == null){
+			goPlayer = gameObject.FindWithTag("BearPlayer");
+			if (goPlayer != null)
+				player = goPlayer.transform;
+		}
+		else{
+			
+			yield ReturnToPlayer();
+			yield CirclePlayer();
+			yield FlyAway();
+			}
 	}
 }
 

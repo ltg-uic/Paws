@@ -35,12 +35,9 @@ function LoadingLevelValues(){
   	}
 }
 
-function OnLevelWasLoaded (level : int) {
+function StartGame () {
 	startGame = true;
-}
-
-function HideInitialMessage(){
-	yield WaitForSeconds(4.0);
+	yield WaitForSeconds(3.0);
 	startGame = false;
 }
 

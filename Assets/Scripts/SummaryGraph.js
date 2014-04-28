@@ -144,6 +144,7 @@ function GetHistoricalAverageValues(){
 
   		}
    	}
+   	/*
    	applicationPath = GetComponent(NetworkConnectionServer).applicationPath;
    	_randomValues.Clear();
    	_randomCount = 0; 
@@ -157,8 +158,8 @@ function GetHistoricalAverageValues(){
 	   		   _randomValues.Add(file[j]);
 	   		}
 	   	}
-	   	
    	}   
+   	*/
 }
 
 

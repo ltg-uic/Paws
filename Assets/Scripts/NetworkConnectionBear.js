@@ -14,6 +14,7 @@ private var yearsAgo: String;
 
 function Start(){
 	LoadIPServer();	
+	currentYear = "2010";
 }
 
 function LoadIPServer(){
@@ -131,9 +132,9 @@ function LoadLevelInClient (_level: String ,  info : NetworkMessageInfo)
 	
 	 //Called on the Clients only
     Debug.Log("Load level "+ currentYear);  
-    Application.LoadLevel(currentYear);
+	SendMessage("LoadYear",currentYear);
 
-    //SendMessage("StartGame");   	  	
+    SendMessage("StartGame");   	  	
 }
 
 @RPC

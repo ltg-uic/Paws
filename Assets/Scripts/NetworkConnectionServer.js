@@ -112,7 +112,7 @@ function Start(){
 	//Debug.Log("Positions main screen "+areaWidth*0.5+" " +areaHeight*0.1);
 	GetComponent(GameParameters).labelHeight = _labelHeight;
 	GetComponent(GameParameters).posX = areaWidth*0.47;       
-	GetComponent(GameParameters).posY = 50;//areaHeight*0.1;
+	GetComponent(GameParameters).posY = areaHeight*0.15;
 
     Initialize();
     GetComponent(DatabaseConnection).GetInterpreters();
@@ -315,11 +315,11 @@ function DrawViews(){
 			if (!isPlaying){
 				
 				// Area rendering the UI elements 
-				GUILayout.BeginArea (Rect (areaWidth*0.1, areaHeight*0.2, areaWidth*0.15, _labelHeight+areaHeight*0.01));
+				GUILayout.BeginArea (Rect (areaWidth*0.1, areaHeight*0.12, areaWidth*0.15, _labelHeight+areaHeight*0.01));
 				_playerName = GUILayout.TextField(_playerName,12);
 				GUILayout.EndArea();
 		     	
-		     	GUILayout.BeginArea (Rect (areaWidth*0.3, areaHeight*0.2, areaWidth*0.15, areaHeight*0.05));
+		     	GUILayout.BeginArea (Rect (areaWidth*0.3, areaHeight*0.12, areaWidth*0.15, areaHeight*0.05));
 			    if (GUILayout.Button(interpreterName)){
 					
     				_showInterpreterList = !_showInterpreterList;
@@ -331,7 +331,7 @@ function DrawViews(){
 
 				 	for (var cnt:int  = 1; cnt < GetComponent(Interpreters).interpreterNames.Count; cnt++){
 				 
-				 	   GUILayout.BeginArea (Rect (areaWidth*0.3, areaHeight*0.2+_labelHeight*(cnt), areaWidth*0.15, _labelHeight));
+				 	   GUILayout.BeginArea (Rect (areaWidth*0.3, areaHeight*0.12+_labelHeight*(cnt), areaWidth*0.15, _labelHeight));
 				 	   if (GUILayout.Button((GetComponent(Interpreters).interpreterNames[cnt].ToString()))){
 				 	   		interpreterName = GetComponent(Interpreters).interpreterNames[cnt];
 				 	   		interpreterID = GetComponent(Interpreters).interpreterIDs[cnt];
@@ -341,7 +341,7 @@ function DrawViews(){
 				    }
 			    }
 			  //  Debug.Log("Positions main screen settings"+areaWidth*0.5+" " +areaHeight*0.12);
-			    GUILayout.BeginArea (Rect (areaWidth*0.5, areaHeight*0.2, areaWidth*0.1, _labelHeight));
+			    GUILayout.BeginArea (Rect (areaWidth*0.5, areaHeight*0.12, areaWidth*0.1, _labelHeight));
 				if (GUILayout.Button("Settings")){	// Game Parameters
 				     GetComponent(GameParameters).showGameParameters(true);
 				}
