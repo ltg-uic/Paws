@@ -111,8 +111,8 @@ function Start(){
 	
 	//Debug.Log("Positions main screen "+areaWidth*0.5+" " +areaHeight*0.1);
 	GetComponent(GameParameters).labelHeight = _labelHeight;
-	GetComponent(GameParameters).posX = areaWidth*0.47;       
-	GetComponent(GameParameters).posY = areaHeight*0.15;
+	GetComponent(GameParameters).posX = areaWidth*0.5;       
+	GetComponent(GameParameters).posY = areaHeight*0.10;
 
     Initialize();
     GetComponent(DatabaseConnection).GetInterpreters();
@@ -144,7 +144,7 @@ function Initialize(){
     _localPromptIndex = -1;
     _getRandomPrompts = false;
     
-	var  _map : Texture2D = Resources.Load("Images/"+yearList[_currentYear]+"_Location_Map", typeof(Texture2D));
+	var  _map : Texture2D = Resources.Load("Images/"+yearList[_currentYear].ToString()+"_Location_Map", typeof(Texture2D));
 	GetComponent(CurrentPosInMap).mapImage = _map;
 	GetComponent(BurnedCaloriesGraph).DestroyLines();
 	GetComponent(CurrentPosInMap).InitializeMap();
@@ -245,12 +245,11 @@ function DrawViews(){
   	{  
   	
   	        // Draw the main view.
-			GUILayout.BeginArea (Rect (areaWidth*0.05, areaHeight*0.22, _labelHeight, _labelHeight));
+			GUILayout.BeginArea (Rect (areaWidth*0.02, areaHeight*0.22, _labelHeight, _labelHeight));
 			if (GUILayout.Button((serverTest%3).ToString())){	
 				serverTest++;
 			}
 		    GUILayout.EndArea();
-		    // Local and Remote View Panels
 		    
 		    GUILayout.BeginArea(Rect (areaWidth*0.08, areaHeight*0.28, areaWidth*0.4, areaHeight*0.42));
 		    if (_localPromptIndex >=0)
@@ -280,14 +279,31 @@ function DrawViews(){
 		    }
 		    GUILayout.EndArea();
 		    
+		    if (isPlaying){
+		       // show map
+			    GUILayout.BeginArea (Rect (areaWidth*0.1, areaHeight*0.12, _labelHeight*7, _labelHeight));
+				if (_showMap){
+				    if (GUILayout.Button("Hide Bird's eye view")){	
+						_showMap = false;
+						}
+				}
+				else{
+				 if (GUILayout.Button("Show Bird's eye view")){	
+						_showMap = true;
+						}
+				}
+				   GUILayout.EndArea();
+		    }    
+		  
+		 
 		    if (_showMap && isPlaying){
 				// Area containing the year slider and selection
-				GUILayout.BeginArea (Rect (areaWidth*0.1, areaHeight*0.205, areaWidth*0.4, _labelHeight));
-				GUILayout.Label("Bird's eye view");	
-				GUILayout.EndArea();		
+				//GUILayout.BeginArea (Rect (areaWidth*0.1, areaHeight*0.22, areaWidth*0.4, _labelHeight));
+				//GUILayout.Label(yearList[_currentYear].ToString());	
+				//GUILayout.EndArea();		
 				// Area rendering the map and it's labels
-				GUILayout.BeginArea (Rect (areaWidth*0.1,areaHeight*0.25,areaWidth*0.4,areaHeight*0.4));
-				//GetComponent(CurrentPosInMap).SetCurrentYear(_currentYear);  --- Game Parameters
+				GUILayout.BeginArea (Rect (areaWidth*0.08,areaHeight*0.3,areaWidth*0.4,areaHeight*0.42));
+				GetComponent(CurrentPosInMap).SetCurrentYear(_currentYear);  //Game Parameters
 				GetComponent(CurrentPosInMap).DrawMap();
 				GUILayout.EndArea();
 			}
@@ -315,11 +331,11 @@ function DrawViews(){
 			if (!isPlaying){
 				
 				// Area rendering the UI elements 
-				GUILayout.BeginArea (Rect (areaWidth*0.1, areaHeight*0.12, areaWidth*0.15, _labelHeight+areaHeight*0.01));
+				GUILayout.BeginArea (Rect (areaWidth*0.1, areaHeight*0.05, areaWidth*0.15, _labelHeight+areaHeight*0.01));
 				_playerName = GUILayout.TextField(_playerName,12);
 				GUILayout.EndArea();
 		     	
-		     	GUILayout.BeginArea (Rect (areaWidth*0.3, areaHeight*0.12, areaWidth*0.15, areaHeight*0.05));
+		     	GUILayout.BeginArea (Rect (areaWidth*0.3, areaHeight*0.05, areaWidth*0.15, areaHeight*0.05));
 			    if (GUILayout.Button(interpreterName)){
 					
     				_showInterpreterList = !_showInterpreterList;
@@ -331,7 +347,7 @@ function DrawViews(){
 
 				 	for (var cnt:int  = 1; cnt < GetComponent(Interpreters).interpreterNames.Count; cnt++){
 				 
-				 	   GUILayout.BeginArea (Rect (areaWidth*0.3, areaHeight*0.12+_labelHeight*(cnt), areaWidth*0.15, _labelHeight));
+				 	   GUILayout.BeginArea (Rect (areaWidth*0.3, areaHeight*0.05+_labelHeight*(cnt), areaWidth*0.15, _labelHeight));
 				 	   if (GUILayout.Button((GetComponent(Interpreters).interpreterNames[cnt].ToString()))){
 				 	   		interpreterName = GetComponent(Interpreters).interpreterNames[cnt];
 				 	   		interpreterID = GetComponent(Interpreters).interpreterIDs[cnt];
@@ -341,7 +357,7 @@ function DrawViews(){
 				    }
 			    }
 			  //  Debug.Log("Positions main screen settings"+areaWidth*0.5+" " +areaHeight*0.12);
-			    GUILayout.BeginArea (Rect (areaWidth*0.5, areaHeight*0.12, areaWidth*0.1, _labelHeight));
+			    GUILayout.BeginArea (Rect (areaWidth*0.5, areaHeight*0.05, areaWidth*0.1, _labelHeight));
 				if (GUILayout.Button("Settings")){	// Game Parameters
 				     GetComponent(GameParameters).showGameParameters(true);
 				}
@@ -351,11 +367,11 @@ function DrawViews(){
 			}
 			else{
 		
-				GUILayout.BeginArea (Rect (areaWidth*0.1, areaHeight*0.12, areaWidth*0.20, _labelHeight));
+				GUILayout.BeginArea (Rect (areaWidth*0.1, areaHeight*0.05, areaWidth*0.20, _labelHeight));
 				GUILayout.Label("Player: " +_playerName);
 				GUILayout.EndArea();
 				
-				GUILayout.BeginArea (Rect (areaWidth*0.3, areaHeight*0.12, areaWidth*0.15, areaHeight*0.05));
+				GUILayout.BeginArea (Rect (areaWidth*0.3, areaHeight*0.05, areaWidth*0.15, areaHeight*0.05));
 			    if (GUILayout.Button(interpreterName)){
 					
     				_showInterpreterList = !_showInterpreterList;
@@ -366,7 +382,7 @@ function DrawViews(){
 	
 					 	for (cnt  = 1; cnt < GetComponent(Interpreters).interpreterNames.Count; cnt++){
 					 
-					 	   GUILayout.BeginArea (Rect (areaWidth*0.3, areaHeight*0.12+_labelHeight*(cnt), areaWidth*0.15, _labelHeight));
+					 	   GUILayout.BeginArea (Rect (areaWidth*0.3, areaHeight*0.05+_labelHeight*(cnt), areaWidth*0.15, _labelHeight));
 					 	   if (GUILayout.Button((GetComponent(Interpreters).interpreterNames[cnt].ToString()))){
 					 	   		interpreterName = GetComponent(Interpreters).interpreterNames[cnt];
 					 	   		interpreterID = GetComponent(Interpreters).interpreterIDs[cnt];
@@ -377,7 +393,7 @@ function DrawViews(){
 				}
 			   
 				
-		     	GUILayout.BeginArea (Rect (areaWidth*0.5, areaHeight*0.12, areaWidth*0.3, _labelHeight));				
+		     	GUILayout.BeginArea (Rect (areaWidth*0.5, areaHeight*0.05, areaWidth*0.3, _labelHeight));				
 				GUILayout.Label("Year: "+yearList[_currentYear].ToString());
 				GUILayout.EndArea();
 				
@@ -402,7 +418,7 @@ function DrawViews(){
 				GUILayout.Label("Remaining time: "+ (Mathf.FloorToInt(_leftTime)/60).ToString("00") + " min "+ (Mathf.FloorToInt(_leftTime)%60).ToString("00") + " sec");
 				GUILayout.EndArea ();
 				
-			   GUILayout.BeginArea (Rect (areaWidth*0.8, areaHeight*0.12, areaWidth*0.15, _labelHeight));
+			   GUILayout.BeginArea (Rect (areaWidth*0.8, areaHeight*0.05, areaWidth*0.15, _labelHeight));
 		       if (_goalReached || _timerReached ){
 		       		Debug.Log("Reached the max time");
 			       if (GUILayout.Button("Play Again")){

@@ -50,10 +50,13 @@ public function ShowOnGUI () {
 	  if (GUILayout.Button ("Start"))
 	  {		
 		//	if (GetComponent(NetworkConnectionServer).interpreterName.CompareTo("Interpreter...")){
-			    //GetComponent(CurrentPosInMap).mapImage = _map;
+			    GetComponent(CurrentPosInMap).SetCurrentYear(GetComponent(NetworkConnectionServer).yearList[_currentYearIndex]);
+			    var  _map : Texture2D = Resources.Load("Images/"+GetComponent(NetworkConnectionServer).yearList[_currentYearIndex].ToString()+"_Location_Map", typeof(Texture2D));
+	            GetComponent(CurrentPosInMap).mapImage = _map;
 			    showGameParameters(false);
 			    GetComponent(NetworkConnectionServer).LoadScores();
 			    GetComponent(NetworkConnectionServer).StartGame();
+			 
 		//	}
 		//	else
 		//	{

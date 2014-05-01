@@ -1,10 +1,7 @@
 ﻿#pragma strict
  
 var _originalPosition: Vector3 = new Vector3(904,15,620);
-var _originalScale: Vector3 = (0,0,0);
 
-    
-  
 function  LoadYear(_year :String){
 
 	 var polarBear:GameObject = GameObject.Find("PolarBear(Clone)");
