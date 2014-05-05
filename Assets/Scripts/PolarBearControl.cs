@@ -54,7 +54,6 @@ public class PolarBearControl : MonoBehaviour {
 	private float _gravity;
 	public bool _gameOver;
 	public bool _firstStep;
-	private bool startScene = false;
     public GameObject other;
 	
 	//Mike's Variables for Kinect
@@ -161,14 +160,14 @@ public class PolarBearControl : MonoBehaviour {
 				testing = false;
 				
 		if (inWater){
-		  if (Mathf.Abs(Camera.mainCamera.transform.rotation.eulerAngles.x - inWRotation) > 1){
-	           Camera.mainCamera.transform.Rotate(new Vector3(inWRotation-Camera.mainCamera.transform.rotation.eulerAngles.x,0,0));
+			if (Mathf.Abs(Camera.main.transform.rotation.eulerAngles.x - inWRotation) > 1){
+				Camera.main.transform.Rotate(new Vector3(inWRotation-Camera.main.transform.rotation.eulerAngles.x,0,0));
 		   }
 		}
 		else{
-			if (Mathf.Abs(Camera.mainCamera.transform.rotation.eulerAngles.x - outWRotation) > 1){
+			if (Mathf.Abs(Camera.main.transform.rotation.eulerAngles.x - outWRotation) > 1){
 			   
-				Camera.mainCamera.transform.Rotate(outWRotation-Camera.mainCamera.transform.rotation.eulerAngles.x,0,0);
+				Camera.main.transform.Rotate(outWRotation-Camera.main.transform.rotation.eulerAngles.x,0,0);
 			}
 		}
 		
@@ -607,14 +606,16 @@ public class PolarBearControl : MonoBehaviour {
 	}
     	
 	public void StartGame(){
-	  Debug.Log("Starting game");
-	   string logPath = "LogMovement_"+trialNumber+".txt";
-	  logFile = new StreamWriter(logPath, true);
-	//  SendMessage("StartLog");
+	 
 	  Initialize();
 	  _firstStep = false;
 	  _gameOver = false;
 	 
+	}
+	public void LoadYear(String _year){
+		Debug.Log("Starting game");
+		string logPath = "LogMovement_"+trialNumber+"_YEAR"+_year+".txt";
+		logFile = new StreamWriter(logPath, true);
 	}
 	
 	public void SaveLog(){
@@ -623,8 +624,7 @@ public class PolarBearControl : MonoBehaviour {
 	}
 	
 	public void LogMovementData(String _str){
-	    string logPath = "LogMovement_"+trialNumber+".txt";
-		logFile = new StreamWriter(logPath, true);
+	
 		
 		var HipCenter = GameObject.Find("Torso");
 		var FootLeft = GameObject.Find("LeftFoot");

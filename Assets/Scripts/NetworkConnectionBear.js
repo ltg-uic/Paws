@@ -10,7 +10,7 @@ var NumSwimSteps:int;
 var playerNumber:int;
 private var currentYear: String;
 private var yearsAgo: String;
-
+private var gameStarted: boolean = false;
 
 function Start(){
 	LoadIPServer();	
@@ -64,7 +64,7 @@ function OnGUI () {
 				GUILayout.BeginArea (Rect (20,20,120,200));
 				remoteIP = GUILayout.TextField(remoteIP,15);
 				
-				if (GUILayout.Button("Connect to Server")){
+				if (GUILayout.Button("Connect to Mobile Interpretation Tool")){
 					Network.Connect(remoteIP, remotePort);
 				}
 				GUILayout.EndArea();
@@ -124,7 +124,7 @@ function SaveLogDocent(_logLine:String)
 @RPC
 function LoadLevelInClient (_level: String ,  info : NetworkMessageInfo)
 {
-
+    gameStarted = true;
 	var values = _level.Split(":"[0]);
 		
 	currentYear = values[0];
@@ -133,22 +133,45 @@ function LoadLevelInClient (_level: String ,  info : NetworkMessageInfo)
 	 //Called on the Clients only
     Debug.Log("Load level "+ currentYear);  
 	SendMessage("LoadYear",currentYear);
-
-    SendMessage("StartGame");   	  	
+    SendMessage("StartGame");
+    	  	
 }
 
 @RPC
 function FinishGame (_calories: float ,  info : NetworkMessageInfo)
 {
 	 //Called on the Clients
-	  SendMessage("GameOver",_calories);
+	 if (   gameStarted){
+	    gameStarted = false;
+	    SendMessage("HideInitialMessage");
+	    Debug.Log("Finish "+ currentYear); 
+	    SendMessage("GameOver",_calories);
+	  }
    
 }
 @RPC
 function StopGame (_calories: float ,  info : NetworkMessageInfo)
 {
 	 //Called on the Clients
-	  SendMessage("GameOver",_calories);
+	  if (gameStarted){
+	    gameStarted = false;
+	    SendMessage("HideInitialMessage");
+	    Debug.Log("Gameover "+ currentYear); 
+	    SendMessage("GameOver",_calories);
+	  }
+   
+}
+@RPC
+function StopGameTimeOut (_calories: float ,  info : NetworkMessageInfo)
+{
+	 //Called on the Clients
+	  if (gameStarted){
+	    gameStarted = false;
+	    SendMessage("HideInitialMessage");
+	    Debug.Log("timeout "+ currentYear);
+	    SendMessage("GameOver",_calories); 
+	    SendMessage("GameOverTimeOut",_calories);
+	  }
    
 }
 @RPC

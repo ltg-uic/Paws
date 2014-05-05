@@ -3,7 +3,7 @@ var linesMaterial : Material;
 private var _axesColor = Color.white;
 private var _axesWidth = 2;
 
-private var _lineColor = Color.white;
+private var _lineColor = Color.yellow;
 private var _lineWidth = 2;
 
 private var _axesLine: VectorLine;
@@ -39,7 +39,6 @@ private var _currentXValue:int;
 function Start(){
 	_xAxisPos = new Array();
 	_xAxisValue = new Array();
-	Debug.Log(_xAxisValue.length);
 	if (maxBurnedCalories <= 0)
 		maxBurnedCalories = 100;
 	_currentPos = 0;
@@ -105,7 +104,7 @@ function OnGUI(){
 	    }
 	    
        for (var k: int = 1; k<= (maxBurnedCalories/50);k++){   
-			GUI.Label(Rect(posX - 35, Screen.height - ((_percentageYPoint * k* 50) + posY) ,30,30), (k*50).ToString());
+			GUI.Label(Rect(posX - 40, Screen.height - ((_percentageYPoint * k* 50) + posY) ,40,30), (k*50).ToString());
 			//      Debug.Log( "label " +    (_xAxisValue[j]-(_xAxisValue[j]%xInterval)));
 		     } 
 	   

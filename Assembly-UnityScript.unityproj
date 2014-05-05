@@ -61,7 +61,6 @@
      <Compile Include="Assets\Scripts\GameParameters.js" />
      <Compile Include="Assets\Scripts\InfoEventTriggers.js" />
      <Compile Include="Assets\Scripts\InfoPolarBear.js" />
-     <Compile Include="Assets\Scripts\InitialMessage.js" />
      <Compile Include="Assets\Scripts\Interpreters.js" />
      <Compile Include="Assets\Scripts\KinectGame.js" />
      <Compile Include="Assets\Scripts\LoadScene.js" />

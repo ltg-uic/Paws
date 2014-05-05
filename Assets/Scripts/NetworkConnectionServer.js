@@ -60,6 +60,7 @@ private var _showMap:boolean;
 private var _showCurrentGraph:boolean;
 private var _showInterpreterList:boolean = false;
 private var _localPromptIndex:int = -1;
+private var _localToRemotePromptIndex:int = -1;
 private var _remotePromptIndex:int = -1;
 private var _selectedPromptIndex:int = -1;
 
@@ -87,29 +88,28 @@ function Start(){
 	
 	_labelHeight = areaHeight*0.04;
 	
-    GetComponent(BurnedCaloriesGraph).posX = ScreenX + areaWidth*0.575;       
-	GetComponent(BurnedCaloriesGraph).posY = Screen.height - (ScreenY + areaHeight*0.625);
+    GetComponent(BurnedCaloriesGraph).posX = areaWidth*0.15;       
+	GetComponent(BurnedCaloriesGraph).posY = Screen.height - areaHeight*0.24;
 	
-	GetComponent(BurnedCaloriesGraph).width = areaWidth*0.35;       
-	GetComponent(BurnedCaloriesGraph).height = areaHeight*0.35;
+	GetComponent(BurnedCaloriesGraph).width = areaWidth*0.7;       
+	GetComponent(BurnedCaloriesGraph).height = areaHeight*0.65;
 	
-	GetComponent(CurrentPosInMap).posX = 0;
-	GetComponent(CurrentPosInMap).posY = 0;
-	GetComponent(CurrentPosInMap).mapWidth = areaWidth*0.4;
-	GetComponent(CurrentPosInMap).mapHeight = areaHeight*0.4;
+	GetComponent(CurrentPosInMap).posX = areaWidth*0.15;
+	GetComponent(CurrentPosInMap).posY = areaHeight*0.24;
+	GetComponent(CurrentPosInMap).mapWidth = areaWidth*0.7;
+	GetComponent(CurrentPosInMap).mapHeight = areaHeight*0.65;
 	
-	GetComponent(SummaryGraph).posX = ScreenX + areaWidth*0.125;
-	GetComponent(SummaryGraph).posY = Screen.height - (ScreenY  + areaHeight*0.725);
-	GetComponent(SummaryGraph).height = areaHeight*0.45;
-	GetComponent(SummaryGraph).width = areaWidth*0.425;
+	GetComponent(SummaryGraph).posX = areaWidth*0.15;
+	GetComponent(SummaryGraph).posY = Screen.height - areaWidth*0.24;
+	GetComponent(SummaryGraph).height = areaHeight*0.7;
+	GetComponent(SummaryGraph).width = areaWidth*0.65;
 	GetComponent(SummaryGraph).numYears = yearList.Length;
 
     GetComponent(InfoPolarBear).posX = areaWidth*0.1;
 	GetComponent(InfoPolarBear).posY = areaHeight*0.1;
 	GetComponent(InfoPolarBear).infoWidth = areaWidth*0.8;
 	GetComponent(InfoPolarBear).infoHeight = areaHeight*0.8;
-	
-	//Debug.Log("Positions main screen "+areaWidth*0.5+" " +areaHeight*0.1);
+
 	GetComponent(GameParameters).labelHeight = _labelHeight;
 	GetComponent(GameParameters).posX = areaWidth*0.5;       
 	GetComponent(GameParameters).posY = areaHeight*0.10;
@@ -132,7 +132,7 @@ function Initialize(){
 	_serverReady = false;	
 	_numSwimSteps = _numWalkSteps = _playerNumber = 0;
 	burnedCalories = meters = _displaySeconds = _displayMinutes = 0;
-	_playerName = "Player name ...";
+	_playerName = "name ...";
 	_goalReached = false;
 	_timerReached = false;
 	_initialPos = new Vector2(0.0,0.0);
@@ -142,7 +142,10 @@ function Initialize(){
     topScores = "";
     _remotePromptIndex = -1;
     _localPromptIndex = -1;
+    _localToRemotePromptIndex = -1;
     _getRandomPrompts = false;
+    _showMap = false;
+    _showCurrentGraph = false;
     
 	var  _map : Texture2D = Resources.Load("Images/"+yearList[_currentYear].ToString()+"_Location_Map", typeof(Texture2D));
 	GetComponent(CurrentPosInMap).mapImage = _map;
@@ -214,23 +217,6 @@ function OnGUI () {
 	     DrawViews();
 	     GetComponent(MessageBox).ShowOnGUI();
    }
-	
-/*	if (Event.current.type == EventType.Layout)
-	{
-		_innerController = 1;
-	}
-	
-	if (Event.current.type == EventType.Repaint)
-	{
-		_innerController = 2;
-	}
-	
-	if (_innerController == 2)
-	{
-		_showSummary = _showGraphView;
-		_innerController = 0;
-	}
-	*/
 }
 
 function DrawViews(){
@@ -241,76 +227,125 @@ function DrawViews(){
 	GUILayout.BeginArea(Rect(ScreenX,ScreenY, areaWidth, areaHeight));
   	GUI.DrawTexture (Rect (0, 0, areaWidth, areaHeight), backgroundTexture);
     		
+   
+	// Draw the main view.
+	GUILayout.BeginArea (Rect (areaWidth*0.02, areaHeight*0.22, _labelHeight, _labelHeight));
+	if (GUILayout.Button((serverTest%3).ToString())){	
+		serverTest++;
+	}
+    GUILayout.EndArea();
+    
+	GUILayout.BeginArea (Rect (areaWidth*0.02, areaHeight*0.9, _labelHeight, _labelHeight));
+	
+	GUILayout.Label(_localToRemotePromptIndex.ToString());	
+
+	GUILayout.EndArea();
+	
+	
+   if (!_showMap || !_showCurrentGraph){   
+	    // Show Prompts
+	    // Draw Prompts View
+	    GUILayout.BeginArea(Rect (areaWidth*0.08, areaHeight*0.28, areaWidth*0.4, areaHeight*0.42));
+	    if (_localPromptIndex >=0)
+	        GUILayout.Box(GetComponent(Prompts).prompts[_localPromptIndex]);
+	    else
+	  	    GUILayout.Box(localViewTexture);
+	    if (_selectedPromptIndex >=0 && Event.current.type == EventType.MouseUp && GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
+	    {
+	       _localPromptIndex = _selectedPromptIndex;
+	       GetComponent(DatabaseConnection).AppendDataToUILog('L',1,_localPromptIndex.ToString(),DateTime.Now.ToString());
+	       _selectedPromptIndex = -1;
+	       _localToRemotePromptIndex = -1;
+	    }
+	    if (_localPromptIndex >=0 && Event.current.type == EventType.MouseDown && GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
+		  {
+		   // Debug.Log("logging down "+ GetComponent(Prompts).promptCurrentList[_p]);
+		    _localToRemotePromptIndex = _localPromptIndex;
+		     _selectedPromptIndex = -1;
+		    GetComponent(DatabaseConnection).AppendDataToUILog('B',0,_localToRemotePromptIndex.ToString(),DateTime.Now.ToString());
+		  }
+	    GUILayout.EndArea();
+    }
+    
+    GUILayout.BeginArea(Rect (areaWidth*0.52, areaHeight*0.28, areaWidth*0.4, areaHeight*0.42));
+      if (_remotePromptIndex >=0)
+        GUILayout.Box(GetComponent(Prompts).prompts[_remotePromptIndex]);
+    else
+  	    GUILayout.Box(remoteViewTexture);
+	if ((_selectedPromptIndex >=0 || _localToRemotePromptIndex>=0) && Event.current.type == EventType.MouseUp && GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
+    {
+        if (_selectedPromptIndex >=0)
+       		 _remotePromptIndex = _selectedPromptIndex;
+        else
+        	_remotePromptIndex = _localToRemotePromptIndex;
+        	
+         GetComponent(DatabaseConnection).AppendDataToUILog('R',1,_remotePromptIndex.ToString(),DateTime.Now.ToString());
+       _selectedPromptIndex = -1;
+       _localToRemotePromptIndex = -1;
+    }
+    GUILayout.EndArea();
+  
+   if (serverTest%3 == 1)
+   {
+   
+        if ((_displaySeconds == 30 || _displaySeconds == 0) && !_getRandomPrompts)
+   		{
+   		    _getRandomPrompts = true;
+   			GetComponent(Prompts).GetPrompts(1);
+   		}
+   		else if (_displaySeconds != 30 && _displaySeconds != 0 )
+   		{
+   	     	_getRandomPrompts = false;
+   		}
+   		
+        GUILayout.BeginArea (Rect (areaWidth*0.05, areaHeight*0.8, _labelHeight, _labelHeight*3));
+   		if (GUILayout.Button("\n<\n")){
+   		    //Debug.Log("Past");
+		    GetComponent(Prompts).GetPrompts(-1);
+		    GetComponent(DatabaseConnection).AppendDataToUILog('B',0,"<",DateTime.Now.ToString());
+	    }
+	    GUILayout.EndArea();  
+	    GUILayout.BeginArea (Rect (areaWidth*0.9, areaHeight*0.8, _labelHeight, _labelHeight*3));
+	    if (GUILayout.Button("\n>\n")){
+	        // Debug.Log("Future");
+		     GetComponent(Prompts).GetPrompts(1);
+		     GetComponent(DatabaseConnection).AppendDataToUILog('B',0,">",DateTime.Now.ToString());
+	    }
+	    GUILayout.EndArea(); 
+	
+   }
+   else if (serverTest%3 == 0)
+   {
+   		if ((_displaySeconds == 30 || _displaySeconds == 0) && !_getRandomPrompts)
+   		{
+   		    _getRandomPrompts = true;
+   			GetComponent(Prompts).GetPrompts(0);
+   		}
+   		else if (_displaySeconds != 30 && _displaySeconds != 0 )
+   		{
+   	     	_getRandomPrompts = false;
+   		}
+   }
+   
+	///Show prompts - resources
+  for (var _p:int = 0; _p < promptsXScreen; _p++){
+    GUILayout.BeginArea (Rect (areaWidth*0.16*_p+areaWidth*0.1, areaHeight*0.78, areaWidth*0.15, areaHeight*0.15));
+	 
+	  GUILayout.Box(GetComponent(Prompts).prompts[GetComponent(Prompts).promptCurrentList[_p]]);
+	  if (Event.current.type == EventType.MouseDown && GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
+	  {
+	   // Debug.Log("logging down "+ GetComponent(Prompts).promptCurrentList[_p]);
+	    _selectedPromptIndex = GetComponent(Prompts).promptCurrentList[_p];
+	    _localToRemotePromptIndex = -1;
+	    GetComponent(DatabaseConnection).AppendDataToUILog('P',0,_selectedPromptIndex.ToString(),DateTime.Now.ToString());
+	  }
+	GUILayout.EndArea();	
+  }		
+			
   	if (!_showSummary)
   	{  
   	
-  	        // Draw the main view.
-			GUILayout.BeginArea (Rect (areaWidth*0.02, areaHeight*0.22, _labelHeight, _labelHeight));
-			if (GUILayout.Button((serverTest%3).ToString())){	
-				serverTest++;
-			}
-		    GUILayout.EndArea();
-		    
-		    GUILayout.BeginArea(Rect (areaWidth*0.08, areaHeight*0.28, areaWidth*0.4, areaHeight*0.42));
-		    if (_localPromptIndex >=0)
-		        GUILayout.Box(GetComponent(Prompts).prompts[_localPromptIndex]);
-		    else
-		  	    GUILayout.Box(localViewTexture);
-		    if (_selectedPromptIndex >=0 && Event.current.type == EventType.MouseUp && GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
-		    {
-		       Debug.Log("Local view"); 
-		       _localPromptIndex = _selectedPromptIndex;
-		       GetComponent(DatabaseConnection).AppendDataToUILog('L',1,_localPromptIndex.ToString(),DateTime.Now.ToString());
-		       _selectedPromptIndex = -1;
-		    }
-		    GUILayout.EndArea();
-		    
-		    GUILayout.BeginArea(Rect (areaWidth*0.52, areaHeight*0.28, areaWidth*0.4, areaHeight*0.42));
-		      if (_remotePromptIndex >=0)
-		        GUILayout.Box(GetComponent(Prompts).prompts[_remotePromptIndex]);
-		    else
-		  	    GUILayout.Box(remoteViewTexture);
- 			if (_selectedPromptIndex >=0 && Event.current.type == EventType.MouseUp && GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
-		    {
-		       Debug.Log("Remote view");
-		        _remotePromptIndex = _selectedPromptIndex;
-		         GetComponent(DatabaseConnection).AppendDataToUILog('R',1,_remotePromptIndex.ToString(),DateTime.Now.ToString());
-		       _selectedPromptIndex = -1;
-		    }
-		    GUILayout.EndArea();
-		    
-		    if (isPlaying){
-		       // show map
-			    GUILayout.BeginArea (Rect (areaWidth*0.1, areaHeight*0.12, _labelHeight*7, _labelHeight));
-				if (_showMap){
-				    if (GUILayout.Button("Hide Bird's eye view")){	
-						_showMap = false;
-						}
-				}
-				else{
-				 if (GUILayout.Button("Show Bird's eye view")){	
-						_showMap = true;
-						}
-				}
-				   GUILayout.EndArea();
-		    }    
-		  
-		 
-		    if (_showMap && isPlaying){
-				// Area containing the year slider and selection
-				//GUILayout.BeginArea (Rect (areaWidth*0.1, areaHeight*0.22, areaWidth*0.4, _labelHeight));
-				//GUILayout.Label(yearList[_currentYear].ToString());	
-				//GUILayout.EndArea();		
-				// Area rendering the map and it's labels
-				GUILayout.BeginArea (Rect (areaWidth*0.08,areaHeight*0.3,areaWidth*0.4,areaHeight*0.42));
-				GetComponent(CurrentPosInMap).SetCurrentYear(_currentYear);  //Game Parameters
-				GetComponent(CurrentPosInMap).DrawMap();
-				GUILayout.EndArea();
-			}
-			if (_showCurrentGraph && isPlaying){
-				GetComponent(BurnedCaloriesGraph).DrawCaloriesGraph();
-			}
-			
+  	     	
 			//Hide until later
 		    /*	GUILayout.BeginArea (Rect (areaWidth*0.8, areaHeight*0.85, areaWidth*0.15, _labelHeight));
 		    if (GUILayout.Button("Show scores")){
@@ -435,67 +470,50 @@ function DrawViews(){
 			     Initialize();    
 			   }
 			   GUILayout.EndArea();  
-			   
-			   if (serverTest%3 == 1)
-			   {
-			   
-			        if ((_displaySeconds == 30 || _displaySeconds == 0) && !_getRandomPrompts)
-			   		{
-			   		    _getRandomPrompts = true;
-			   			GetComponent(Prompts).GetPrompts(1);
-			   		}
-			   		else if (_displaySeconds != 30 && _displaySeconds != 0 )
-			   		{
-			   	     	_getRandomPrompts = false;
-			   		}
-			   		
-			        GUILayout.BeginArea (Rect (areaWidth*0.05, areaHeight*0.74, _labelHeight, _labelHeight*3));
-			   		if (GUILayout.Button("\n<\n")){
-			   		    //Debug.Log("Past");
-					    GetComponent(Prompts).GetPrompts(-1);
-					    GetComponent(DatabaseConnection).AppendDataToUILog('B',0,"<",DateTime.Now.ToString());
-				    }
-				    GUILayout.EndArea();  
-				    GUILayout.BeginArea (Rect (areaWidth*0.9, areaHeight*0.74, _labelHeight, _labelHeight*3));
-				    if (GUILayout.Button("\n>\n")){
-				        // Debug.Log("Future");
-					     GetComponent(Prompts).GetPrompts(1);
-					     GetComponent(DatabaseConnection).AppendDataToUILog('B',0,">",DateTime.Now.ToString());
-				    }
-				    GUILayout.EndArea(); 
+				   
+				// show map Button
+			    GUILayout.BeginArea (Rect (areaWidth*0.1, areaHeight*0.12, _labelHeight*7, _labelHeight));
+				if (_showMap){
+				    if (GUILayout.Button("Hide Bird's eye view")){	
+						_showMap = false;
+						}
+				}
+				else{
+				 if (GUILayout.Button("Show Bird's eye view")){	
+						_showMap = true;
+						_showCurrentGraph = false;
+						}
+				}
+				GUILayout.EndArea();
 				
-			   }
-			   else if (serverTest%3 == 0)
-			   {
-			   		if ((_displaySeconds == 30 || _displaySeconds == 0) && !_getRandomPrompts)
-			   		{
-			   		    _getRandomPrompts = true;
-			   			GetComponent(Prompts).GetPrompts(0);
-			   		}
-			   		else if (_displaySeconds != 30 && _displaySeconds != 0 )
-			   		{
-			   	     	_getRandomPrompts = false;
-			   		}
-			   }
-			   
-				///Show prompts
-			  for (var _p:int = 0; _p < promptsXScreen; _p++){
-			    GUILayout.BeginArea (Rect (areaWidth*0.16*_p+areaWidth*0.1, areaHeight*0.72, areaWidth*0.15, areaHeight*0.15));
-				 
-				  GUILayout.Box(GetComponent(Prompts).prompts[GetComponent(Prompts).promptCurrentList[_p]]);
-				  if (Event.current.type == EventType.MouseDown && GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
-				  {
-				   // Debug.Log("logging down "+ GetComponent(Prompts).promptCurrentList[_p]);
-				    _selectedPromptIndex = GetComponent(Prompts).promptCurrentList[_p];
-				    GetComponent(DatabaseConnection).AppendDataToUILog('P',0,_selectedPromptIndex.ToString(),DateTime.Now.ToString());
-				  }
-				GUILayout.EndArea();	
-			  }
-			  
-						
-			}
-			
-				    
+				// Show current Calories graph Button
+				GUILayout.BeginArea (Rect (areaWidth*0.5, areaHeight*0.12, _labelHeight*9, _labelHeight));
+				if (_showCurrentGraph){
+				    if (GUILayout.Button("Hide Current Calories Graph")){	
+						_showCurrentGraph = false;
+						}
+				}
+				else{
+				 if (GUILayout.Button("Show Current Calories Graph")){	
+						_showCurrentGraph = true;
+						_showMap = false;
+						}
+				}
+				GUILayout.EndArea();
+				      
+				      
+				if (_showMap){	
+					// Area rendering the map and it's labels
+				//	GUILayout.BeginArea (Rect (GetComponent(CurrentPosInMap).posX,GetComponent(CurrentPosInMap).posY,GetComponent(CurrentPosInMap).mapWidth,GetComponent(CurrentPosInMap).mapHeight));
+					GetComponent(CurrentPosInMap).SetCurrentYear(_currentYear);  //Game Parameters
+					GetComponent(CurrentPosInMap).DrawMap();
+				//	GUILayout.EndArea();
+				}
+				if (_showCurrentGraph){
+					GetComponent(BurnedCaloriesGraph).DrawCaloriesGraph();
+				}
+		    }  
+		        
 		  /*  GUILayout.BeginArea(Rect (areaWidth*0.1, areaHeight*0.95, areaWidth*0.3, _labelHeight));
 		    _showInfo = GUILayout.Toggle(_showInfo, "Show polar bear info");
 		    GetComponent(InfoPolarBear).ShowInfo(_showInfo);
@@ -563,7 +581,13 @@ function DrawViews(){
   
 	///  Game will stop when reach timer    
     if ((isPlaying && _displayMinutes == gameDurationList[_durationGame]) || _goalReached ){
-       networkView.RPC ("FinishGame", RPCMode.Others,burnedCalories);  
+    	if (_goalReached){
+    	    networkView.RPC ("FinishGame", RPCMode.Others,burnedCalories);  
+    	}
+    	else {
+    	    networkView.RPC ("StopGameTimeOut", RPCMode.Others,burnedCalories);  
+    	}
+   
        _timerReached = true; 
        if (!_savedLog){
  	    GetComponent(AppendToLog).AppendDataToLog();
@@ -734,6 +758,11 @@ function FinishGame (_calories: float ,  info : NetworkMessageInfo)
 }
 @RPC
 function StopGame (_calories: float ,  info : NetworkMessageInfo)
+{
+	 //Called on the Clients
+}
+@RPC
+function StopGameTimeOut (_calories: float ,  info : NetworkMessageInfo)
 {
 	 //Called on the Clients
 }
