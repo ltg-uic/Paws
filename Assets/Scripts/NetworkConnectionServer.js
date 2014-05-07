@@ -89,18 +89,17 @@ function Start(){
 	_labelHeight = areaHeight*0.04;
 	
     GetComponent(BurnedCaloriesGraph).posX = areaWidth*0.15;       
-	GetComponent(BurnedCaloriesGraph).posY = Screen.height - areaHeight*0.24;
-	
-	GetComponent(BurnedCaloriesGraph).width = areaWidth*0.7;       
-	GetComponent(BurnedCaloriesGraph).height = areaHeight*0.65;
+	GetComponent(BurnedCaloriesGraph).posY = areaHeight*0.15;
+	GetComponent(BurnedCaloriesGraph).width = areaWidth*0.65;       
+	GetComponent(BurnedCaloriesGraph).height = areaHeight*0.50;
 	
 	GetComponent(CurrentPosInMap).posX = areaWidth*0.15;
-	GetComponent(CurrentPosInMap).posY = areaHeight*0.24;
+	GetComponent(CurrentPosInMap).posY = areaHeight*0.27;
 	GetComponent(CurrentPosInMap).mapWidth = areaWidth*0.7;
 	GetComponent(CurrentPosInMap).mapHeight = areaHeight*0.65;
 	
 	GetComponent(SummaryGraph).posX = areaWidth*0.15;
-	GetComponent(SummaryGraph).posY = Screen.height - areaWidth*0.24;
+	GetComponent(SummaryGraph).posY = areaWidth*0.24;
 	GetComponent(SummaryGraph).height = areaHeight*0.7;
 	GetComponent(SummaryGraph).width = areaWidth*0.65;
 	GetComponent(SummaryGraph).numYears = yearList.Length;
@@ -161,8 +160,9 @@ function StartGame(){
 	_durationGame = GetComponent(GameParameters).getDurationGameIndex();
 	_startTime = Time.realtimeSinceStartup;
 	GetComponent(SummaryGraph).SetCurrentYear(_currentYear);
+	GetComponent(BurnedCaloriesGraph).maxXAxisValue = _durationGame * 60;
     isPlaying = true;
-    networkView.RPC ("LoadLevelInClient", RPCMode.Others, yearList[_currentYear].ToString()+":"+_yearAgoList[_currentYear].ToString());  
+    networkView.RPC ("LoadLevelInClient", RPCMode.Others, _currentYear.ToString()+":"+_yearAgoList[_currentYear].ToString()+":"+_durationGame.ToString());  
 }
 
 function OnConnectedToServer () {
@@ -234,15 +234,9 @@ function DrawViews(){
 		serverTest++;
 	}
     GUILayout.EndArea();
-    
-	GUILayout.BeginArea (Rect (areaWidth*0.02, areaHeight*0.9, _labelHeight, _labelHeight));
+ 
 	
-	GUILayout.Label(_localToRemotePromptIndex.ToString());	
-
-	GUILayout.EndArea();
-	
-	
-   if (!_showMap || !_showCurrentGraph){   
+   if (!_showMap && !_showCurrentGraph){   
 	    // Show Prompts
 	    // Draw Prompts View
 	    GUILayout.BeginArea(Rect (areaWidth*0.08, areaHeight*0.28, areaWidth*0.4, areaHeight*0.42));
@@ -265,26 +259,44 @@ function DrawViews(){
 		    GetComponent(DatabaseConnection).AppendDataToUILog('B',0,_localToRemotePromptIndex.ToString(),DateTime.Now.ToString());
 		  }
 	    GUILayout.EndArea();
-    }
-    
-    GUILayout.BeginArea(Rect (areaWidth*0.52, areaHeight*0.28, areaWidth*0.4, areaHeight*0.42));
-      if (_remotePromptIndex >=0)
-        GUILayout.Box(GetComponent(Prompts).prompts[_remotePromptIndex]);
-    else
-  	    GUILayout.Box(remoteViewTexture);
-	if ((_selectedPromptIndex >=0 || _localToRemotePromptIndex>=0) && Event.current.type == EventType.MouseUp && GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
-    {
-        if (_selectedPromptIndex >=0)
-       		 _remotePromptIndex = _selectedPromptIndex;
-        else
-        	_remotePromptIndex = _localToRemotePromptIndex;
-        	
-         GetComponent(DatabaseConnection).AppendDataToUILog('R',1,_remotePromptIndex.ToString(),DateTime.Now.ToString());
-       _selectedPromptIndex = -1;
-       _localToRemotePromptIndex = -1;
-    }
-    GUILayout.EndArea();
+	    GUILayout.BeginArea (Rect (areaWidth*0.02, areaHeight*0.9, _labelHeight*20, _labelHeight));
+     	GUILayout.Label("Draw prompts");
+	    GUILayout.EndArea();
+ 
+	    GUILayout.BeginArea(Rect (areaWidth*0.52, areaHeight*0.28, areaWidth*0.4, areaHeight*0.42));
+	      if (_remotePromptIndex >=0)
+	        GUILayout.Box(GetComponent(Prompts).prompts[_remotePromptIndex]);
+	    else
+	  	    GUILayout.Box(remoteViewTexture);
+		if ((_selectedPromptIndex >=0 || _localToRemotePromptIndex>=0) && Event.current.type == EventType.MouseUp && GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
+	    {
+	        if (_selectedPromptIndex >=0)
+	       		 _remotePromptIndex = _selectedPromptIndex;
+	        else
+	        	_remotePromptIndex = _localToRemotePromptIndex;
+	        	
+	         GetComponent(DatabaseConnection).AppendDataToUILog('R',1,_remotePromptIndex.ToString(),DateTime.Now.ToString());
+	         _selectedPromptIndex = -1;
+	         _localToRemotePromptIndex = -1;
+	    }
+	    GUILayout.EndArea();
+	    
+	    	///Show prompts - resources
+		  for (var _p:int = 0; _p < promptsXScreen; _p++){
+		    GUILayout.BeginArea (Rect (areaWidth*0.16*_p+areaWidth*0.1, areaHeight*0.78, areaWidth*0.15, areaHeight*0.15));
+			 
+			  GUILayout.Box(GetComponent(Prompts).prompts[GetComponent(Prompts).promptCurrentList[_p]]);
+			  if (Event.current.type == EventType.MouseDown && GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
+			  {
+			   // Debug.Log("logging down "+ GetComponent(Prompts).promptCurrentList[_p]);
+			    _selectedPromptIndex = GetComponent(Prompts).promptCurrentList[_p];
+			    _localToRemotePromptIndex = -1;
+			    GetComponent(DatabaseConnection).AppendDataToUILog('P',0,_selectedPromptIndex.ToString(),DateTime.Now.ToString());
+			  }
+			GUILayout.EndArea();	
+		  }	
   
+   }
    if (serverTest%3 == 1)
    {
    
@@ -325,22 +337,7 @@ function DrawViews(){
    		{
    	     	_getRandomPrompts = false;
    		}
-   }
-   
-	///Show prompts - resources
-  for (var _p:int = 0; _p < promptsXScreen; _p++){
-    GUILayout.BeginArea (Rect (areaWidth*0.16*_p+areaWidth*0.1, areaHeight*0.78, areaWidth*0.15, areaHeight*0.15));
-	 
-	  GUILayout.Box(GetComponent(Prompts).prompts[GetComponent(Prompts).promptCurrentList[_p]]);
-	  if (Event.current.type == EventType.MouseDown && GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
-	  {
-	   // Debug.Log("logging down "+ GetComponent(Prompts).promptCurrentList[_p]);
-	    _selectedPromptIndex = GetComponent(Prompts).promptCurrentList[_p];
-	    _localToRemotePromptIndex = -1;
-	    GetComponent(DatabaseConnection).AppendDataToUILog('P',0,_selectedPromptIndex.ToString(),DateTime.Now.ToString());
-	  }
-	GUILayout.EndArea();	
-  }		
+   }	
 			
   	if (!_showSummary)
   	{  
@@ -487,7 +484,7 @@ function DrawViews(){
 				GUILayout.EndArea();
 				
 				// Show current Calories graph Button
-				GUILayout.BeginArea (Rect (areaWidth*0.5, areaHeight*0.12, _labelHeight*9, _labelHeight));
+				GUILayout.BeginArea (Rect (areaWidth*0.5, areaHeight*0.12, _labelHeight*10, _labelHeight));
 				if (_showCurrentGraph){
 				    if (GUILayout.Button("Hide Current Calories Graph")){	
 						_showCurrentGraph = false;
@@ -511,6 +508,10 @@ function DrawViews(){
 				}
 				if (_showCurrentGraph){
 					GetComponent(BurnedCaloriesGraph).DrawCaloriesGraph();
+					//GetComponent(BurnedCaloriesGraph).PrintBurnedCaloriesGraph();
+				}
+				else{
+					GetComponent(BurnedCaloriesGraph).HideBurnedCaloriesGraph();
 				}
 		    }  
 		        

@@ -11,18 +11,18 @@ private var _lineLine: VectorLine;
 
 private var _linePoints: Vector2[];
 private var _axesPoints : Vector2[];
-private var _spaceXLabel:float = 14.0;
+private var _spaceXLabel:float;
 
 var posX: int;
 var posY: int;
 var width: int;
 var height: int;
-var maxBurnedCalories: float = 300;
-var maxXAxisValue:float = 500;
+var maxBurnedCalories: float;
+var maxXAxisValue:float;
 var mySkin: GUISkin;
 var typeGraph: int; // 0 time, 1 distance
-var xInterval: int = 20;
-var noOfPoints: int = 25;
+var xInterval: int;
+var noOfPoints: int;
 var showGraph: boolean = false;
 
 private var _calories: float;
@@ -140,6 +140,14 @@ function SetLines () {
 }
 
 function PrintSummaryGraph() {
+   if (_lineLine!=null && _axesLine!= null){
+	 Vector.Active(_lineLine,false);
+	 Vector.Active(_axesLine,false);
+    }
+	 showGraph = false;
+}
+
+function HideBurnedCaloriesGraph() {
    if (_lineLine!=null && _axesLine!= null){
 	 Vector.Active(_lineLine,false);
 	 Vector.Active(_axesLine,false);

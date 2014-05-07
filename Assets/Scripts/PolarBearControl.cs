@@ -122,10 +122,7 @@ public class PolarBearControl : MonoBehaviour {
 		Initialize();
 
 	}
-	/*
-	void Awake(){
-		DontDestroyOnLoad(GameObject.Find("Sensor"));
-	}*/
+
 	void Initialize(){
 	    _moveDirection = Vector3.zero;
 		_getDir = new bool[2];
@@ -173,14 +170,14 @@ public class PolarBearControl : MonoBehaviour {
 		
 		
 		if (!_gameOver){
-			if (!Application.loadedLevelName.Equals("StudyScene")){
-				if (Vector3.Distance(_controller.transform.position,GameObject.FindWithTag("Goal").transform.position) < 4)
-				{
-					GameObject.FindWithTag("Goal").audio.mute = true;
-					SendMessage("GoalReached");
-				    networkView.RPC ("ReceivedFinishedLevel", RPCMode.Server, "");
-				}
+			Debug.Log("No game over");
+			if (Vector3.Distance(_controller.transform.position,GameObject.FindWithTag("Goal").transform.position) < 4)
+			{
+				GameObject.FindWithTag("Goal").audio.mute = true;
+				SendMessage("GoalReached");
+			    networkView.RPC ("ReceivedFinishedLevel", RPCMode.Server, "");
 			}
+	
 					
 		    BearStatus bs = polarBear.GetComponent<BearStatus>();
 		    inWater = bs.inWater;
@@ -215,12 +212,12 @@ public class PolarBearControl : MonoBehaviour {
 				
 				if (!inWater){
 					if (_controller.isGrounded){
-						//Debug.Log("Test - Esta en tierra");
+						Debug.Log("Test - Esta en tierra");
 						if (Input.GetKeyDown(KeyCode.UpArrow)){
-						//	Debug.Log("Test - Caminando...");
+							Debug.Log("Test - Caminando...");
 						    
 							
-							//MoveForward("Walk");
+							MoveForward("Walk");
 							
 							_moveDirection = new Vector3(0, 0, 1);
 							_moveDirection = transform.TransformDirection(_moveDirection);
@@ -259,11 +256,11 @@ public class PolarBearControl : MonoBehaviour {
 
 				}
 				else if (inWater){
-					//Debug.Log("Test - Esta en agua");
+					Debug.Log("Test - Esta en agua");
 			
 					  if (Input.GetKeyDown(KeyCode.UpArrow)){
-						 //  Debug.Log("Nadando");
-	   					    //MoveForward("Swim");
+						   Debug.Log("Nadando");
+	   					    MoveForward("Swim");
 	   					    
 	   					    bs.setAudioClip("inWater");
 	   					    _moveDirection = new Vector3(0, 0, 1);
@@ -625,41 +622,43 @@ public class PolarBearControl : MonoBehaviour {
 	
 	public void LogMovementData(String _str){
 	
-		
-		var HipCenter = GameObject.Find("Torso");
-		var FootLeft = GameObject.Find("LeftFoot");
-		var FootRight = GameObject.Find("RightFoot");
-		var KneeLeft = GameObject.Find("LeftKnee");
-		var KneeRight = GameObject.Find("RightKnee");
-		var Head = GameObject.Find ("Head");
-		var HandLeft = GameObject.Find ("LeftHand");
-		var HandRight = GameObject.Find ("RightHand");
-		
-		Vector3 positionLF = FootLeft.GetComponent<UnityEngine.Transform>().position;
-		Vector3 positionHC = HipCenter.GetComponent<UnityEngine.Transform>().position;
-		Vector3 positionRF = FootRight.GetComponent<UnityEngine.Transform>().position;
-		Vector3 positionKL = KneeLeft.GetComponent<UnityEngine.Transform>().position;
-		Vector3 positionKR = KneeRight.GetComponent<UnityEngine.Transform>().position;
-		Vector3 positionH = Head.GetComponent<UnityEngine.Transform>().position;
-		Vector3 positionHL = HandLeft.GetComponent<UnityEngine.Transform>().position;
-		Vector3 positionHR = HandRight.GetComponent<UnityEngine.Transform>().position;
-			
-		logFile.WriteLine(_str+"\t"+positionH.x + "\t" + positionH.y + "\t" + positionH.z  + "\t" + 
-							positionHC.x + "\t" + positionHC.y + "\t" + positionHC.z + "\t" + 
-							positionHL.x + "\t" + positionHL.y + "\t" + positionHL.z + "\t" + 
-							positionHR.x + "\t" + positionHR.y + "\t" + positionHR.z + "\t" + 
-							positionKL.x + "\t" + positionKL.y + "\t" + positionKL.z + "\t" + 
-							positionKR.x + "\t" + positionKR.y + "\t" + positionKR.z + "\t" + 
-							positionLF.x + "\t" + positionLF.y + "\t" + positionLF.z + "\t" +
-							positionRF.x + "\t" + positionRF.y + "\t" + positionRF.z + "\t" );
-	 /*  Debug.Log("Writing at log..."+positionH.x + "\t" + positionH.y + "\t" + positionH.z  + "\t" + 
-							positionHC.x + "\t" + positionHC.y + "\t" + positionHC.z + "\t" + 
-							positionHL.x + "\t" + positionHL.y + "\t" + positionHL.z + "\t" + 
-							positionHR.x + "\t" + positionHR.y + "\t" + positionHR.z + "\t" + 
-							positionKL.x + "\t" + positionKL.y + "\t" + positionKL.z + "\t" + 
-							positionKR.x + "\t" + positionKR.y + "\t" + positionKR.z + "\t" + 
-							positionLF.x + "\t" + positionLF.y + "\t" + positionLF.z + "\t" +
-							positionRF.x + "\t" + positionRF.y + "\t" + positionRF.z + "\t");*/
+		if (_firstStep && !_gameOver) {
+
+			var HipCenter = GameObject.Find ("Torso");
+			var FootLeft = GameObject.Find ("LeftFoot");
+			var FootRight = GameObject.Find ("RightFoot");
+			var KneeLeft = GameObject.Find ("LeftKnee");
+			var KneeRight = GameObject.Find ("RightKnee");
+			var Head = GameObject.Find ("Head");
+			var HandLeft = GameObject.Find ("LeftHand");
+			var HandRight = GameObject.Find ("RightHand");
+
+			Vector3 positionLF = FootLeft.GetComponent<UnityEngine.Transform> ().position;
+			Vector3 positionHC = HipCenter.GetComponent<UnityEngine.Transform> ().position;
+			Vector3 positionRF = FootRight.GetComponent<UnityEngine.Transform> ().position;
+			Vector3 positionKL = KneeLeft.GetComponent<UnityEngine.Transform> ().position;
+			Vector3 positionKR = KneeRight.GetComponent<UnityEngine.Transform> ().position;
+			Vector3 positionH = Head.GetComponent<UnityEngine.Transform> ().position;
+			Vector3 positionHL = HandLeft.GetComponent<UnityEngine.Transform> ().position;
+			Vector3 positionHR = HandRight.GetComponent<UnityEngine.Transform> ().position;
+
+			logFile.WriteLine (_str + "\t" + positionH.x + "\t" + positionH.y + "\t" + positionH.z + "\t" + 
+					positionHC.x + "\t" + positionHC.y + "\t" + positionHC.z + "\t" + 
+					positionHL.x + "\t" + positionHL.y + "\t" + positionHL.z + "\t" + 
+					positionHR.x + "\t" + positionHR.y + "\t" + positionHR.z + "\t" + 
+					positionKL.x + "\t" + positionKL.y + "\t" + positionKL.z + "\t" + 
+					positionKR.x + "\t" + positionKR.y + "\t" + positionKR.z + "\t" + 
+					positionLF.x + "\t" + positionLF.y + "\t" + positionLF.z + "\t" +
+					positionRF.x + "\t" + positionRF.y + "\t" + positionRF.z + "\t");
+			/*  Debug.Log("Writing at log..."+positionH.x + "\t" + positionH.y + "\t" + positionH.z  + "\t" + 
+				positionHC.x + "\t" + positionHC.y + "\t" + positionHC.z + "\t" + 
+				positionHL.x + "\t" + positionHL.y + "\t" + positionHL.z + "\t" + 
+				positionHR.x + "\t" + positionHR.y + "\t" + positionHR.z + "\t" + 
+				positionKL.x + "\t" + positionKL.y + "\t" + positionKL.z + "\t" + 
+				positionKR.x + "\t" + positionKR.y + "\t" + positionKR.z + "\t" + 
+				positionLF.x + "\t" + positionLF.y + "\t" + positionLF.z + "\t" +
+				positionRF.x + "\t" + positionRF.y + "\t" + positionRF.z + "\t");*/
+		}
 	}
 	
 	private void MoveForward(string _str){
@@ -668,27 +667,24 @@ public class PolarBearControl : MonoBehaviour {
 			else
 			    NumSwimSteps++;
 		
-		if (!Application.loadedLevelName.Equals("StudyScene")){
-			string msgToSend = "";
-			if (!_firstStep){
-				SendMessage("SetCurrentYear",int.Parse(Application.loadedLevelName));
-				_firstStep = true;
-			    Terrain terrain = Terrain.activeTerrain;
-	    		 msgToSend = terrain.terrainData.size.x.ToString() + ":" 
-	                            + terrain.terrainData.size.z.ToString() + ":"
-	                            + _controller.transform.position.x.ToString()+ ":"
-	                            + _controller.transform.position.z.ToString()+ ":"
-	                            + GameObject.FindWithTag("Goal").transform.position.x.ToString()+ ":"
-	                            + GameObject.FindWithTag("Goal").transform.position.z.ToString();
-	    
-	    
-	  		    networkView.RPC ("SetGoalBearInMap", RPCMode.Server, msgToSend);
-			
-			}
-			SendMessage("SetTrigger",_controller.transform.position.z);		
-		    msgToSend = NumWalkSteps.ToString() + ":" + NumSwimSteps.ToString()+":"+ _controller.transform.position.x.ToString()+":"+_controller.transform.position.z.ToString();
-		    networkView.RPC ("ReceivedMovementInput", RPCMode.Server, msgToSend);
+		string msgToSend = "";
+		if (!_firstStep){
+			_firstStep = true;
+		    Terrain terrain = Terrain.activeTerrain;
+    		 msgToSend = terrain.terrainData.size.x.ToString() + ":" 
+                            + terrain.terrainData.size.z.ToString() + ":"
+                            + _controller.transform.position.x.ToString()+ ":"
+                            + _controller.transform.position.z.ToString()+ ":"
+                            + GameObject.FindWithTag("Goal").transform.position.x.ToString()+ ":"
+                            + GameObject.FindWithTag("Goal").transform.position.z.ToString();
+    
+    
+  		    networkView.RPC ("SetGoalBearInMap", RPCMode.Server, msgToSend);
+		
 		}
+		//SendMessage("SetTrigger",_controller.transform.position.z);		
+	    msgToSend = NumWalkSteps.ToString() + ":" + NumSwimSteps.ToString()+":"+ _controller.transform.position.x.ToString()+":"+_controller.transform.position.z.ToString();
+	    networkView.RPC ("ReceivedMovementInput", RPCMode.Server, msgToSend);
 	}
 
    private void SensingLeftPaw(){

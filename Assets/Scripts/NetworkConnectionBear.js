@@ -6,11 +6,15 @@ private var server: boolean = false;
 
 var NumWalkSteps:int;
 var NumSwimSteps:int;
-
+var gameDuration:int;
 var playerNumber:int;
+
+var yearList : int[] = [1975,2010,2045];
+
 private var currentYear: String;
 private var yearsAgo: String;
 private var gameStarted: boolean = false;
+
 
 function Start(){
 	LoadIPServer();	
@@ -129,6 +133,7 @@ function LoadLevelInClient (_level: String ,  info : NetworkMessageInfo)
 		
 	currentYear = values[0];
 	yearsAgo = values[1];
+	gameDuration = parseInt(values[2]);
 	
 	 //Called on the Clients only
     Debug.Log("Load level "+ currentYear);  
