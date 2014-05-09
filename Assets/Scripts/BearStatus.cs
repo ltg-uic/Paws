@@ -29,7 +29,7 @@ public class BearStatus : MonoBehaviour {
 		 if (other.CompareTag("Water")){
 			     inWater = true;
 			if(transform.position.y <= normalWaterHeight + 0.275f){
-		        SendMessage("InsideWater");
+		       SendMessage("InsideWater");
 		    }
 			touchingWater = false;
 	    }
@@ -41,7 +41,7 @@ public class BearStatus : MonoBehaviour {
 			
 		if(transform.position.y <= normalWaterHeight + 0.275f  && !inWater){
 			inWater = true;
-		    SendMessage("InsideWater");
+		   SendMessage("InsideWater");
 			touchingWater = false;	
 		}else if(transform.position.y > normalWaterHeight + 0.275f   && inWater){
 			SendMessage("OutOfWater");

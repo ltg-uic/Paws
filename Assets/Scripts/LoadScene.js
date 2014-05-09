@@ -43,11 +43,24 @@ function  LoadYear(year :String){
 	 var polarBear:GameObject = GameObject.Find("PolarBear(Clone)");
      var water:GameObject = GameObject.FindGameObjectWithTag("Water");
      var seal:GameObject = GameObject.FindGameObjectWithTag("Goal");
+     var cave:GameObject = GameObject.Find("cave");
+     
  	 print("LoadScene::LoadYear "+_year);
  	 water.transform.position = new Vector3(842+(parseInt(_year)*2000),10.25,785);
- 	 seal.transform.position = new Vector3(903+(parseInt(_year)*2000),10.91528,842.7151);
- 	 polarBear.transform.position = Vector3(_originalPosition.x+(parseInt(_year)*2000),_originalPosition.y,_originalPosition.z);
-	 
+ 	 seal.transform.position = new Vector3(903+(parseInt(_year)*2000),11.177,843);
+ 	 cave.transform.position = new Vector3(902,10.68,842.63);
+ 	 if (GetComponent(NetworkConnectionBear).gameDuration == 0){
+ 	 	polarBear.transform.position = Vector3(_originalPosition.x+(parseInt(_year)*2000),_originalPosition.y,710);
+ 	 }
+ 	 else if (GetComponent(NetworkConnectionBear).gameDuration == 1){
+ 	 	polarBear.transform.position = Vector3(_originalPosition.x+(parseInt(_year)*2000),_originalPosition.y,620);
+ 	 }
+ 	 else{
+ 	 	seal.transform.position = new Vector3(903.33+(parseInt(_year)*2000),10.91528,942.7151);
+ 	 	cave.transform.position = new Vector3(902,10.68,941.63);
+ 	 	polarBear.transform.position = Vector3(_originalPosition.x+(parseInt(_year)*2000),_originalPosition.y,600);
+ 	 }
+     SendMessage("SetSpeed",(GetComponent(NetworkConnectionBear).gameDuration == 0)?14:7);
 	 startGame = true;
 	 yield WaitForSeconds(3.0);
 	 startGame = false;

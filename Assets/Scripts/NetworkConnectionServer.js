@@ -260,7 +260,7 @@ function DrawViews(){
 		  }
 	    GUILayout.EndArea();
 	    GUILayout.BeginArea (Rect (areaWidth*0.02, areaHeight*0.9, _labelHeight*20, _labelHeight));
-     	GUILayout.Label("Draw prompts");
+     	GUILayout.Label(GetComponent(BurnedCaloriesGraph).maxXAxisValue.ToString());
 	    GUILayout.EndArea();
  
 	    GUILayout.BeginArea(Rect (areaWidth*0.52, areaHeight*0.28, areaWidth*0.4, areaHeight*0.42));

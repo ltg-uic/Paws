@@ -170,7 +170,7 @@ public class PolarBearControl : MonoBehaviour {
 		
 		
 		if (!_gameOver){
-			Debug.Log("No game over");
+			//Debug.Log("No game over");
 			if (Vector3.Distance(_controller.transform.position,GameObject.FindWithTag("Goal").transform.position) < 4)
 			{
 				GameObject.FindWithTag("Goal").audio.mute = true;
@@ -212,9 +212,9 @@ public class PolarBearControl : MonoBehaviour {
 				
 				if (!inWater){
 					if (_controller.isGrounded){
-						Debug.Log("Test - Esta en tierra");
+						//Debug.Log("Test - Esta en tierra");
 						if (Input.GetKeyDown(KeyCode.UpArrow)){
-							Debug.Log("Test - Caminando...");
+							//Debug.Log("Test - Caminando...");
 						    
 							
 							MoveForward("Walk");
@@ -256,10 +256,10 @@ public class PolarBearControl : MonoBehaviour {
 
 				}
 				else if (inWater){
-					Debug.Log("Test - Esta en agua");
+					//Debug.Log("Test - Esta en agua");
 			
 					  if (Input.GetKeyDown(KeyCode.UpArrow)){
-						   Debug.Log("Nadando");
+						  // Debug.Log("Nadando");
 	   					    MoveForward("Swim");
 	   					    
 	   					    bs.setAudioClip("inWater");
@@ -592,9 +592,13 @@ public class PolarBearControl : MonoBehaviour {
 	
 	   _accZR = _value;
     }
-    
 
-	
+	public void SetSpeed(float _speed){
+		Debug.Log("Updating speed " + _speed);
+		this.moveSpeed = _speed;
+		this.swimSpeed = _speed;
+	}
+
 	public void GameOver(float _value){
 	   _gameOver = true;
 	 
@@ -726,71 +730,60 @@ public class PolarBearControl : MonoBehaviour {
 			}
 		}
 	}
+
     private void SensingRightPaw(){
-	 var prev = _pAccYR;
-	 var accY = _accYR;
+		var prev = _pAccYR;
+		var accY = _accYR;
 
-		if (!_getDir[RIGHT]){
+		if (!_getDir [RIGHT]) {
 
-			Debug.Log("R Asking direction  z R"  + _accZR + " " + accY+" " + prev + " " + _maxAccY[RIGHT]);
+				Debug.Log ("R Asking direction  z R" + _accZR + " " + accY + " " + prev + " " + _maxAccY [RIGHT]);
+
+				if (_accZR < 0 && accY > prev && _maxAccY [RIGHT] == MIN_MAX_VALUE) { //Wiimote pointing up
+						Debug.Log ("R Getting direction  " + accY + " " + prev + " " + _maxAccY [RIGHT]);
+						_getDir [RIGHT] = true;
+						_minAccY [RIGHT] = prev;
+				} else if (accY < prev) {
+						_maxAccY [RIGHT] = MIN_MAX_VALUE;
+				}
+
+		} else if (_getDir [RIGHT]) {
+				Debug.Log ("R Tiene direction  " + accY + " min " + _minAccY [RIGHT] + " prev " + prev);
 			
-			if ( _accZR< 0 && accY > prev && _maxAccY[RIGHT] == MIN_MAX_VALUE ){ //Wiimote pointing up
-               Debug.Log("R Getting direction  "  + accY+" " + prev + " " + _maxAccY[RIGHT]);
-				_getDir[RIGHT] = true;
-				_minAccY[RIGHT] = prev;
-			}
-			else if (accY < prev){
-				_maxAccY[RIGHT] = 	MIN_MAX_VALUE;
-			}
-			
-		}
-	    else if (_getDir[RIGHT]) {
-			Debug.Log("R Tiene direction  " + accY +" min "+_minAccY[RIGHT] + " prev " + prev);
+				if (accY > _minAccY [RIGHT]) {
+						if (accY > prev) {
+								if (_minAccY [RIGHT] < 0 && accY > 0 && (accY - _minAccY [RIGHT]) >= 0.3) {
+										_stroke [RIGHT] = accY - _minAccY [RIGHT];
+										_maxAccY [RIGHT] = accY;
 					
-				 if (accY > _minAccY[RIGHT]){
-					if (accY > prev){
-					    if (_minAccY[RIGHT] < 0 && accY > 0 && (accY - _minAccY[RIGHT]) >= 0.3){
-						   _stroke[RIGHT] = accY - _minAccY[RIGHT];
-						   _maxAccY[RIGHT] = accY;
-							
+								} else if (_minAccY [RIGHT] < 0 && accY < 0 && Mathf.Abs (accY - _minAccY [RIGHT]) >= 0.3) {
+										_stroke [RIGHT] = Mathf.Abs (accY - _minAccY [RIGHT]);
+										_maxAccY [RIGHT] = accY;
+								} else if (_minAccY [RIGHT] > 0 && Mathf.Abs (accY - _minAccY [RIGHT]) >= 0.3) {
+										_stroke [RIGHT] = Mathf.Abs (accY - _minAccY [RIGHT]);
+										_maxAccY [RIGHT] = accY;
+								}
+						} else {
+								if (prev < 0 && _minAccY [RIGHT] < 0 && (Mathf.Abs (prev - _minAccY [RIGHT])) >= 0.3) { //Wiimote changing direction
+										_maxAccY [RIGHT] = prev;
+										_stroke [RIGHT] = Mathf.Abs (prev - _minAccY [RIGHT]);
+								} else if (prev > 0 && (Mathf.Abs (prev - _minAccY [RIGHT])) >= 0.3) { //Wiimote changing direction
+										_maxAccY [RIGHT] = prev;
+										_stroke [RIGHT] = Mathf.Abs (prev - _minAccY [RIGHT]);
+								}
+
 						}
-						else if (_minAccY[RIGHT] < 0 && accY < 0 && Mathf.Abs(accY - _minAccY[RIGHT]) >= 0.3){
-						   _stroke[RIGHT] = Mathf.Abs(accY - _minAccY[RIGHT]);
-							_maxAccY[RIGHT] = accY;
+				} else if (accY < _minAccY [RIGHT]) {
+						if (prev < 0 && _minAccY [RIGHT] < 0 && (Mathf.Abs (prev - _minAccY [RIGHT])) >= 0.3) { //Wiimote changing direction
+								_maxAccY [RIGHT] = prev;
+								_stroke [RIGHT] = Mathf.Abs (prev - _minAccY [RIGHT]);
+						} else if (prev > 0 && (Mathf.Abs (prev - _minAccY [RIGHT])) >= 0.3) { //Wiimote changing direction
+								_maxAccY [RIGHT] = prev;
+								_stroke [RIGHT] = Mathf.Abs (prev - _minAccY [RIGHT]);
+						} else {
+								_getDir [RIGHT] = false;
 						}
-						else if (_minAccY[RIGHT] > 0 && Mathf.Abs(accY - _minAccY[RIGHT]) >= 0.3){
-							_stroke[RIGHT] = Mathf.Abs(accY - _minAccY[RIGHT]);
-							_maxAccY[RIGHT] = accY;
-						}
-					}
-					else{
-						if  (prev < 0 && _minAccY[RIGHT] < 0 && (Mathf.Abs(prev - _minAccY[RIGHT])) >= 0.3 ){ //Wiimote changing direction
-						_maxAccY[RIGHT] = prev;
-						_stroke[RIGHT] = Mathf.Abs(prev - _minAccY[RIGHT]);
-					     }
-						 else if (prev > 0 && (Mathf.Abs(prev - _minAccY[RIGHT] )) >= 0.3){ //Wiimote changing direction
-							_maxAccY[RIGHT] = prev;
-							_stroke[RIGHT] = Mathf.Abs(prev - _minAccY[RIGHT]);
-						 }
-		
-					}
-				 }
-				 else if (accY < _minAccY[RIGHT]){
-		     		if  (prev < 0 && _minAccY[RIGHT] < 0 && (Mathf.Abs(prev - _minAccY[RIGHT])) >= 0.3 ){ //Wiimote changing direction
-						_maxAccY[RIGHT] = prev;
-						_stroke[RIGHT] = Mathf.Abs(prev - _minAccY[RIGHT]);
-				     }
-					
-					 else if (prev > 0 && (Mathf.Abs(prev - _minAccY[RIGHT] )) >= 0.3){ //Wiimote changing direction
-						_maxAccY[RIGHT] = prev;
-						_stroke[RIGHT] = Mathf.Abs(prev - _minAccY[RIGHT]);
-					 }
-					else {
-						_getDir[RIGHT] = false;
-					}
-				 }
+				}
 		}
 	}
-	
-			
 }

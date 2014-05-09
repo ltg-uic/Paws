@@ -72,6 +72,7 @@
      <Compile Include="Assets\OpenNI\Scripts\OpenNIUserTracker.cs" />
      <Compile Include="Assets\OpenNI\Scripts\OpenNIUsersRadar.cs" />
      <Compile Include="Assets\Scripts\BearStatus.cs" />
+     <Compile Include="Assets\Scripts\FindMissingScripts.cs" />
      <Compile Include="Assets\Scripts\PolarBearControl.cs" />
      <Compile Include="Assets\Scripts\SensorsListener.cs" />
      <Compile Include="Assets\Scripts\SpinObject.cs" />
