@@ -1,15 +1,13 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/BearStatus.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/NetworkConnectionServer.js">
     <Files>
-      <File FileName="Assets/Scripts/NetworkConnectionServer.js" Line="260" Column="6" />
-      <File FileName="Assets/Scripts/PolarBearControl.cs" Line="8" Column="46" />
-      <File FileName="Assets/Scripts/GameParameters.js" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/BurnedCaloriesGraph.js" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/NetworkConnectionBear.js" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/LoadScene.js" Line="56" Column="21" />
-      <File FileName="Assets/Scripts/FindMissingScripts.cs" Line="7" Column="38" />
-      <File FileName="Assets/Scripts/BearStatus.cs" Line="32" Column="22" />
+      <File FileName="Assets/Scripts/NetworkConnectionServer.js" Line="251" Column="22" />
+      <File FileName="Assets/Scripts/GameParameters.js" Line="24" Column="22" />
+      <File FileName="Assets/Scripts/BurnedCaloriesGraph.js" Line="20" Column="5" />
+      <File FileName="Assets/Scripts/LoadScene.js" Line="46" Column="43" />
+      <File FileName="Assets/Scripts/DatabaseConnection.js" Line="32" Column="48" />
+      <File FileName="Assets/Scripts/Prompts.js" Line="31" Column="53" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

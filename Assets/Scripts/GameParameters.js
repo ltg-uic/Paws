@@ -56,9 +56,6 @@ public function ShowOnGUI () {
 			    showGameParameters(false);
 			    GetComponent(NetworkConnectionServer).LoadScores();
 			    GetComponent(NetworkConnectionServer).StartGame();
-			    GetComponent(BurnedCaloriesGraph).maxBurnedCalories = 450 * (_gameDurationIndex + 1);
-			    GetComponent(BurnedCaloriesGraph).maxXAxisValue = GetComponent(BurnedCaloriesGraph).xInterval * 30 * (_gameDurationIndex + 1);
-
 		//	}
 		//	else
 		//	{

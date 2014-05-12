@@ -1,11 +1,9 @@
 var TOP_SCORES = 10;
 
-var remoteIP = "127.0.0.1";
-var remotePort = 25000;
 var listenPort = 25000;
 var useNAT = false;
-var yourIP = "";
-var yourPort = "";
+var DBReady: boolean = false;
+var PromptReady: boolean = false;
 
 var newSkin: GUISkin;
 var areaWidth : float;
@@ -78,11 +76,14 @@ private var _innerController : int;
 private var _labelHeight :float;
 			       
 //variable for testing different versions of the server
-var serverTest:int = 0; //  0 mouseDown, mouseUp with only 5 prompts at a time
+var serverTest:int; //  0 mouseDown, mouseUp with only 5 prompts at a time
 						//  1 mouseDown, mouseUp with buttons to navigate prompts	
  
 function Start(){
-  // BL added for screen distribution of elements
+ 
+  StartScene();
+}
+function StartScene(){
     ScreenX = ((Screen.width * 0.5) - (areaWidth * 0.5));
     ScreenY = ((Screen.height * 0.5) - (areaHeight * 0.5));
 	
@@ -116,7 +117,6 @@ function Start(){
     Initialize();
     GetComponent(DatabaseConnection).GetInterpreters();
 }
-
 function Initialize(){
 	_scoreValues = new ArrayList();
 	_scoreNames = new ArrayList();
@@ -160,7 +160,8 @@ function StartGame(){
 	_durationGame = GetComponent(GameParameters).getDurationGameIndex();
 	_startTime = Time.realtimeSinceStartup;
 	GetComponent(SummaryGraph).SetCurrentYear(_currentYear);
-	GetComponent(BurnedCaloriesGraph).maxXAxisValue = _durationGame * 60;
+	GetComponent(BurnedCaloriesGraph).maxXAxisValue = (_durationGame+1) * 60;
+    GetComponent(BurnedCaloriesGraph).maxBurnedCalories = 450 * (_durationGame + 1);
     isPlaying = true;
     networkView.RPC ("LoadLevelInClient", RPCMode.Others, _currentYear.ToString()+":"+_yearAgoList[_currentYear].ToString()+":"+_durationGame.ToString());  
 }
@@ -212,7 +213,6 @@ function Update(){
 }
 
 function OnGUI () {
-   
    if ( _serverReady){
 	     DrawViews();
 	     GetComponent(MessageBox).ShowOnGUI();
@@ -235,6 +235,32 @@ function DrawViews(){
 	}
     GUILayout.EndArea();
  
+ 	if (!(DBReady && PromptReady)){
+
+		GUILayout.BeginArea (Rect (areaWidth*0.95, areaHeight*0.94, _labelHeight, _labelHeight));
+		if (GUILayout.Button("Go")){	
+			StartScene();
+		}
+	    GUILayout.EndArea();
+	}
+	
+	if (!DBReady){
+	
+		GUILayout.BeginArea (Rect (areaWidth*0.02, areaHeight*0.92, _labelHeight*20, _labelHeight));
+     	GUILayout.Label("Database url:");
+	    GUILayout.EndArea();
+    	GUILayout.BeginArea (Rect (areaWidth*0.02, areaHeight*0.96, areaWidth*0.45, _labelHeight+areaHeight*0.01));
+		GetComponent(DatabaseConnection).dbURL = GUILayout.TextField(GetComponent(DatabaseConnection).dbURL,50);
+		GUILayout.EndArea();
+	}
+	if (!PromptReady){
+        GUILayout.BeginArea (Rect (areaWidth*0.50, areaHeight*0.92, _labelHeight*20, _labelHeight));
+     	GUILayout.Label("Prompts url:");
+	    GUILayout.EndArea();
+    	GUILayout.BeginArea (Rect (areaWidth*0.50, areaHeight*0.96, areaWidth*0.45, _labelHeight+areaHeight*0.01));
+		GetComponent(Prompts).url = GUILayout.TextField(GetComponent(Prompts).url,50);
+		GUILayout.EndArea();
+	}
 	
    if (!_showMap && !_showCurrentGraph){   
 	    // Show Prompts
@@ -259,9 +285,6 @@ function DrawViews(){
 		    GetComponent(DatabaseConnection).AppendDataToUILog('B',0,_localToRemotePromptIndex.ToString(),DateTime.Now.ToString());
 		  }
 	    GUILayout.EndArea();
-	    GUILayout.BeginArea (Rect (areaWidth*0.02, areaHeight*0.9, _labelHeight*20, _labelHeight));
-     	GUILayout.Label(GetComponent(BurnedCaloriesGraph).maxXAxisValue.ToString());
-	    GUILayout.EndArea();
  
 	    GUILayout.BeginArea(Rect (areaWidth*0.52, areaHeight*0.28, areaWidth*0.4, areaHeight*0.42));
 	      if (_remotePromptIndex >=0)
@@ -285,7 +308,7 @@ function DrawViews(){
 		  for (var _p:int = 0; _p < promptsXScreen; _p++){
 		    GUILayout.BeginArea (Rect (areaWidth*0.16*_p+areaWidth*0.1, areaHeight*0.78, areaWidth*0.15, areaHeight*0.15));
 			 
-			  GUILayout.Box(GetComponent(Prompts).prompts[GetComponent(Prompts).promptCurrentList[_p]]);
+			  GUILayout.Box(GetComponent(Prompts).prompts[GetComponent(Prompts).promptCurrentList[_p]],GUILayout.ExpandHeight(true));
 			  if (Event.current.type == EventType.MouseDown && GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
 			  {
 			   // Debug.Log("logging down "+ GetComponent(Prompts).promptCurrentList[_p]);
@@ -297,18 +320,18 @@ function DrawViews(){
 		  }	
   
    }
-   if (serverTest%3 == 1)
+   if (serverTest%3 == 1 && !(_showMap || _showCurrentGraph))
    {
    
-        if ((_displaySeconds == 30 || _displaySeconds == 0) && !_getRandomPrompts)
+       /* if ((_displaySeconds == 30 || _displaySeconds == 0) && !_getRandomPrompts)
    		{
    		    _getRandomPrompts = true;
    			GetComponent(Prompts).GetPrompts(1);
    		}
    		else if (_displaySeconds != 30 && _displaySeconds != 0 )
-   		{
+   		{*/
    	     	_getRandomPrompts = false;
-   		}
+   	//	}
    		
         GUILayout.BeginArea (Rect (areaWidth*0.05, areaHeight*0.8, _labelHeight, _labelHeight*3));
    		if (GUILayout.Button("\n<\n")){
@@ -331,7 +354,7 @@ function DrawViews(){
    		if ((_displaySeconds == 30 || _displaySeconds == 0) && !_getRandomPrompts)
    		{
    		    _getRandomPrompts = true;
-   			GetComponent(Prompts).GetPrompts(0);
+   			GetComponent(Prompts).GetPrompts(1);
    		}
    		else if (_displaySeconds != 30 && _displaySeconds != 0 )
    		{
@@ -508,13 +531,14 @@ function DrawViews(){
 				}
 				if (_showCurrentGraph){
 					GetComponent(BurnedCaloriesGraph).DrawCaloriesGraph();
-					//GetComponent(BurnedCaloriesGraph).PrintBurnedCaloriesGraph();
 				}
 				else{
 					GetComponent(BurnedCaloriesGraph).HideBurnedCaloriesGraph();
 				}
 		    }  
-		        
+		        GUILayout.BeginArea (Rect (areaWidth*0.02, areaHeight*0.02, _labelHeight*50, _labelHeight));
+		     	GUILayout.Label("Data "+ this.numberSteps() + " " + this.walkCalories() + " " + this.swimCalories() + " - "+GetComponent(BurnedCaloriesGraph).PrintMessage());
+			    GUILayout.EndArea(); 
 		  /*  GUILayout.BeginArea(Rect (areaWidth*0.1, areaHeight*0.95, areaWidth*0.3, _labelHeight));
 		    _showInfo = GUILayout.Toggle(_showInfo, "Show polar bear info");
 		    GetComponent(InfoPolarBear).ShowInfo(_showInfo);

@@ -5,13 +5,21 @@ var promptCurrentList: int[] = [0,1,2,3,4];
 function Start () {
 	prompts = new Texture2D[20];
 	var www : WWW;
+	var countError:int = 0;
 	for (var i:int = 0; i < 20;i++)
 	{ 
 		prompts[i] = new Texture2D(80,60);
 	    www = new WWW (url+(i+1).ToString()+".jpg");
 		yield www;
+		if (!String.IsNullOrEmpty(www.error)){
+	    	Debug.Log(www.error);
+	    	countError ++;
+	    }
 		prompts[i] = www.texture;
 		Debug.Log(url+(i+1).ToString()+".jpg");
+	}
+	if (countError < 2){
+		GetComponent(NetworkConnectionServer).PromptReady = true;
 	}
 }
 

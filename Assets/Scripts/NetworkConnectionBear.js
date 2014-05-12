@@ -68,7 +68,7 @@ function OnGUI () {
 				GUILayout.BeginArea (Rect (20,20,120,200));
 				remoteIP = GUILayout.TextField(remoteIP,15);
 				
-				if (GUILayout.Button("Connect to Mobile Interpretation Tool")){
+				if (GUILayout.Button("Connect..")){
 					Network.Connect(remoteIP, remotePort);
 				}
 				GUILayout.EndArea();

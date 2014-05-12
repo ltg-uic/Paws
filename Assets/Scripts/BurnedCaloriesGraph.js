@@ -199,7 +199,6 @@ function UpdateGraph() {
 	       
 	             _linePoints[_currentPos] =  Vector2( tempX, (_percentageYPoint * _calories) + posY); 
 	  		     _xAxisValue.Push(_currentXValue);
-	  		   //  Debug.Log("XValue  - " + _xAxisValue[_currentPos]);
 		         _xAxisPos.Push(tempX);	
 		         _currentPos++;   
 	         }       
@@ -212,5 +211,9 @@ function UpdateGraph() {
 	   		Vector.DrawLine(_lineLine);	 
 	   }	 
    }
+}
+
+public function PrintMessage(){
+   return ("XValue pos  " + _currentPos.ToString());
 }
    

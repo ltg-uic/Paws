@@ -29,7 +29,7 @@ function GetInterpreters() {
     if(hs_get.error) {
     	print("DatabaseConnection::There was an error getting the interpreters: " + hs_get.error);
     } else {
-     
+       GetComponent(NetworkConnectionServer).DBReady = true;
 	   GetComponent(Interpreters).interpreters = hs_get.text; 
 	//   GetComponent(Interpreters).interpreters = "JohnS:John|CathyH:Cathy";
 	   GetComponent(Interpreters).SetInterpreters();
