@@ -2,7 +2,6 @@ private var remoteIP: String = "127.0.0.1";
 private var remotePort: int = 25000;
 private var listenPort: int = 25000;
 private var useNAT = false;
-private var server: boolean = false;
 
 var NumWalkSteps:int;
 var NumSwimSteps:int;
@@ -18,9 +17,11 @@ private var gameStarted: boolean = false;
 
 function Start(){
 	LoadIPServer();	
-	currentYear = "2010";
+	currentYear = "1";
 }
-
+function Update(){
+	//ConnectToServer();
+}
 function LoadIPServer(){
     if (PlayerPrefs.HasKey("ipServer")){	
 		var serverIP = PlayerPrefs.GetString("ipServer");
@@ -32,6 +33,7 @@ function LoadIPServer(){
   		remotePort = 25000;
   		listenPort = 25000;
   	}
+	ConnectToServer();
 }
 
 function UpdateIPServer(){ 
@@ -49,52 +51,14 @@ function OnConnectedToServer () {
 	for (var go : GameObject in FindObjectsOfType(GameObject))
 		go.SendMessage("OnNetworkLoadedLevel", SendMessageOptions.DontRequireReceiver);
 }
+function ConnectToServer(){
+  if (Network.peerType == NetworkPeerType.Disconnected){	
+//	yield WaitForSeconds(15.0);
+	Network.Connect(remoteIP, remotePort);
+	Debug.Log("After 15 secs... ");
 
-function OnGUI () {
-	if (!Application.loadedLevelName.Equals("StudyScene")){
-		// Checking if you are connected to the server or not
-		if (Network.peerType == NetworkPeerType.Disconnected){
-			// If not connected
-	
-			if (server){
-				// Creating server
-				Network.InitializeServer(10, listenPort,useNAT);
-				// Notify our objects that the level and the network is ready
-				for (var go : GameObject in FindObjectsOfType(GameObject)){
-					go.SendMessage("OnNetworkLoadedLevel", SendMessageOptions.DontRequireReceiver);
-				}
-			}
-			else {
-				GUILayout.BeginArea (Rect (20,20,120,200));
-				remoteIP = GUILayout.TextField(remoteIP,15);
-				
-				if (GUILayout.Button("Connect..")){
-					Network.Connect(remoteIP, remotePort);
-				}
-				GUILayout.EndArea();
-			}		
-		}
-		else{
-		/*
-			// Getting your ip address and port
-			ipaddress = Network.player.ipAddress;
-			port = Network.player.port.ToString();
-			GUI.Label(new Rect(140,20,250,40),"IP Adress: "+ipaddress+":"+port);
-			if (GUI.Button (new Rect(10,10,100,50),"Disconnect")){
-				// Disconnect from the server
-				Network.Disconnect(200);
-			}*/
-	
-	
-	  
-			if (server)
-				GUI.Label(new Rect(180,50,250,40), "Received from client "+playerNumber+" : " + NumWalkSteps +", " +NumSwimSteps);
-			
-		}
-	}
+  }	
 }
-
-
 
 function OnPlayerConnected(newPlayer: NetworkPlayer){
 	//Called on the server only

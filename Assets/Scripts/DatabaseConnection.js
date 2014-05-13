@@ -3,9 +3,7 @@ var isCalledFinished = false;
 private var secretKey: String="AMIMP"; // Edit this value and make sure it's the same as the one stored on the server
 //var addScoreUrl="http://localhost/unity_test/addscore.php?"; //be sure to add a ? to your url
 private var hs_get: WWW ;
-var dbURL:String = "http://paws.evl.uic.edu/";
-
-var saveSessionData:String="http://paws.evl.uic.edu/SaveSession.php";
+var dbURL:String = "http://paws.local/";
 
 // Get the scores from the MySQL DB
 function GetPrompts() {

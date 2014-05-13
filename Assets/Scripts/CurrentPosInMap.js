@@ -81,10 +81,10 @@ public function SetGoalBearInMap(_xyValues: String){
 	_terrainMaxX = parseInt(values[0]);
 	_terrainMaxY = parseInt(values[1]);
 	  
-    _startPos[POS_X] = _bearPreviousPos[POS_X] = _bearPos[POS_X] = parseFloat(values[2])*mapWidth/_terrainMaxX;
+    _startPos[POS_X] = _bearPreviousPos[POS_X] = _bearPos[POS_X] = (parseFloat(values[2])-(2000*_currentYear))*mapWidth/_terrainMaxX;
 	_startPos[POS_Y] = _bearPreviousPos[POS_Y] = _bearPos[POS_Y] = mapHeight - parseFloat(values[3])*mapHeight/_terrainMaxY;
 	 
-	_endPos[POS_X] = parseFloat(values[4])*mapWidth/_terrainMaxX;
+	_endPos[POS_X] = (parseFloat(values[4])-(2000*_currentYear))*mapWidth/_terrainMaxX;
 	_endPos[POS_Y] = mapHeight - parseFloat(values[5])*mapHeight/_terrainMaxY;
 		
 	_trail = new ArrayList();
@@ -97,7 +97,7 @@ public function UpdateCurrentPosition(_xyValues: String){
 
 	
     var values = _xyValues.Split(":"[0]);
-    var _x = parseFloat(values[2])*mapWidth/_terrainMaxX;
+    var _x = (parseFloat(values[2])-(2000*_currentYear))*mapWidth/_terrainMaxX;
     var _y = mapHeight - parseFloat(values[3])*mapHeight/_terrainMaxY;
     
 	_bearPos[POS_X] = _x;
@@ -111,7 +111,6 @@ public function UpdateCurrentPosition(_xyValues: String){
 	   _trail.Add(Vector2(_x,_y));
 	   	   
 	}
-	//Debug.Log("Meters : " + _bearPos[POS_X] + " " + _bearPos[POS_Y]);
 }
 
 
@@ -132,3 +131,7 @@ public function InitializeMap(){
    _trail = new ArrayList();
    
    }
+   
+ public function PrintMessage(){
+ 	return ("Meters : " + _bearPos[POS_X] + " " + _bearPos[POS_Y]+" - "+_currentYear);
+ }

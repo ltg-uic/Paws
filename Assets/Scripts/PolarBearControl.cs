@@ -682,11 +682,11 @@ public class PolarBearControl : MonoBehaviour {
                             + GameObject.FindWithTag("Goal").transform.position.x.ToString()+ ":"
                             + GameObject.FindWithTag("Goal").transform.position.z.ToString();
     
-    
+			Debug.Log("Set Goal -  current map position");	
   		    networkView.RPC ("SetGoalBearInMap", RPCMode.Server, msgToSend);
 		
 		}
-		//SendMessage("SetTrigger",_controller.transform.position.z);		
+	
 	    msgToSend = NumWalkSteps.ToString() + ":" + NumSwimSteps.ToString()+":"+ _controller.transform.position.x.ToString()+":"+_controller.transform.position.z.ToString();
 	    networkView.RPC ("ReceivedMovementInput", RPCMode.Server, msgToSend);
 	}

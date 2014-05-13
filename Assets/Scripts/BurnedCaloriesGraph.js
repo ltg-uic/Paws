@@ -59,26 +59,21 @@ function Update () {
      if (GetComponent(NetworkConnectionServer).elapsedTime == 0){
 	   if (Input.GetKeyDown(KeyCode.T)){  // Print  calories vs time graph
 		   typeGraph = 0;
-		   xInterval = 20;
-		   maxXAxisValue = 500;
 	   }
 	   if (Input.GetKeyDown(KeyCode.D)){  // Print  calories vs distance graph
 		   typeGraph = 1;
-		   xInterval = 20;
-		   maxXAxisValue = 550;
 	   }
 	 }
   }
-  else{
 
-      _calories = GetComponent(NetworkConnectionServer).burnedCalories;
-      if (typeGraph == 0)
-         _currentXValue = GetComponent(NetworkConnectionServer).elapsedTime;
-      else if (typeGraph == 1)
-         _currentXValue = GetComponent(NetworkConnectionServer).meters;
-  
-      UpdateGraph();
-  }
+	_calories = GetComponent(NetworkConnectionServer).burnedCalories;
+	if (typeGraph == 0)
+	 _currentXValue = GetComponent(NetworkConnectionServer).elapsedTime;
+	else if (typeGraph == 1)
+	 _currentXValue = GetComponent(NetworkConnectionServer).meters;
+
+	UpdateGraph();
+
 }
 
 function OnGUI(){
@@ -87,7 +82,7 @@ function OnGUI(){
 	   
 	    switch (typeGraph) {
 	       case 0:
-		       	GUI.Label(Rect( posX + width - 30, Screen.height - posY  ,120,40),"Time (sec)");      
+		       	GUI.Label(Rect( posX + width - 25, Screen.height - posY  ,120,40),"Time (sec)");      
 		       // Points to be drawn.
 			    for (var i: int = 1; i< _xAxisPos.Count;i++){   
 				      GUI.Label(Rect(_xAxisPos[i], Screen.height - posY,40,30), _xAxisValue[i].ToString());      
@@ -104,7 +99,7 @@ function OnGUI(){
 	    }
 	    
        for (var k: int = 1; k<= (maxBurnedCalories/50);k++){   
-			GUI.Label(Rect(posX - 40, Screen.height - ((_percentageYPoint * k* 50) + posY) ,40,30), (k*50).ToString());
+			GUI.Label(Rect(posX - 50, Screen.height - ((_percentageYPoint * k* 50) + posY) ,50,30), (k*50).ToString());
 			//      Debug.Log( "label " +    (_xAxisValue[j]-(_xAxisValue[j]%xInterval)));
 		     } 
 	   
@@ -191,12 +186,12 @@ public function DrawCaloriesGraph()
 }
 
 function UpdateGraph() {
-   if (GetComponent(NetworkConnectionServer).isPlaying){
 	    if (_currentPos > 0 && _currentPos < noOfPoints){
 	         var tempX = (_percentageXPoint * _currentXValue) + posX;
 	         var tempAxis: int = _xAxisValue[_currentPos-1];
+	         temp = tempAxis;
 	         if ((_currentXValue - tempAxis) >= xInterval){
-	       
+	       		
 	             _linePoints[_currentPos] =  Vector2( tempX, (_percentageYPoint * _calories) + posY); 
 	  		     _xAxisValue.Push(_currentXValue);
 		         _xAxisPos.Push(tempX);	
@@ -210,10 +205,9 @@ function UpdateGraph() {
 	        _lineLine.maxDrawIndex = _currentPos-1;
 	   		Vector.DrawLine(_lineLine);	 
 	   }	 
-   }
 }
-
+var temp:int = 0;
 public function PrintMessage(){
-   return ("XValue pos  " + _currentPos.ToString());
+   return ("XValue pos  " + _currentPos.ToString()+" "+temp+" "+xInterval+" " +_currentXValue+" "+noOfPoints);
 }
    

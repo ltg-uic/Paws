@@ -89,10 +89,10 @@ function StartScene(){
 	
 	_labelHeight = areaHeight*0.04;
 	
-    GetComponent(BurnedCaloriesGraph).posX = areaWidth*0.15;       
+    GetComponent(BurnedCaloriesGraph).posX = areaWidth*0.12;       
 	GetComponent(BurnedCaloriesGraph).posY = areaHeight*0.15;
-	GetComponent(BurnedCaloriesGraph).width = areaWidth*0.65;       
-	GetComponent(BurnedCaloriesGraph).height = areaHeight*0.50;
+	GetComponent(BurnedCaloriesGraph).width = areaWidth*0.7;       
+	GetComponent(BurnedCaloriesGraph).height = areaHeight*0.55;
 	
 	GetComponent(CurrentPosInMap).posX = areaWidth*0.15;
 	GetComponent(CurrentPosInMap).posY = areaHeight*0.27;
@@ -148,8 +148,8 @@ function Initialize(){
     
 	var  _map : Texture2D = Resources.Load("Images/"+yearList[_currentYear].ToString()+"_Location_Map", typeof(Texture2D));
 	GetComponent(CurrentPosInMap).mapImage = _map;
-	GetComponent(BurnedCaloriesGraph).DestroyLines();
 	GetComponent(CurrentPosInMap).InitializeMap();
+	GetComponent(BurnedCaloriesGraph).DestroyLines();
 	GetComponent(Prompts).ResetPrompts();
 	LoadScores();
 	
@@ -160,8 +160,11 @@ function StartGame(){
 	_durationGame = GetComponent(GameParameters).getDurationGameIndex();
 	_startTime = Time.realtimeSinceStartup;
 	GetComponent(SummaryGraph).SetCurrentYear(_currentYear);
-	GetComponent(BurnedCaloriesGraph).maxXAxisValue = (_durationGame+1) * 60;
-    GetComponent(BurnedCaloriesGraph).maxBurnedCalories = 450 * (_durationGame + 1);
+	GetComponent(BurnedCaloriesGraph).maxXAxisValue = (gameDurationList[_durationGame]) * 70;
+    GetComponent(BurnedCaloriesGraph).maxBurnedCalories = 250 * (gameDurationList[_durationGame]);
+    GetComponent(BurnedCaloriesGraph).xInterval = 10;
+    GetComponent(BurnedCaloriesGraph).DrawCaloriesGraph();
+	GetComponent(BurnedCaloriesGraph).HideBurnedCaloriesGraph();
     isPlaying = true;
     networkView.RPC ("LoadLevelInClient", RPCMode.Others, _currentYear.ToString()+":"+_yearAgoList[_currentYear].ToString()+":"+_durationGame.ToString());  
 }
@@ -265,7 +268,7 @@ function DrawViews(){
    if (!_showMap && !_showCurrentGraph){   
 	    // Show Prompts
 	    // Draw Prompts View
-	    GUILayout.BeginArea(Rect (areaWidth*0.08, areaHeight*0.28, areaWidth*0.4, areaHeight*0.42));
+	    GUILayout.BeginArea(Rect (areaWidth*0.03, areaHeight*0.28, areaWidth*0.45, areaHeight*0.45));
 	    if (_localPromptIndex >=0)
 	        GUILayout.Box(GetComponent(Prompts).prompts[_localPromptIndex]);
 	    else
@@ -286,7 +289,7 @@ function DrawViews(){
 		  }
 	    GUILayout.EndArea();
  
-	    GUILayout.BeginArea(Rect (areaWidth*0.52, areaHeight*0.28, areaWidth*0.4, areaHeight*0.42));
+	    GUILayout.BeginArea(Rect (areaWidth*0.53, areaHeight*0.28, areaWidth*0.45, areaHeight*0.45));
 	      if (_remotePromptIndex >=0)
 	        GUILayout.Box(GetComponent(Prompts).prompts[_remotePromptIndex]);
 	    else
@@ -333,14 +336,14 @@ function DrawViews(){
    	     	_getRandomPrompts = false;
    	//	}
    		
-        GUILayout.BeginArea (Rect (areaWidth*0.05, areaHeight*0.8, _labelHeight, _labelHeight*3));
+        GUILayout.BeginArea (Rect (areaWidth*0.05, areaHeight*0.79, _labelHeight, _labelHeight*3));
    		if (GUILayout.Button("\n<\n")){
    		    //Debug.Log("Past");
 		    GetComponent(Prompts).GetPrompts(-1);
 		    GetComponent(DatabaseConnection).AppendDataToUILog('B',0,"<",DateTime.Now.ToString());
 	    }
 	    GUILayout.EndArea();  
-	    GUILayout.BeginArea (Rect (areaWidth*0.9, areaHeight*0.8, _labelHeight, _labelHeight*3));
+	    GUILayout.BeginArea (Rect (areaWidth*0.9, areaHeight*0.79, _labelHeight, _labelHeight*3));
 	    if (GUILayout.Button("\n>\n")){
 	        // Debug.Log("Future");
 		     GetComponent(Prompts).GetPrompts(1);
@@ -363,9 +366,7 @@ function DrawViews(){
    }	
 			
   	if (!_showSummary)
-  	{  
-  	
-  	     	
+  	{    	     	
 			//Hide until later
 		    /*	GUILayout.BeginArea (Rect (areaWidth*0.8, areaHeight*0.85, areaWidth*0.15, _labelHeight));
 		    if (GUILayout.Button("Show scores")){
@@ -399,9 +400,7 @@ function DrawViews(){
    			    GUILayout.EndArea();
    			    
    			    if (_showInterpreterList){
-
-				 	for (var cnt:int  = 1; cnt < GetComponent(Interpreters).interpreterNames.Count; cnt++){
-				 
+				 	for (var cnt:int  = 1; cnt < GetComponent(Interpreters).interpreterNames.Count; cnt++){		 
 				 	   GUILayout.BeginArea (Rect (areaWidth*0.3, areaHeight*0.05+_labelHeight*(cnt), areaWidth*0.15, _labelHeight));
 				 	   if (GUILayout.Button((GetComponent(Interpreters).interpreterNames[cnt].ToString()))){
 				 	   		interpreterName = GetComponent(Interpreters).interpreterNames[cnt];
@@ -435,19 +434,18 @@ function DrawViews(){
    			    GUILayout.EndArea();
 				if (_showInterpreterList){
 	
-					 	for (cnt  = 1; cnt < GetComponent(Interpreters).interpreterNames.Count; cnt++){
-					 
-					 	   GUILayout.BeginArea (Rect (areaWidth*0.3, areaHeight*0.05+_labelHeight*(cnt), areaWidth*0.15, _labelHeight));
-					 	   if (GUILayout.Button((GetComponent(Interpreters).interpreterNames[cnt].ToString()))){
-					 	   		interpreterName = GetComponent(Interpreters).interpreterNames[cnt];
-					 	   		interpreterID = GetComponent(Interpreters).interpreterIDs[cnt];
-					 	   		_showInterpreterList = !_showInterpreterList;
-					 	   } 
-					 	   GUILayout.EndArea();
-					    }
+				 	for (cnt  = 1; cnt < GetComponent(Interpreters).interpreterNames.Count; cnt++){
+				 
+				 	   GUILayout.BeginArea (Rect (areaWidth*0.3, areaHeight*0.05+_labelHeight*(cnt), areaWidth*0.15, _labelHeight));
+				 	   if (GUILayout.Button((GetComponent(Interpreters).interpreterNames[cnt].ToString()))){
+				 	   		interpreterName = GetComponent(Interpreters).interpreterNames[cnt];
+				 	   		interpreterID = GetComponent(Interpreters).interpreterIDs[cnt];
+				 	   		_showInterpreterList = !_showInterpreterList;
+				 	   } 
+				 	   GUILayout.EndArea();
+				    }
 				}
 			   
-				
 		     	GUILayout.BeginArea (Rect (areaWidth*0.5, areaHeight*0.05, areaWidth*0.3, _labelHeight));				
 				GUILayout.Label("Year: "+yearList[_currentYear].ToString());
 				GUILayout.EndArea();
@@ -521,7 +519,6 @@ function DrawViews(){
 				}
 				GUILayout.EndArea();
 				      
-				      
 				if (_showMap){	
 					// Area rendering the map and it's labels
 				//	GUILayout.BeginArea (Rect (GetComponent(CurrentPosInMap).posX,GetComponent(CurrentPosInMap).posY,GetComponent(CurrentPosInMap).mapWidth,GetComponent(CurrentPosInMap).mapHeight));
@@ -530,14 +527,14 @@ function DrawViews(){
 				//	GUILayout.EndArea();
 				}
 				if (_showCurrentGraph){
-					GetComponent(BurnedCaloriesGraph).DrawCaloriesGraph();
+					GetComponent(BurnedCaloriesGraph).PrintBurnedCaloriesGraph();
 				}
 				else{
 					GetComponent(BurnedCaloriesGraph).HideBurnedCaloriesGraph();
 				}
 		    }  
 		        GUILayout.BeginArea (Rect (areaWidth*0.02, areaHeight*0.02, _labelHeight*50, _labelHeight));
-		     	GUILayout.Label("Data "+ this.numberSteps() + " " + this.walkCalories() + " " + this.swimCalories() + " - "+GetComponent(BurnedCaloriesGraph).PrintMessage());
+		     	GUILayout.Label("Msg  " + this.swimCalories() + " - "+GetComponent(BurnedCaloriesGraph).PrintMessage() +" - Map:"+GetComponent(CurrentPosInMap).PrintMessage());
 			    GUILayout.EndArea(); 
 		  /*  GUILayout.BeginArea(Rect (areaWidth*0.1, areaHeight*0.95, areaWidth*0.3, _labelHeight));
 		    _showInfo = GUILayout.Toggle(_showInfo, "Show polar bear info");
