@@ -67,7 +67,7 @@
      <Compile Include="Assets\Scripts\MessageBox.js" />
      <Compile Include="Assets\Scripts\Network Connection Secondary Display.js" />
      <Compile Include="Assets\Scripts\NetworkConnectionBear.js" />
-     <Compile Include="Assets\Scripts\NetworkConnectionServer.js" />
+     <Compile Include="Assets\Scripts\NetworkConnectionIT.js" />
      <Compile Include="Assets\Scripts\PlayerCollider.js" />
      <Compile Include="Assets\Scripts\Prompts.js" />
      <Compile Include="Assets\Scripts\ReachGoal.js" />

@@ -92,7 +92,7 @@ public class OpenNISingleSkeletonController : MonoBehaviour
 			else
 			{
 				// Looking
-				GUILayout.BeginArea (new Rect (Screen.width/2 - 150, Screen.height/2 - 150, 300, 300));
+				GUILayout.BeginArea (new Rect (Screen.width/2 - 150, Screen.height/2 - 250, 300, 300));
 				GUILayout.Box("Waiting for single player to calibrate");
 				GUILayout.EndArea();
 			}

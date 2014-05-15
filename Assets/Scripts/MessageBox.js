@@ -6,8 +6,8 @@ var areaHeight : float;
 
 function Start () {
 	message = "";
-	areaWidth = GetComponent(NetworkConnectionServer).areaWidth;
-	areaHeight = GetComponent(NetworkConnectionServer).areaHeight;
+	areaWidth = GetComponent(NetworkConnectionIT).areaWidth;
+	areaHeight = GetComponent(NetworkConnectionIT).areaHeight;
 }
 
 public function ShowOnGUI () {

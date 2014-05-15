@@ -23,7 +23,7 @@ function OnGUI() {
 	if (_showInfo){
 	 	GUILayout.BeginArea(new Rect(posX, posY, infoWidth, infoHeight));
 	  
-		 if (GetComponent(NetworkConnectionServer).isPlaying && _showInfo){
+		 if (GetComponent(NetworkConnectionIT).isPlaying && _showInfo){
 		 	 // Dsiplay bear information on the map
 	        if (infoImages[_currentInfo] != null)
 				GUI.DrawTexture(new Rect(0, 0, infoWidth, infoHeight), infoImages[_currentInfo]);
@@ -33,7 +33,7 @@ function OnGUI() {
 		GUILayout.BeginArea(Rect (infoWidth*.927, infoHeight*0.015, infoWidth*0.07, infoHeight*0.75));		
 	    if (GUILayout.Button(closeImage,"ImageButton")){
 	       _showInfo = false;
-	       _logLine = "TestB|Close Info|"+GetComponent(NetworkConnectionServer).playerName()+"|"+GetComponent(NetworkConnectionServer).currentYear()+
+	       _logLine = "TestB|Close Info|"+GetComponent(NetworkConnectionIT).playerName()+"|"+GetComponent(NetworkConnectionIT).currentYear()+
               "|"+(_currentInfo+1)+"|"+DateTime.Now;
            networkView.RPC ("SaveLogDocent", RPCMode.Others,_logLine); 
 		}
@@ -46,7 +46,7 @@ function OnGUI() {
 public function SetCurrentInfo(_value: int) {
    _currentInfo = _value-1;	
    _showInfo = true;
-   _logLine = "TestB|Show Info|"+GetComponent(NetworkConnectionServer).playerName()+"|"+GetComponent(NetworkConnectionServer).currentYear()+
+   _logLine = "TestB|Show Info|"+GetComponent(NetworkConnectionIT).playerName()+"|"+GetComponent(NetworkConnectionIT).currentYear()+
               "|"+_value+"|"+DateTime.Now;
    networkView.RPC ("SaveLogDocent", RPCMode.Others,_logLine);                         
 }

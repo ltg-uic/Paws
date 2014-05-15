@@ -1,15 +1,15 @@
 ﻿var prompts : Texture2D[];
 var url = "http://paws.local/PawsImages/";
 var promptCurrentList: int[] = [0,1,2,3,4];
-private var remainingImages =  new Array();
 private var pos:int = 0;
 private var startDone : boolean = false;
 private var countError:int = 0;
-function Start () {
-	prompts = new Texture2D[20];
-	var www : WWW;
+var countImages = 0;
 
-	for (var i:int = 0; i < 20;i++)
+public function LoadImages(){
+    var www : WWW;
+    prompts = new Texture2D[countImages];
+	for (var i:int = 0; i < countImages;i++)
 	{ 
 		prompts[i] = new Texture2D(100,75);
 	    www = new WWW (url+(i+1).ToString()+".jpg");
@@ -17,37 +17,14 @@ function Start () {
 		if (!String.IsNullOrEmpty(www.error)){
 	    	Debug.Log(www.error);
 	    	countError ++;
-	    	remainingImages.Add(i);
 	    }
+	    else
 		prompts[i] = www.texture;
-		Debug.Log(url+(i+1).ToString()+".jpg");
+	//	Debug.Log(url+(i+1).ToString()+".jpg");
 	}
-	if (countError == 0){
-		GetComponent(NetworkConnectionServer).PromptReady = true;
+	if ( countImages > 0 ){
+		GetComponent(NetworkConnectionIT).PromptReady = true;
 	}
-	startDone = true;
-}
-
-public function LoadImages(){
-    var www : WWW;
-	if (remainingImages.length > 0 && pos < remainingImages.length){
-			prompts[remainingImages[pos]] = new Texture2D(100,75);
-			var name: int = remainingImages[pos];
-		    www = new WWW (url+(name+1).ToString()+".jpg");
-			yield www;
-			if (String.IsNullOrEmpty(www.error)){
-		      	remainingImages.RemoveAt(pos);
-		    }
-			prompts[remainingImages[pos]] = www.texture;
-			Debug.Log(url+(name+1).ToString()+".jpg");
-			pos++;
-	 }
-	 else if (pos == 0 && countError>0){
-		 GetComponent(NetworkConnectionServer).PromptReady = true;
-	 }
-	 else{	
-	  	 pos = 0;	
-	 } 
 }
 
 public function GetPrompts(_direction:int){
@@ -61,11 +38,10 @@ public function GetPrompts(_direction:int){
 		{
 			promptCurrentList[i] = promptCurrentList[i]-5;
 		}
-		else if (_direction == 1 && promptCurrentList[i]+5 <= 19)
+		else if (_direction == 1 && promptCurrentList[i]+5 <= (countImages - 1))
 		{
 			promptCurrentList[i] = promptCurrentList[i]+5;
 		}
-		LoadImages();
 	}
 
 }

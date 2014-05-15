@@ -1,5 +1,4 @@
-private var remoteIP: String = "127.0.0.1";
-private var remotePort: int = 25000;
+
 private var listenPort: int = 25000;
 private var useNAT = false;
 
@@ -9,56 +8,24 @@ var gameDuration:int;
 var playerNumber:int;
 
 var yearList : int[] = [1975,2010,2045];
-
-private var currentYear: String;
-private var yearsAgo: String;
-private var gameStarted: boolean = false;
-
-
-function Start(){
-	LoadIPServer();	
-	currentYear = "1";
-}
+private var gameStarted:boolean;
+private var currentYear: String = "1";
+var yearsAgo : String;
 function Update(){
-	//ConnectToServer();
+	if (Network.peerType == NetworkPeerType.Disconnected){
+	
+		Network.InitializeServer(10,listenPort,useNAT);
+	    for (var go : GameObject in FindObjectsOfType(GameObject))
+		     go.SendMessage("OnNetworkLoadedLevel", SendMessageOptions.DontRequireReceiver);
+	}
 }
-function LoadIPServer(){
-    if (PlayerPrefs.HasKey("ipServer")){	
-		var serverIP = PlayerPrefs.GetString("ipServer");
-	  	remoteIP = PlayerPrefs.GetString("ipServer");
-  		remotePort = int.Parse(PlayerPrefs.GetString("remotePort"));
-  		listenPort = int.Parse(PlayerPrefs.GetString("listenPort"));
-  	}else{
-  		remoteIP = "127.0.0.1";
-  		remotePort = 25000;
-  		listenPort = 25000;
-  	}
-	ConnectToServer();
-}
-
-function UpdateIPServer(){ 
-   PlayerPrefs.SetString("ipServer",remoteIP);
-   PlayerPrefs.SetString("remotePort",remotePort.ToString());
-   PlayerPrefs.SetString("listenPort",listenPort.ToString());
-   PlayerPrefs.Save();
-   Debug.Log("NetworkConnectionBear::Updated network settings..");  
-}
-
 function OnConnectedToServer () {
-    Debug.Log("Connected to Server... ");
-    UpdateIPServer();
+    Debug.Log("Connected to... ");
 	// Notify our objects that the level and the network are ready
 	for (var go : GameObject in FindObjectsOfType(GameObject))
 		go.SendMessage("OnNetworkLoadedLevel", SendMessageOptions.DontRequireReceiver);
 }
-function ConnectToServer(){
-  if (Network.peerType == NetworkPeerType.Disconnected){	
-//	yield WaitForSeconds(15.0);
-	Network.Connect(remoteIP, remotePort);
-	Debug.Log("After 15 secs... ");
 
-  }	
-}
 
 function OnPlayerConnected(newPlayer: NetworkPlayer){
 	//Called on the server only
@@ -110,7 +77,7 @@ function LoadLevelInClient (_level: String ,  info : NetworkMessageInfo)
 function FinishGame (_calories: float ,  info : NetworkMessageInfo)
 {
 	 //Called on the Clients
-	 if (   gameStarted){
+	 if (gameStarted){
 	    gameStarted = false;
 	    SendMessage("HideInitialMessage");
 	    Debug.Log("Finish "+ currentYear); 

@@ -54,7 +54,7 @@ function Start(){
 
 function OnGUI(){
    GUI.skin = mySkin;
-   _calories = GetComponent(NetworkConnectionServer).burnedCalories;
+   _calories = GetComponent(NetworkConnectionIT).burnedCalories;
 
    if (_showSummaryGraph){ 
         var spanBtwXPoints =  width / numYears;
@@ -71,7 +71,7 @@ function OnGUI(){
 		//      Debug.Log( "label " +    (_xAxisValue[j]-(_xAxisValue[j]%xInterval)));
 	     } 
 		     
-   	    if (GetComponent(NetworkConnectionServer).isPlaying){
+   	    if (GetComponent(NetworkConnectionIT).isPlaying){
    	     // Debug.Log("Calories to print " + (percentageYPoint));
    	      
 	      GUI.DrawTexture(new Rect(_xCurrentPoint - 18, Screen.height - posY  - 18 - (percentageYPoint * _calories), 36, 36), pointImage);      
@@ -114,7 +114,7 @@ public function ShowSummaryGraph(_value: boolean) {
 }
    
 public function SetCurrentYear(_value: int){
-	_currentYear = GetComponent(NetworkConnectionServer).yearList[_value];
+	_currentYear = GetComponent(NetworkConnectionIT).yearList[_value];
 	_indexYear = _value;
 	}
 	
@@ -126,10 +126,10 @@ function GetHistoricalAverageValues(){
     
    	for (var i: int = 0;i< numYears;i++){   
    
-	    if (PlayerPrefs.HasKey(GetComponent(NetworkConnectionServer).yearList[i].ToString())){  	 
-  		 	values = (PlayerPrefs.GetString(GetComponent(NetworkConnectionServer).yearList[i].ToString())).Split(":"[0]);
+	    if (PlayerPrefs.HasKey(GetComponent(NetworkConnectionIT).yearList[i].ToString())){  	 
+  		 	values = (PlayerPrefs.GetString(GetComponent(NetworkConnectionIT).yearList[i].ToString())).Split(":"[0]);
   	                  
-           _graphYears.Add(GetComponent(NetworkConnectionServer).yearList[i].ToString()); // year;
+           _graphYears.Add(GetComponent(NetworkConnectionIT).yearList[i].ToString()); // year;
            _graphAVG.Add(float.Parse(values[0].ToString())); //average;
            _graphNoPlayers.Add(int.Parse(values[1].ToString()));//  #Players;
        //    Debug.Log(i + " - " + _graphYears[i] + " " +_graphAVG[i] + " " + _graphNoPlayers[i]);
@@ -137,7 +137,7 @@ function GetHistoricalAverageValues(){
      	}
   		else{
  		   
-           _graphYears.Add(GetComponent(NetworkConnectionServer).yearList[i].ToString()); // year;
+           _graphYears.Add(GetComponent(NetworkConnectionIT).yearList[i].ToString()); // year;
            _graphAVG.Add(0); //average;
            _graphNoPlayers.Add(0);//  #Players;
       //     Debug.Log(i + " - No hay - " + _graphYears[i] + " " +_graphAVG[i] + " " + _graphNoPlayers[i]);
@@ -145,7 +145,7 @@ function GetHistoricalAverageValues(){
   		}
    	}
    	/*
-   	applicationPath = GetComponent(NetworkConnectionServer).applicationPath;
+   	applicationPath = GetComponent(NetworkConnectionIT).applicationPath;
    	_randomValues.Clear();
    	_randomCount = 0; 
    	if (File.Exists(applicationPath+"/"+_currentYear+".txt")){
@@ -190,7 +190,7 @@ public function UpdateAverageValues(){
 public function UpdateDataByYear()
 {
 /*
-  applicationPath = GetComponent(NetworkConnectionServer).applicationPath;
+  applicationPath = GetComponent(NetworkConnectionIT).applicationPath;
   var sw =  new StreamWriter(applicationPath+"/"+_currentYear+".txt");
   sw.WriteLine(_calories);
   Debug.Log("File --> " + _currentYear+".txt = " + _randomCount);

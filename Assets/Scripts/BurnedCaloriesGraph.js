@@ -54,9 +54,9 @@ function Start(){
 }
 
 function Update () {
-  // Debug.Log("BurnedCaloriesGraph " + GetComponent(NetworkConnectionServer).isPlaying + " " +GetComponent(NetworkConnectionServer).elapsedTime);
-   if (!GetComponent(NetworkConnectionServer).isPlaying){
-     if (GetComponent(NetworkConnectionServer).elapsedTime == 0){
+  // Debug.Log("BurnedCaloriesGraph " + GetComponent(NetworkConnectionIT).isPlaying + " " +GetComponent(NetworkConnectionIT).elapsedTime);
+   if (!GetComponent(NetworkConnectionIT).isPlaying){
+     if (GetComponent(NetworkConnectionIT).elapsedTime == 0){
 	   if (Input.GetKeyDown(KeyCode.T)){  // Print  calories vs time graph
 		   typeGraph = 0;
 	   }
@@ -66,11 +66,11 @@ function Update () {
 	 }
   }
 
-	_calories = GetComponent(NetworkConnectionServer).burnedCalories;
+	_calories = GetComponent(NetworkConnectionIT).burnedCalories;
 	if (typeGraph == 0)
-	 _currentXValue = GetComponent(NetworkConnectionServer).elapsedTime;
+	 _currentXValue = GetComponent(NetworkConnectionIT).elapsedTime;
 	else if (typeGraph == 1)
-	 _currentXValue = GetComponent(NetworkConnectionServer).meters;
+	 _currentXValue = GetComponent(NetworkConnectionIT).meters;
 
 	UpdateGraph();
 

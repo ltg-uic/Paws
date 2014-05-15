@@ -47,7 +47,7 @@ function DrawMap()
 		 if (mapImage != null)
 			GUI.DrawTexture(new Rect(0, 0, mapWidth, mapHeight), mapImage);
 		 
-		 if (GetComponent(NetworkConnectionServer).isPlaying){
+		 if (GetComponent(NetworkConnectionIT).isPlaying){
 		 	 // Draw the bear on the map
 		     if (_startPos[POS_X] > 0){
 		       GUI.DrawTexture(new Rect(_startPos[POS_X]-_shiftX, _startPos[POS_Y] - _shiftY, 24, 24), startImage);
@@ -133,5 +133,5 @@ public function InitializeMap(){
    }
    
  public function PrintMessage(){
- 	return ("Meters : " + _bearPos[POS_X] + " " + _bearPos[POS_Y]+" - "+_currentYear);
+ 	return ("Meters : " + _bearPos[POS_X] + " " + _bearPos[POS_Y]+" - "+_currentYear+" - "+POS_X+ " "+_startPos[POS_X]+" "+ _startPos[POS_Y]);
  }

@@ -227,18 +227,18 @@ public class PolarBearControl : MonoBehaviour {
 								if (_changeStepsSound)
 								{
 									if (!bs.touchingWater){
-							      	  //bs.setAudioClip("leftStep");
+							      	  bs.setAudioClip("leftStep");
 									}
 									else {
-										//bs.setAudioClip("waterLeftStep");
+										bs.setAudioClip("waterLeftStep");
 									}
 							    }
 								else {
 									if (!bs.touchingWater){
-							      	 // bs.setAudioClip("rightStep");
+							      	  bs.setAudioClip("rightStep");
 									}
 									else {
-										//bs.setAudioClip("waterRightStep");
+									  bs.setAudioClip("waterRightStep");
 									}
 							    }
 							
@@ -263,8 +263,8 @@ public class PolarBearControl : MonoBehaviour {
 	   					    MoveForward("Swim");
 	   					    
 	   					    bs.setAudioClip("inWater");
-	   					    _moveDirection = new Vector3(0, 0, 1);
-						    _moveDirection = transform.TransformDirection(_moveDirection);
+						_moveDirection = new Vector3(0, 0, (swimSpeed==14?7:5));
+						_moveDirection = transform.TransformDirection(_moveDirection);
 	  				        _moveDirection *= swimSpeed;
 						   
 					 }
@@ -414,9 +414,22 @@ public class PolarBearControl : MonoBehaviour {
 						_moveDirection = transform.TransformDirection(_moveDirection);
 						_moveDirection *= moveSpeed;
 						if (_changeStepsSound)
-							bs.setAudioClip("leftStep");
-						else 
-							bs.setAudioClip("rightStep");
+						{
+							if (!bs.touchingWater){
+								bs.setAudioClip("leftStep");
+							}
+							else {
+								bs.setAudioClip("waterLeftStep");
+							}
+						}
+						else {
+							if (!bs.touchingWater){
+								bs.setAudioClip("rightStep");
+							}
+							else {
+								bs.setAudioClip("waterRightStep");
+							}
+						}
 						_changeStepsSound = !_changeStepsSound;
 					}
 			
@@ -557,11 +570,12 @@ public class PolarBearControl : MonoBehaviour {
 							totalRightStroke=0;
 						}
 						MoveForward("Swim");
-						_moveDirection = new Vector3(0, 0, strokeLength);
+						bs.setAudioClip("inWater");
+						_moveDirection = new Vector3(0, 0, strokeLength*(swimSpeed==14?7:5));
 						_moveDirection = transform.TransformDirection(_moveDirection);
 						_moveDirection *= swimSpeed;
 					}
-						    bs.setAudioClip("inWater");
+						 
 						
 				    _moveDirection.y = Mathf.Sin(Time.time*4)/4;
 		    	    // Move the controller
@@ -613,9 +627,10 @@ public class PolarBearControl : MonoBehaviour {
 	  _gameOver = false;
 	 
 	}
+
 	public void LoadYear(String _year){
 		Debug.Log("Starting game");
-		string logPath = "LogMovement_"+trialNumber+"_YEAR"+_year+".txt";
+		string logPath = "PawsLog/LogMovement_"+trialNumber+"_YEAR"+_year+".txt";
 		logFile = new StreamWriter(logPath, true);
 	}
 	
@@ -667,9 +682,9 @@ public class PolarBearControl : MonoBehaviour {
 	
 	private void MoveForward(string _str){
 		if (_str.Equals("Walk"))
-				NumWalkSteps++;
-			else
-			    NumSwimSteps++;
+			NumWalkSteps++;
+		else
+			NumSwimSteps++;
 		
 		string msgToSend = "";
 		if (!_firstStep){

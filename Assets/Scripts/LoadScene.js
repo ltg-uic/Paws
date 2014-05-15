@@ -60,7 +60,7 @@ function  LoadYear(year :String){
  	 	cave.transform.position = new Vector3(902.5+(parseInt(_year)*2000),10.68,941.63);
  	 	polarBear.transform.position = Vector3(_originalPosition.x+(parseInt(_year)*2000),12,605);
  	 }
-     SendMessage("SetSpeed",(GetComponent(NetworkConnectionBear).gameDuration == 0)?14:8);
+     SendMessage("SetSpeed",((GetComponent(NetworkConnectionBear).gameDuration == 0)?14:8));
 	 startGame = true;
 	 yield WaitForSeconds(3.0);
 	 startGame = false;

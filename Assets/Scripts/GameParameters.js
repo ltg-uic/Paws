@@ -22,7 +22,7 @@ public function ShowOnGUI () {
 	if (_showGameParameters){
 	   // Debug.Log("Positions "+posX+" " +posY);
 	    GUILayout.BeginArea (Rect (posX, posY, areaWidth, labelHeight));
-		GUILayout.Label("Year: "+GetComponent(NetworkConnectionServer).yearList[_currentYearIndex]);
+		GUILayout.Label("Year: "+GetComponent(NetworkConnectionIT).yearList[_currentYearIndex]);
 		GUILayout.EndArea();
 
 		for (var cnt:int  = 0; cnt < yearBtnTexture.Length; cnt++){
@@ -35,7 +35,7 @@ public function ShowOnGUI () {
 				   
 				    
 		GUILayout.BeginArea (Rect (posX, posY+labelHeight+100, areaWidth, labelHeight));
-		GUILayout.Label("Game duration: "+GetComponent(NetworkConnectionServer).gameDurationList[_gameDurationIndex]+" min");
+		GUILayout.Label("Game duration: "+GetComponent(NetworkConnectionIT).gameDurationList[_gameDurationIndex]+" min");
 		GUILayout.EndArea();
 	
 		for (var cnt2:int  = 0; cnt2 < durationBtnTexture.Length; cnt2++){
@@ -49,13 +49,13 @@ public function ShowOnGUI () {
       GUILayout.BeginArea (Rect (posX, posY + areaHeight - 60, 140, 60));
 	  if (GUILayout.Button ("Start"))
 	  {		
-		//	if (GetComponent(NetworkConnectionServer).interpreterName.CompareTo("Interpreter...")){
-			    GetComponent(CurrentPosInMap).SetCurrentYear(GetComponent(NetworkConnectionServer).yearList[_currentYearIndex]);
-			    var  _map : Texture2D = Resources.Load("Images/"+GetComponent(NetworkConnectionServer).yearList[_currentYearIndex].ToString()+"_Location_Map", typeof(Texture2D));
+		//	if (GetComponent(NetworkConnectionIT).interpreterName.CompareTo("Interpreter...")){
+			    GetComponent(CurrentPosInMap).SetCurrentYear(GetComponent(NetworkConnectionIT).yearList[_currentYearIndex]);
+			    var  _map : Texture2D = Resources.Load("Images/"+GetComponent(NetworkConnectionIT).yearList[_currentYearIndex].ToString()+"_Location_Map", typeof(Texture2D));
 	            GetComponent(CurrentPosInMap).mapImage = _map;
 			    showGameParameters(false);
-			    GetComponent(NetworkConnectionServer).LoadScores();
-			    GetComponent(NetworkConnectionServer).StartGame();
+			    GetComponent(NetworkConnectionIT).LoadScores();
+			    GetComponent(NetworkConnectionIT).StartGame();
 		//	}
 		//	else
 		//	{

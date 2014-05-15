@@ -17,26 +17,37 @@ function GetPrompts() {
         gameObject.guiText.text = hs_get.text; // this is a GUIText that will display the scores in game.
     }*/
 }
-
-// Mirlanda: Create php(s) that load Interpreters Id and name. (1) order alphabetically (2) order by the last used
 function GetInterpreters() {
     
-    hs_get = WWW(dbURL+"getInterpreters.php");
+    var hs_get_int: WWW = WWW(dbURL+"getInterpreters.php");
+    yield hs_get_int;
+ 
+    if(hs_get_int.error) {
+    	print("DatabaseConnection::There was an error getting the interpreters: " + hs_get.error);
+    } else {
+       GetComponent(Interpreters).interpreters = hs_get_int.text; 
+       GetComponent(NetworkConnectionIT).DBReady = true;
+	   GetComponent(Interpreters).SetInterpreters();
+    }
+}
+function GetPawsImages() {
+    
+    hs_get = WWW(dbURL+"GetPawsImages.php");
     yield hs_get;
  
     if(hs_get.error) {
-    	print("DatabaseConnection::There was an error getting the interpreters: " + hs_get.error);
+    	print("DatabaseConnection::There was an error getting the images: " + hs_get.error);
     } else {
-       GetComponent(NetworkConnectionServer).DBReady = true;
-	   GetComponent(Interpreters).interpreters = hs_get.text; 
-	//   GetComponent(Interpreters).interpreters = "JohnS:John|CathyH:Cathy";
-	   GetComponent(Interpreters).SetInterpreters();
+       GetComponent(NetworkConnectionIT).DBReady = true;
+	   GetComponent(Prompts).countImages = parseInt(hs_get.text); 
+	   GetComponent(Prompts).LoadImages();
     }
 }
 
 function SaveSession(_parameters: String[]){
 
-    Debug.Log("DatabaseConnection::Save data to log..."+dbURL+"SaveSession.php"); 
+ //   Debug.Log("DatabaseConnection::Save data to log..."+dbURL+"SaveSession.php"); 
+  
     var session_url:String;
     var session_data: WWWForm = new WWWForm();
     
@@ -58,7 +69,6 @@ function SaveSession(_parameters: String[]){
     var web_request:WWW = new WWW(dbURL+"SaveSession.php",session_data);
 
     yield web_request;
-    
 }
 
 // Mirlanda: Create php that load scores
@@ -76,26 +86,27 @@ function GetScores(_parameters: int[]){
     else{
 	    if (hs_get.text.Length > 0){
 	      //Debug.Log("DatabaseConnection::Get scores for parameters "+_parameters[0]+" " +_parameters[1] + "--"+ hs_get.text);
-			GetComponent(NetworkConnectionServer).topScores = hs_get.text;
-			GetComponent(NetworkConnectionServer).SetScores();
+			GetComponent(NetworkConnectionIT).topScores = hs_get.text;
+			GetComponent(NetworkConnectionIT).SetScores();
 		}
 	}
 }
+function AppendDataToUILog(_parameter1:String,_parameter2:int,_parameter3:String,_parameter4:boolean,_parameter5:String){
 
-function AppendDataToUILog(_parameter1:String,_parameter2:int,_parameter3:String,_parameter4:String){
-
-    Debug.Log("DatabaseConnection::Save data to UI log..."+dbURL+"SaveUILog.php "+_parameter1+ " " +_parameter2+ " "+_parameter3+ " "+_parameter4); 
+ //   Debug.Log("DatabaseConnection::Save data to UI log..."+dbURL+"SaveUILog.php "+_parameter1+ " " +_parameter2+ " "+_parameter3+ " "+_parameter4+" - " +GetComponent(NetworkConnectionIT).interpreterID); 
+//    message = ""+dbURL+"SaveUILog.php "+_parameter1+ " " +_parameter2+ " "+_parameter3+ " "+_parameter4+ " " + GetComponent(NetworkConnectionIT).interpreterID;
+  
     var session_url:String;
     var session_data: WWWForm = new WWWForm();
     
     session_data.AddField("ui_type",_parameter1);
     session_data.AddField("interaction",_parameter2); // 0 down, 1 up
     session_data.AddField("observation",_parameter3);
-    session_data.AddField("date_time",_parameter4);
- 	session_data.AddField("interpreter",GetComponent(NetworkConnectionServer).interpreterID);
+    session_data.AddField("isPlaying",(_parameter4?1:0));
+    session_data.AddField("date_time",_parameter5);
+ 	session_data.AddField("interpreter",GetComponent(NetworkConnectionIT).interpreterID);
  	
-    var web_request:WWW = new WWW(dbURL+"SaveUILog.php",session_data);
+    var web_request2:WWW = new WWW(dbURL+"SaveUILog.php",session_data);
 
-    yield web_request;
-    
+    yield web_request2;
 }
