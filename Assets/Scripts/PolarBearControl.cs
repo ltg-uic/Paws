@@ -83,11 +83,11 @@ public class PolarBearControl : MonoBehaviour {
 	int leftj = 0;
 	int righti = 0;
 	int rightj = 0;
-	float step_distance = 0;
+	float step_distance = 1;
 	//Scale factors for Step and Stroke
-	float stepScale = 20;
+	float stepScale = 6;
 	float strokeScale  = 1;
-	float strokeLength = 0;
+	float strokeLength = 1;
 	//Mike's Variables for Arm Strokes
 	float leftStroke_cur = 0;
 	float leftStroke_pre = 0;
@@ -171,9 +171,9 @@ public class PolarBearControl : MonoBehaviour {
 		
 		if (!_gameOver){
 			//Debug.Log("No game over");
-			if (Vector3.Distance(_controller.transform.position,GameObject.FindWithTag("Goal").transform.position) < 4)
+			if (Vector3.Distance(_controller.transform.position,GameObject.FindWithTag("Goal").transform.position) < 4 || 
+			    (_controller.transform.position.x > GameObject.FindWithTag("Goal").transform.position.x))
 			{
-				GameObject.FindWithTag("Goal").audio.mute = true;
 				SendMessage("GoalReached");
 			    networkView.RPC ("ReceivedFinishedLevel", RPCMode.Server, "");
 			}
@@ -215,11 +215,9 @@ public class PolarBearControl : MonoBehaviour {
 						//Debug.Log("Test - Esta en tierra");
 						if (Input.GetKeyDown(KeyCode.UpArrow)){
 							//Debug.Log("Test - Caminando...");
-						    
-							
 							MoveForward("Walk");
 							
-							_moveDirection = new Vector3(0, 0, 1);
+							_moveDirection = new Vector3(0, 0, step_distance);
 							_moveDirection = transform.TransformDirection(_moveDirection);
 			                _moveDirection *= moveSpeed;
 			               
@@ -263,7 +261,7 @@ public class PolarBearControl : MonoBehaviour {
 	   					    MoveForward("Swim");
 	   					    
 	   					    bs.setAudioClip("inWater");
-						_moveDirection = new Vector3(0, 0, (swimSpeed==14?7:5));
+						_moveDirection = new Vector3(0, 0, strokeLength);
 						_moveDirection = transform.TransformDirection(_moveDirection);
 	  				        _moveDirection *= swimSpeed;
 						   
@@ -409,6 +407,7 @@ public class PolarBearControl : MonoBehaviour {
 							totalRightStep = 0;
 						}
 						MoveForward("Walk");
+						Debug.Log(step_distance);
 						//I changed the move from 0,0,1 to 0,0,5 because 1 seemed very slow
 						_moveDirection = new Vector3(0, 0, step_distance);
 						_moveDirection = transform.TransformDirection(_moveDirection);
@@ -569,9 +568,9 @@ public class PolarBearControl : MonoBehaviour {
 							strokeLength = totalRightStroke*strokeScale;
 							totalRightStroke=0;
 						}
-						MoveForward("Swim");
+						MoveForward("Swim" + totalLeftStroke + " " +totalRightStroke + " " + strokeLength);
 						bs.setAudioClip("inWater");
-						_moveDirection = new Vector3(0, 0, strokeLength*(swimSpeed==14?7:5));
+						_moveDirection = new Vector3(0, 0, strokeLength);
 						_moveDirection = transform.TransformDirection(_moveDirection);
 						_moveDirection *= swimSpeed;
 					}
@@ -625,6 +624,7 @@ public class PolarBearControl : MonoBehaviour {
 	  Initialize();
 	  _firstStep = false;
 	  _gameOver = false;
+	  GameObject.FindWithTag("Goal").audio.mute = false;
 	 
 	}
 

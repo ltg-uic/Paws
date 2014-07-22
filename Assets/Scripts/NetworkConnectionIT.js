@@ -60,7 +60,7 @@ private var _localPromptIndex:int = -1;
 private var _localToRemotePromptIndex:int = -1;
 private var _remotePromptIndex:int = -1;
 private var _selectedPromptIndex:int = -1;
-
+private var _showSingleView: boolean = true;
 private var _getRandomPrompts: boolean = false;
 
 var yearList : int[] = [1975,2010,2045];
@@ -68,7 +68,7 @@ private var _yearAgoList : int[]= [-35,0,35];
 private var _yearLabels : String[]= ["1975","2010","2045"];
 var gameDurationList: int[] = [1,3,5];
 private var _DBParameters;
-
+var tapCount: int;
 private var _innerController : int;			 
 			       
 //variable for the heigh of the lable text
@@ -112,10 +112,13 @@ function StartScene(){
 	GetComponent(GameParameters).labelHeight = _labelHeight;
 	GetComponent(GameParameters).posX = areaWidth*0.52;       
 	GetComponent(GameParameters).posY = areaHeight*0.10;
-    GetComponent(DatabaseConnection).GetInterpreters();
-    GetComponent(DatabaseConnection).GetPawsImages();
+	ConnectToDataServers();
     Initialize();
     
+}
+function ConnectToDataServers(){
+    GetComponent(DatabaseConnection).GetInterpreters();
+    GetComponent(DatabaseConnection).GetPawsImages();
 }
 function Initialize(){
 	_scoreValues = new ArrayList();
@@ -163,7 +166,7 @@ function StartGame(){
 	GetComponent(SummaryGraph).SetCurrentYear(_currentYear);
 	GetComponent(CurrentPosInMap).SetCurrentYear(_currentYear);
 	GetComponent(BurnedCaloriesGraph).maxXAxisValue = (gameDurationList[_durationGame]) * 70;
-    GetComponent(BurnedCaloriesGraph).maxBurnedCalories = (gameDurationList[_durationGame]==1?250:600);
+    GetComponent(BurnedCaloriesGraph).maxBurnedCalories = (gameDurationList[_durationGame]==1?400:(gameDurationList[_durationGame]==3?500:700));
     GetComponent(BurnedCaloriesGraph).xInterval = 10;
     GetComponent(BurnedCaloriesGraph).DrawCaloriesGraph();
 	GetComponent(BurnedCaloriesGraph).HideBurnedCaloriesGraph();
@@ -179,6 +182,11 @@ function OnConnectedToServer () {
 	for (var go : GameObject in FindObjectsOfType(GameObject))
 		go.SendMessage("OnNetworkLoadedLevel", SendMessageOptions.DontRequireReceiver);
 }
+
+function DoubleTapView(){
+	
+}
+
 function Update(){
 	if (isPlaying && !_goalReached && !_timerReached)
 	{
@@ -218,7 +226,7 @@ function DrawConnectionLabels(){
 
 		GUILayout.BeginArea (Rect (areaWidth*0.05, areaHeight*0.96, _labelHeight, _labelHeight));
 		if (GUILayout.Button("Go")){	
-			StartScene();
+			ConnectToDataServers();
 		}
 	    GUILayout.EndArea();
 	}
@@ -280,8 +288,10 @@ function DrawViews(){
 	    // Show Prompts
 	    // Draw Prompts View
 	    GUILayout.BeginArea(Rect (areaWidth*0.03, areaHeight*0.28, areaWidth*0.45, areaHeight*0.45));
-	    if (_localPromptIndex >=0)
+	    if (_localPromptIndex >=0){
 	        GUILayout.Box(GetComponent(Prompts).prompts[_localPromptIndex]);
+	       
+	        }
 	    else
 	  	    GUILayout.Box(localViewTexture);
 	    if (_selectedPromptIndex >=0 && Event.current.type == EventType.MouseUp && GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
@@ -301,8 +311,10 @@ function DrawViews(){
 	    GUILayout.EndArea();
  
 	    GUILayout.BeginArea(Rect (areaWidth*0.53, areaHeight*0.28, areaWidth*0.45, areaHeight*0.45));
-	      if (_remotePromptIndex >=0)
+	      if (_remotePromptIndex >=0){
 	        GUILayout.Box(GetComponent(Prompts).prompts[_remotePromptIndex]);
+	       
+	        }
 	    else
 	  	    GUILayout.Box(remoteViewTexture);
 		if ((_selectedPromptIndex >=0 || _localToRemotePromptIndex>=0) && Event.current.type == EventType.MouseUp && GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))

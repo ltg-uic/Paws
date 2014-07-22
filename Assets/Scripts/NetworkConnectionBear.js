@@ -67,7 +67,7 @@ function LoadLevelInClient (_level: String ,  info : NetworkMessageInfo)
 	gameDuration = parseInt(values[2]);
 	
 	 //Called on the Clients only
-    Debug.Log("gameDUration "+ gameDuration);  
+    Debug.Log("gameDuration "+ gameDuration);  
 	SendMessage("LoadYear",currentYear);
     SendMessage("StartGame");
     	  	
