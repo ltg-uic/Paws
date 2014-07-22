@@ -393,29 +393,32 @@ function DrawViews(){
    	     	_getRandomPrompts = false;
    		}
    }	
-			
-  	if (!_showSummary)
-  	{    	     	
-			//Hide until later
-		    /*	GUILayout.BeginArea (Rect (areaWidth*0.8, areaHeight*0.85, areaWidth*0.15, _labelHeight));
-		    if (GUILayout.Button("Show scores")){
-			   
-			 _showGraphView = true;
-		     SendMessage("GetHistoricalAverageValues");
-		     if (!_savedAvg && _goalReached){
-		       		GetComponent(SummaryGraph).UpdateAverageValues();
-		       		_savedAvg = true;
-		     }
-		     SendMessage("PrintSummaryGraph"); 
-		     SendMessage("ShowSummaryGraph",true);  
-		    }
-		    GUILayout.EndArea();  
-	     
-	       	GUILayout.BeginArea (Rect (areaWidth*0.1, areaHeight*0.01, areaWidth, _labelHeight+areaHeight*0.01));
-				 GUILayout.Label(GetComponent(DatabaseConnection).PrintMessage());
-				GUILayout.EndArea();
-				 */
+
 			_scoresLoaded = false;
+		
+			// Show Historical values
+			GUILayout.BeginArea (Rect (areaWidth*0.7, areaHeight*0.12, _labelHeight*10, _labelHeight));
+			if (_showCurrentGraph){
+			    if (GUILayout.Button("Hide Historical Graph")){	
+					 _showGraphView = false;
+					}
+			}
+			else{
+			   if (GUILayout.Button("Show Historical Graph")){	
+		     	  SendMessage("GetHistoricalAverageValues");
+		     	   if (!_savedAvg && _goalReached){
+		       		  GetComponent(SummaryGraph).UpdateAverageValues();
+		       		  _savedAvg = true;
+		           }
+				    _showGraphView = true;
+					_showCurrentGraph = false;
+					_showMap = false;
+					SendMessage("PrintSummaryGraph"); 
+		            SendMessage("ShowSummaryGraph",true); 
+				}
+			}
+			GUILayout.EndArea();
+					  	    
 			if (!isPlaying){
 				
 				// Area rendering the UI elements 
@@ -570,11 +573,7 @@ function DrawViews(){
 		    GetComponent(InfoPolarBear).ShowInfo(_showInfo);
 		    GUILayout.EndArea();
 		    */
-		    // Game will stop by user request	
-	
-			
-	}
-	else{  // Draw the Summary Graph
+		    // Game will stop by user request
 	
 		GUILayout.BeginArea (Rect (areaWidth*0.1, areaHeight*0.2, areaWidth*0.45, _labelHeight));
 		GUILayout.Label("Average Kcal Burned"); 
@@ -588,19 +587,8 @@ function DrawViews(){
 		
 		//Return to main view button
 		 GUILayout.BeginArea(Rect (areaWidth*0.8, areaHeight*0.85, areaWidth*0.15, _labelHeight));
-	
-		 if (GUILayout.Button("Back")){
-		     SendMessage("ShowSummaryGraph",false);
-		     _showGraphView = false;
-		     GetComponent(BurnedCaloriesGraph).PrintBurnedCaloriesGraph();
-		     GetComponent(CurrentPosInMap).PrintMap();
-		     if (!isPlaying)
-		     {
-		        Initialize();  
-		     }
-	     }
-	     GUILayout.EndArea ();
 	     
+	 /*
 	    GUILayout.BeginArea (Rect (areaWidth*0.65, areaHeight*0.2, areaWidth*0.3, _labelHeight));
 	  	GUILayout.Label("Top 10 - Year " + yearList[_currentYear]);  
 	    GUILayout.EndArea();
@@ -624,11 +612,10 @@ function DrawViews(){
 	    
 	    GUILayout.EndVertical();
 		GUILayout.EndArea();
-		
-  	}	
+		*/	
   	  	
   	//End Area for the entire GUI
-   GUILayout.EndArea();
+    GUILayout.EndArea();
   
 	///  Game will stop when reach timer    
     if ((isPlaying && _displayMinutes == gameDurationList[_durationGame]) || _goalReached ){
