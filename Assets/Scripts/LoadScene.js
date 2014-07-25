@@ -50,21 +50,18 @@ function  LoadYear(year :String){
  	 seal.transform.position = new Vector3(903+(parseInt(_year)*2000),11.177,843);
  	 cave.transform.position = new Vector3(902,10.68,842.63);
  	 if (GetComponent(NetworkConnectionBear).gameDuration == 0){
- 	 	polarBear.transform.position = Vector3(_originalPosition.x+(parseInt(_year)*2000),12,700);
- 	 	SendMessage("SetSpeed",11);
+ 	 	polarBear.transform.position = Vector3(_originalPosition.x+(parseInt(_year)*2000),12,720);
  	 }
  	 else if (GetComponent(NetworkConnectionBear).gameDuration == 1){
  	 	polarBear.transform.position = Vector3(_originalPosition.x+(parseInt(_year)*2000),12,602);
- 	 	SendMessage("SetSpeed",10);
  	 }
  	 else{
  	 	seal.transform.position = new Vector3(903.33+(parseInt(_year)*2000),10.91528,942.7151);
  	 	cave.transform.position = new Vector3(902.5+(parseInt(_year)*2000),10.68,941.63);
  	 	polarBear.transform.position = Vector3(_originalPosition.x+(parseInt(_year)*2000),12,550);
- 	 	SendMessage("SetSpeed",8);
  	 }
     
 	 startGame = true;
-	 yield WaitForSeconds(3.0);
+	 yield WaitForSeconds(4.0);
 	 startGame = false;
 }

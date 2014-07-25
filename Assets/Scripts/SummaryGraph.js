@@ -1,7 +1,7 @@
 import System.IO;
 
 var linesMaterial : Material;
-var avgLineColor = Color.white;
+var avgLineColor = Color.yellow;
 var lineWidth = 2.5;
 
 var  pointImage: Texture2D =  null;
@@ -14,11 +14,11 @@ var width : int;
 var height : int;
 var numYears: int;
 
-private var _summaryFile:String;
 private var _showSummaryGraph: boolean = false;
 private var _axesColor = Color.white;
 private var _axesWidth = 4.0;
 private var _currentYear : int;
+private var _gameDuration: int;
 private var _indexYear: int;
 private var _calories: float = 0;
 private var _xCurrentPoint = 0;
@@ -33,23 +33,23 @@ private var _axesPoints : Vector2[];
 private var myLine: VectorLine;  // to print the years in the x-axis.
 
 //graph values
-private var _graphYears: Array;
+private var _graphYears:Array;
 private var _graphAVG: Array;
-private var _graphNoPlayers: Array;
-
+public  var avgCalories: String;
+public  var historicalValues1: String;
+public  var historicalValues2: String;
+public  var historicalValues3: String;
+private var _graphHistory1:Array;
+private var _graphHistory2:Array;
+private var _graphHistory3:Array;
 private var _maxCaloriesValue: float = 700;
-private var _randomValues:Array;
-private var _randomCount = 0;
-	
-private var applicationPath:String = "";
 
 function Start(){
- 
 	_graphYears = new Array();
-	_graphAVG = new Array();
-	_graphNoPlayers = new Array();
-	_randomValues = new Array();
-
+	_graphAVG =  new Array();
+	_graphHistory1 = new Array();
+	_graphHistory2 = new Array();
+	_graphHistory3 = new Array();
 }
 
 function OnGUI(){
@@ -59,29 +59,41 @@ function OnGUI(){
    if (_showSummaryGraph){ 
         var spanBtwXPoints =  width / numYears;
   
-       GUI.Label(Rect(posX + width , Screen.height - posY , 100,40),"Years");      
-
-   	   // Points for the averages       
+       GUI.Label(Rect(posX + width - 25, Screen.height - posY , 120,40),"Years");      
+       GUI.Label(Rect(posX +25, Screen.height - posY + 40 , width,40),"Average of the bear's calories burned in the last 10 games");      
+     
 	    for (var i: int =0;i< numYears;i++){   
 	        GUI.Label(Rect(spanBtwXPoints/2  + (i* spanBtwXPoints) + posX - 12, Screen.height - posY ,width,height), _graphYears[i].ToString());      
    	    }  	
    	  
-        for (var k: int = 1; k<= (_maxCaloriesValue/50);k++){   
-		GUI.Label(Rect(posX - 35, Screen.height - ((percentageYPoint * k* 50) + posY) ,30,30), (k*50).ToString());
+        for (var k: int = 1; k<= ((_maxCaloriesValue+100)/50);k++){   
+		       GUI.Label(Rect(posX - 45, Screen.height - ((percentageYPoint * k* 50) + posY) ,40,30), (k*50).ToString());
 		//      Debug.Log( "label " +    (_xAxisValue[j]-(_xAxisValue[j]%xInterval)));
 	     } 
-		     
-   	    if (GetComponent(NetworkConnectionIT).isPlaying){
+		  
+		for (var j: int = 0; j < _graphHistory1.length;j++){
+	   	    // Debug.Log(_randomCount + "  " +_randomValues[j]);
+	   	 
+	   	       GUI.DrawTexture(new Rect(spanBtwXPoints/2 + posX - 12, Screen.height - posY  - 6 - (percentageYPoint * float.Parse(_graphHistory1[j])), 12, 12), pointsImage);      
+	
+	   	}
+	   	for (j = 0; j < _graphHistory2.length;j++){
+	   	    // Debug.Log(_randomCount + "  " +_randomValues[j]);
+	   	 
+	   	       GUI.DrawTexture(new Rect(spanBtwXPoints/2  + (1* spanBtwXPoints) + posX - 12, Screen.height - posY  - 6 - (percentageYPoint * float.Parse(_graphHistory2[j])), 12, 12), pointsImage);      
+	
+	   	}		
+	   	for (j = 0; j < _graphHistory3.length;j++){
+	   	    // Debug.Log(_randomCount + "  " +_randomValues[j]);
+	   	 
+	   	       GUI.DrawTexture(new Rect(spanBtwXPoints/2  + (2* spanBtwXPoints) + posX - 12, Screen.height - posY  - 6 - (percentageYPoint * float.Parse(_graphHistory3[j])), 12, 12), pointsImage);      
+	
+	   	}   
+   	    if (_calories > 0){
    	     // Debug.Log("Calories to print " + (percentageYPoint));
    	      
 	      GUI.DrawTexture(new Rect(_xCurrentPoint - 18, Screen.height - posY  - 18 - (percentageYPoint * _calories), 36, 36), pointImage);      
-	
-	   	   for (var j: int = 0; j < _randomCount;j++){
-	   	    // Debug.Log(_randomCount + "  " +_randomValues[j]);
-	   	   
-	   	       GUI.DrawTexture(new Rect(_xCurrentPoint, Screen.height - posY  - 6 - (percentageYPoint * float.Parse(_randomValues[j])), 12, 12), pointsImage);      
-	
-	   	   }
+
    	   }
     }
 }
@@ -106,100 +118,125 @@ public function DestroyLines(){
 }
 	
 public function ShowSummaryGraph(_value: boolean) {
+
    _showSummaryGraph = _value;
    
-   if (!_showSummaryGraph)
+   if (!_showSummaryGraph){
    		SetLinesPointsLabels();
-   		
+   		HideHistoricalGraph();
+   		}
+    else	
+    	PrintHistoricalGraph();
 }
    
-public function SetCurrentYear(_value: int){
-	_currentYear = GetComponent(NetworkConnectionIT).yearList[_value];
-	_indexYear = _value;
+   
+function HideHistoricalGraph() {
+	if (_avgLine!=null && _axesLine!= null){
+	 Vector.Active(_avgLine,false);
+	 Vector.Active(_axesLine,false);
+	}
+}
+
+function PrintHistoricalGraph() {
+   if (_avgLine!=null && _axesLine!= null){
+	 Vector.Active(_avgLine,true);
+	 Vector.Active(_axesLine,true);
+   }	
+}
+
+public function SetParameters(currentYearIndex: int, gameDuration:int){
+	_currentYear = GetComponent(NetworkConnectionIT).yearList[currentYearIndex];
+	_indexYear = currentYearIndex;
+	_gameDuration = gameDuration;
+	_maxCaloriesValue = 0;
 	}
 	
-function GetHistoricalAverageValues(){
-    var values: String[];
-    _graphYears.Clear();
-    _graphAVG.Clear();
-    _graphNoPlayers.Clear();
+public function SetAVGCalories(){
     
-   	for (var i: int = 0;i< numYears;i++){   
-   
-	    if (PlayerPrefs.HasKey(GetComponent(NetworkConnectionIT).yearList[i].ToString())){  	 
-  		 	values = (PlayerPrefs.GetString(GetComponent(NetworkConnectionIT).yearList[i].ToString())).Split(":"[0]);
-  	                  
-           _graphYears.Add(GetComponent(NetworkConnectionIT).yearList[i].ToString()); // year;
-           _graphAVG.Add(float.Parse(values[0].ToString())); //average;
-           _graphNoPlayers.Add(int.Parse(values[1].ToString()));//  #Players;
-       //    Debug.Log(i + " - " + _graphYears[i] + " " +_graphAVG[i] + " " + _graphNoPlayers[i]);
-   		   _maxCaloriesValue = Mathf.Max(float.Parse(values[0].ToString()),_maxCaloriesValue);
-     	}
-  		else{
- 		   
-           _graphYears.Add(GetComponent(NetworkConnectionIT).yearList[i].ToString()); // year;
-           _graphAVG.Add(0); //average;
-           _graphNoPlayers.Add(0);//  #Players;
-      //     Debug.Log(i + " - No hay - " + _graphYears[i] + " " +_graphAVG[i] + " " + _graphNoPlayers[i]);
+    _graphAVG = new Array();
+    _graphYears = new Array();
 
-  		}
-   	}
-   	/*
-   	applicationPath = GetComponent(NetworkConnectionIT).applicationPath;
-   	_randomValues.Clear();
-   	_randomCount = 0; 
-   	if (File.Exists(applicationPath+"/"+_currentYear+".txt")){
-	   	var file =  File.ReadAllLines(applicationPath+"/"+_currentYear+".txt");
-	   	Debug.Log("File --> " + _currentYear+".txt = " + file.Length);
-	   	if (file!=null){
-	   	    _randomCount = file.Length;
-	   		
-	   		for (var j: int = 0 ; j < _randomCount; j++){
-	   		   _randomValues.Add(file[j]);
-	   		}
-	   	}
-   	}   
-   	*/
+    if (avgCalories.Length > 0){
+      
+	    var avgCaloriesEntries = avgCalories.Split('|'[0]);
+	     
+		for (var entry in avgCaloriesEntries)
+		{
+		   if (entry.Length > 1){
+		       var avgValue : String[]= entry.Split(':'[0]);
+		        
+		       if (avgValue.Length > 0){		      
+				   _graphYears.Add(avgValue[0]);
+				   _graphAVG.Add(avgValue[1]); 
+				   _maxCaloriesValue = Mathf.Max(float.Parse(avgValue[1].ToString()),_maxCaloriesValue);
+			   }
+		   }
+		}
+	}
+	
+}
+public function SetHistoricalValues(_year : String){
+    
+    if (_year == "1975"){
+        _graphHistory1 = new Array();
+	    if (historicalValues1.Length > 0){
+		    var caloriesEntries = historicalValues1.Split('|'[0]);
+		 
+			for (var entry in caloriesEntries)
+			{
+			   if (entry.Length > 1){         
+				      // Debug.Log("Values::Received data:"+avgValue[ 0 ]+"  "+avgValue[ 1 ]);
+					   _graphHistory1.Push(entry);
+					   _maxCaloriesValue = Mathf.Max(float.Parse(entry),_maxCaloriesValue);
+			   }
+			}
+		}
+	}
+	else if (_year == "2010"){
+	  _graphHistory2 = new Array();
+	    if (historicalValues2.Length > 0){
+		    var caloriesEntries2 = historicalValues2.Split('|'[0]);
+		 
+			for (var entry in caloriesEntries2)
+			{
+			   if (entry.Length > 1){         
+				      // Debug.Log("Values::Received data:"+avgValue[ 0 ]+"  "+avgValue[ 1 ]);
+					   _graphHistory2.Push(entry);
+					   _maxCaloriesValue = Mathf.Max(float.Parse(entry),_maxCaloriesValue);
+			   }
+			}
+		}
+	}
+	else if (_year == "2045"){
+	    _graphHistory3 = new Array();
+	    if (historicalValues3.Length > 0){
+		    var caloriesEntries3 = historicalValues3.Split('|'[0]);
+		 
+			for (var entry in caloriesEntries3)
+			{
+			   if (entry.Length > 1){         
+				      // Debug.Log("Values::Received data:"+avgValue[ 0 ]+"  "+avgValue[ 1 ]);
+					   _graphHistory3.Push(entry);
+					   _maxCaloriesValue = Mathf.Max(float.Parse(entry),_maxCaloriesValue);
+			   }
+			}
+		}
+	}
+}
+
+public function GetHistoricalAverageValues(){
+Debug.Log("get historial");
+    GetComponent(DatabaseConnection).GetHistoricalValues(_currentYear,_gameDuration);
 }
 
 
 	
 public function UpdateAverageValues(){
-   var newNoPlayers: int  = 0;
-   var newAvg: float = 0.0f;
-   
-   if (PlayerPrefs.HasKey(_currentYear.ToString())){
-	    var values:String[] = (PlayerPrefs.GetString(_currentYear.ToString())).Split(":"[0]);
-        newNoPlayers = Mathf.Round(float.Parse(values[1])) + 1;
-        
-        newAvg = ((Mathf.Round(float.Parse(values[0])) * Mathf.Round(float.Parse(values[1]))) + _calories) / newNoPlayers;
-   
-   }
-   else
-   {
-	   newNoPlayers = 1;
-	   newAvg = _calories;
-   }
-   
-   PlayerPrefs.SetString(_currentYear.ToString(),(newAvg.ToString()+":"+newNoPlayers.ToString()));
-   PlayerPrefs.Save();
+
+    GetComponent(DatabaseConnection).GetAVGCalories(_gameDuration);
       
 }
 
-
-public function UpdateDataByYear()
-{
-/*
-  applicationPath = GetComponent(NetworkConnectionIT).applicationPath;
-  var sw =  new StreamWriter(applicationPath+"/"+_currentYear+".txt");
-  sw.WriteLine(_calories);
-  Debug.Log("File --> " + _currentYear+".txt = " + _randomCount);
-  for (var i:int = 0 ; i < _randomCount && i < 10; i++){
-      sw.WriteLine(_randomValues[i]);
-  }
-  sw.Close();
-  */
-}
 
 function PrintSummaryGraph(){
         
@@ -207,19 +244,19 @@ function PrintSummaryGraph(){
 	    
 	    SetLinesPointsLabels();
 	    // max y-point
-	    _axesPoints[0] = Vector2( posX, posY + height);
+	    _axesPoints[0] = Vector2( posX, posY + height + 2);
 	  
 	    // origin 
 	    _axesPoints[1] = Vector2( posX, posY);
 	   
 	     
 	    // max x-point
-	     _axesPoints[2] = Vector2( (posX + width)  , posY);
-	  // 	Debug.Log("Print summary graph " + _maxCaloriesValue + " " + height);
-	   	if (_maxCaloriesValue > 0 )  { 
-	  // 	Debug.Log("Print summary graph " + _maxCaloriesValue + " " + height);
-		    percentageYPoint = height /_maxCaloriesValue;
-		    Debug.Log("Print summary graph " + percentageYPoint);
+	     _axesPoints[2] = Vector2( (posX + width + 2)  , posY);
+	   	Debug.Log("Print summary graph " + _maxCaloriesValue + " " + height);
+
+ 	   	if (_maxCaloriesValue > 0 )  { 
+	     	Debug.Log("Print summary graph " + _maxCaloriesValue + " " + height);
+		    percentageYPoint = height /(_maxCaloriesValue+100);
 		 }
 	      
 	   // Points for the averages       
@@ -234,7 +271,6 @@ function PrintSummaryGraph(){
 
    	    }  	    
 
-		
 		if (numYears > 0)
 			Vector.DrawLine(_avgLine);
 			

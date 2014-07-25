@@ -41,6 +41,7 @@ private var _goalReached:boolean;
 private var _timerReached:boolean;
 private var _currentAvg:float;
 private var _minYear : int = 0;
+private var _defTime : int = 3;
 private var _maxYear : int = 2;
 private var _serverReady : boolean;
 private var _playerName : String;
@@ -98,10 +99,10 @@ function StartScene(){
 	GetComponent(CurrentPosInMap).mapWidth = areaWidth*0.7;
 	GetComponent(CurrentPosInMap).mapHeight = areaHeight*0.65;
 	
-	GetComponent(SummaryGraph).posX = areaWidth*0.15;
-	GetComponent(SummaryGraph).posY = areaWidth*0.24;
-	GetComponent(SummaryGraph).height = areaHeight*0.7;
-	GetComponent(SummaryGraph).width = areaWidth*0.65;
+	GetComponent(SummaryGraph).posX = areaWidth*0.12;
+	GetComponent(SummaryGraph).posY = areaHeight*0.15;
+	GetComponent(SummaryGraph).height = areaHeight*0.55;
+	GetComponent(SummaryGraph).width = areaWidth*0.7;
 	GetComponent(SummaryGraph).numYears = yearList.Length;
 
     GetComponent(InfoPolarBear).posX = areaWidth*0.1;
@@ -130,6 +131,7 @@ function Initialize(){
     _leftTime = 0;
 	_currentYear = _minYear;
 	_showGraphView = false;
+	SendMessage("ShowSummaryGraph",false); 
 	isPlaying = false;
 	_innerController = 1;
 	_serverReady = false;	
@@ -155,15 +157,19 @@ function Initialize(){
 	GetComponent(CurrentPosInMap).InitializeMap();
 	GetComponent(BurnedCaloriesGraph).DestroyLines();
 	GetComponent(Prompts).ResetPrompts();
+	GetComponent(SummaryGraph).SetParameters(_currentYear,_defTime);
+	GetComponent(SummaryGraph).UpdateAverageValues();
 	LoadScores();
-	
 }
 
 function StartGame(){
 	_currentYear = GetComponent(GameParameters).getCurrentYearIndex();
 	_durationGame = GetComponent(GameParameters).getDurationGameIndex();
 	_startTime = Time.realtimeSinceStartup;
-	GetComponent(SummaryGraph).SetCurrentYear(_currentYear);
+	GetComponent(SummaryGraph).SetParameters(_currentYear,gameDurationList[_durationGame]);
+	GetComponent(SummaryGraph).UpdateAverageValues();
+	GetComponent(SummaryGraph).GetHistoricalAverageValues();
+	
 	GetComponent(CurrentPosInMap).SetCurrentYear(_currentYear);
 	GetComponent(BurnedCaloriesGraph).maxXAxisValue = (gameDurationList[_durationGame]) * 70;
     GetComponent(BurnedCaloriesGraph).maxBurnedCalories = (gameDurationList[_durationGame]==1?400:(gameDurationList[_durationGame]==3?500:700));
@@ -248,13 +254,13 @@ function DrawConnectionLabels(){
 		GUILayout.EndArea();
 	}
 	if (!_serverReady){
-	    GUILayout.BeginArea (Rect (areaWidth*0.70, areaHeight*0.92, areaWidth*0.20, _labelHeight));
+	    GUILayout.BeginArea (Rect (areaWidth*0.75, areaHeight*0.92, areaWidth*0.20, _labelHeight));
 		if (GUILayout.Button("Connect to Exhibit")){	
 			// If server not connected - iPad Connect to Exhibit
 			Network.Connect(remoteIP, remotePort);
 		}
 	    GUILayout.EndArea();
-		GUILayout.BeginArea (Rect (areaWidth*0.70, areaHeight*0.96, areaWidth*0.22, _labelHeight+areaHeight*0.01));
+		GUILayout.BeginArea (Rect (areaWidth*0.75, areaHeight*0.96, areaWidth*0.20, _labelHeight+areaHeight*0.01));
 		remoteIP = GUILayout.TextField(remoteIP,15);
 		GUILayout.EndArea();
 
@@ -284,7 +290,7 @@ function DrawViews(){
  
     DrawConnectionLabels();
 			
-   if (!_showMap && !_showCurrentGraph){   
+   if (!_showMap && !_showCurrentGraph && !_showGraphView){   
 	    // Show Prompts
 	    // Draw Prompts View
 	    GUILayout.BeginArea(Rect (areaWidth*0.03, areaHeight*0.28, areaWidth*0.45, areaHeight*0.45));
@@ -352,18 +358,10 @@ function DrawViews(){
 		  
   
    }
-   if (serverTest%3 == 1 && !(_showMap || _showCurrentGraph))
+   if (serverTest%3 == 1 && !(_showMap || _showCurrentGraph || _showGraphView))
    {
    
-       /* if ((_displaySeconds == 30 || _displaySeconds == 0) && !_getRandomPrompts)
-   		{
-   		    _getRandomPrompts = true;
-   			GetComponent(Prompts).GetPrompts(1);
-   		}
-   		else if (_displaySeconds != 30 && _displaySeconds != 0 )
-   		{*/
-   	     	_getRandomPrompts = false;
-   	//	}
+   	    _getRandomPrompts = false;
    		
         GUILayout.BeginArea (Rect (areaWidth*0.05, areaHeight*0.79, _labelHeight, _labelHeight*3));
    		if (GUILayout.Button("\n<\n")){
@@ -397,19 +395,17 @@ function DrawViews(){
 			_scoresLoaded = false;
 		
 			// Show Historical values
-			GUILayout.BeginArea (Rect (areaWidth*0.7, areaHeight*0.12, _labelHeight*10, _labelHeight));
-			if (_showCurrentGraph){
+			GUILayout.BeginArea (Rect (areaWidth*0.75, areaHeight*0.12, _labelHeight*8, _labelHeight));
+			if (_showGraphView){
 			    if (GUILayout.Button("Hide Historical Graph")){	
 					 _showGraphView = false;
+					 SendMessage("ShowSummaryGraph",false); 
 					}
 			}
 			else{
 			   if (GUILayout.Button("Show Historical Graph")){	
-		     	  SendMessage("GetHistoricalAverageValues");
-		     	   if (!_savedAvg && _goalReached){
-		       		  GetComponent(SummaryGraph).UpdateAverageValues();
-		       		  _savedAvg = true;
-		           }
+		     	  	GetComponent(SummaryGraph).UpdateAverageValues();
+	                GetComponent(SummaryGraph).GetHistoricalAverageValues();
 				    _showGraphView = true;
 					_showCurrentGraph = false;
 					_showMap = false;
@@ -482,9 +478,9 @@ function DrawViews(){
 				}
 			   
 		     	GUILayout.BeginArea (Rect (areaWidth*0.5, areaHeight*0.05, areaWidth*0.3, _labelHeight));				
-				GUILayout.Label("Year: "+yearList[_currentYear].ToString());
+				GUILayout.Label("Year: "+yearList[_currentYear].ToString() + " - " + gameDurationList[_durationGame]+" min.");
 				GUILayout.EndArea();
-				
+
 				// Draw the main view.
 				GUILayout.BeginArea (Rect (areaWidth*0.3, areaHeight*0.18, areaWidth*0.4, _labelHeight));
 				GUILayout.Label("Bear calories burned: " + (Mathf.Round(burnedCalories*100)/100) + " Calories");  
@@ -525,22 +521,25 @@ function DrawViews(){
 			   GUILayout.EndArea();  
 				   
 				// show map Button
-			    GUILayout.BeginArea (Rect (areaWidth*0.1, areaHeight*0.12, _labelHeight*7, _labelHeight));
+			    GUILayout.BeginArea (Rect (areaWidth*0.03, areaHeight*0.12, _labelHeight*7, _labelHeight));
 				if (_showMap){
 				    if (GUILayout.Button("Hide Bird's eye view")){	
 						_showMap = false;
+						_showGraphView = false;
 						}
 				}
 				else{
 				 if (GUILayout.Button("Show Bird's eye view")){	
 						_showMap = true;
+						_showGraphView = false;
+						 SendMessage("ShowSummaryGraph",false); 
 						_showCurrentGraph = false;
 						}
 				}
 				GUILayout.EndArea();
 				
 				// Show current Calories graph Button
-				GUILayout.BeginArea (Rect (areaWidth*0.5, areaHeight*0.12, _labelHeight*10, _labelHeight));
+				GUILayout.BeginArea (Rect (areaWidth*0.35, areaHeight*0.12, _labelHeight*10, _labelHeight));
 				if (_showCurrentGraph){
 				    if (GUILayout.Button("Hide Current Calories Graph")){	
 						_showCurrentGraph = false;
@@ -550,6 +549,8 @@ function DrawViews(){
 				 if (GUILayout.Button("Show Current Calories Graph")){	
 						_showCurrentGraph = true;
 						_showMap = false;
+						_showGraphView = false;
+					    SendMessage("ShowSummaryGraph",false); 
 						}
 				}
 				GUILayout.EndArea();
@@ -567,26 +568,15 @@ function DrawViews(){
 				else{
 					GetComponent(BurnedCaloriesGraph).HideBurnedCaloriesGraph();
 				}
+				if (_showGraphView){
+					SendMessage("PrintSummaryGraph"); 
+		            SendMessage("ShowSummaryGraph",true); 
+		        }
+				
 		    }  
-		  /*  GUILayout.BeginArea(Rect (areaWidth*0.1, areaHeight*0.95, areaWidth*0.3, _labelHeight));
-		    _showInfo = GUILayout.Toggle(_showInfo, "Show polar bear info");
-		    GetComponent(InfoPolarBear).ShowInfo(_showInfo);
-		    GUILayout.EndArea();
-		    */
-		    // Game will stop by user request
-	
-		GUILayout.BeginArea (Rect (areaWidth*0.1, areaHeight*0.2, areaWidth*0.45, _labelHeight));
-		GUILayout.Label("Average Kcal Burned"); 
-		GUILayout.EndArea();
-		
-		GUILayout.BeginArea (Rect (areaWidth*0.1, areaHeight*0.25, areaWidth*0.5, areaHeight*0.50));
-		GUILayout.BeginVertical(GUI.skin.box, GUILayout.Height(areaHeight*0.5), GUILayout.Width(areaWidth*0.5));
-		GUILayout.Space(areaHeight*0.5);
-		GUILayout.EndVertical();
-		GUILayout.EndArea();	
-		
+
 		//Return to main view button
-		 GUILayout.BeginArea(Rect (areaWidth*0.8, areaHeight*0.85, areaWidth*0.15, _labelHeight));
+		// GUILayout.BeginArea(Rect (areaWidth*0.8, areaHeight*0.85, areaWidth*0.15, _labelHeight));
 	     
 	 /*
 	    GUILayout.BeginArea (Rect (areaWidth*0.65, areaHeight*0.2, areaWidth*0.3, _labelHeight));
@@ -629,7 +619,7 @@ function DrawViews(){
        _timerReached = true; 
        if (!_savedLog){
  	    GetComponent(AppendToLog).AppendDataToLog();
- 	    GetComponent(SummaryGraph).UpdateDataByYear();
+ 	    GetComponent(SummaryGraph).UpdateAverageValues();
  	    _savedLog = true;
        }
 	}
@@ -754,7 +744,8 @@ function ReceivedFinishedLevel (_steps: String ,  info : NetworkMessageInfo)
     
     if (!_savedLog){
 	    GetComponent(AppendToLog).AppendDataToLog(); 	
-	    GetComponent(SummaryGraph).UpdateDataByYear();
+	    GetComponent(SummaryGraph).UpdateAverageValues();
+	    GetComponent(SummaryGraph).GetHistoricalAverageValues();
 	    _savedLog = true;
     }
 }

@@ -36,7 +36,6 @@ function GameOverTimeOut(_value: float){
    _timeOut = true;
   // 	yield WaitForSeconds(4.0);
    //	_gameOver = false;
-   Debug.Log("counterMsg"+_counterMsg);
    _counterMsg=0;
    yield WaitForSeconds(5.0);
    GameObject.FindWithTag("Goal").audio.mute = true;
@@ -59,11 +58,11 @@ function OnGUI(){
 	//GUI.BeginGroup (new Rect (ScreenX, ScreenY, areaWidh, areaHeight));
 		GUI.BeginGroup (new Rect (Screen.width / 2 -320, Screen.height / 2 - 240, areaWidth, areaHeight));
 		// All rectangles are now adjusted to the group. (0,0) is the topleft corner of the group.
-		
+		  Debug.Log("counterMsg"+_counterMsg);
 		GUI.DrawTexture (new Rect (0, 0, areaWidth, areaHeight), backgroundTexture);
 		if (!reachedGoal && _timeOut){
 		  	GUI.Label (new Rect (0,100,areaWidth,areaHeight), "GAME OVER - TIME OUT");
-		  	}
+		}
 		else if (!reachedGoal && !_timeOut){
 		  	GUI.Label (new Rect (0,100,areaWidth,areaHeight), "GAME OVER");
 		  	_counterMsg++;

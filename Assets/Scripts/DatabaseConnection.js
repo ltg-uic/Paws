@@ -28,6 +28,7 @@ function GetInterpreters() {
        GetComponent(Interpreters).interpreters = hs_get_int.text; 
        GetComponent(NetworkConnectionIT).DBReady = true;
 	   GetComponent(Interpreters).SetInterpreters();
+	   Debug.Log("done interpreters");
     }
 }
 function GetPawsImages() {
@@ -88,6 +89,68 @@ function GetScores(_parameters: int[]){
 	      //Debug.Log("DatabaseConnection::Get scores for parameters "+_parameters[0]+" " +_parameters[1] + "--"+ hs_get.text);
 			GetComponent(NetworkConnectionIT).topScores = hs_get.text;
 			GetComponent(NetworkConnectionIT).SetScores();
+		}
+	}
+}
+function GetAVGCalories(_parameters: int){
+    var _url = "getAvgCalories.php" + "?game_duration=" + _parameters;
+    var hs_get = WWW(dbURL+_url);
+  
+    yield hs_get; // Wait until the download is done
+ 
+    if(hs_get.error) {
+        print("DatabaseConnection::There was an error getting the avg calories value: " + hs_get.error);
+    }
+    else{
+	    if (hs_get.text.Length > 0){
+	     //   Debug.Log("DatabaseConnection::GetAVGCalories "+_parameters + "--"+ hs_get.text);
+			GetComponent(SummaryGraph).avgCalories = hs_get.text;
+			GetComponent(SummaryGraph).SetAVGCalories();
+		}
+	}
+}
+function GetHistoricalValues(_parameter1: int, _parameter2:int){
+
+    var _url = "getHistoryGraph.php" + "?game_duration=" + _parameter2 + "&year="+"1975";
+    var hs_get = WWW(dbURL+_url);
+    yield hs_get; // Wait until the download is done
+
+    if(hs_get.error) {
+        print("DatabaseConnection::There was an error getting the historical calories value: " + hs_get.error);
+    }
+    else{
+	    if (hs_get.text.Length > 0){
+	     // Debug.Log("DatabaseConnection::GetHistoricalValues "+_parameter1+" " +_parameter2 + "--"+ hs_get.text);
+			GetComponent(SummaryGraph).historicalValues1 = hs_get.text;
+			GetComponent(SummaryGraph).SetHistoricalValues("1975");
+		}
+	}
+	_url = "getHistoryGraph.php" + "?game_duration=" + _parameter2 + "&year="+"2010";
+    hs_get = WWW(dbURL+_url);
+    yield hs_get; // Wait until the download is done
+    Debug.Log(dbURL+_url);
+    if(hs_get.error) {
+        print("DatabaseConnection::There was an error getting the historical calories value: " + hs_get.error);
+    }
+    else{
+	    if (hs_get.text.Length > 0){
+	      //Debug.Log("DatabaseConnection::GetHistoricalValues "+_parameter1+" " +_parameter2 + "--"+ hs_get.text);
+			GetComponent(SummaryGraph).historicalValues2 = hs_get.text;
+			GetComponent(SummaryGraph).SetHistoricalValues("2010");
+		}
+	}
+	_url = "getHistoryGraph.php" + "?game_duration=" + _parameter2 + "&year="+"2045";
+    hs_get = WWW(dbURL+_url);
+    yield hs_get; // Wait until the download is done
+    Debug.Log(dbURL+_url);
+    if(hs_get.error) {
+        print("DatabaseConnection::There was an error getting the historical calories value: " + hs_get.error);
+    }
+    else{
+	    if (hs_get.text.Length > 0){
+	     // Debug.Log("DatabaseConnection::GetHistoricalValues "+_parameter1+" " +_parameter2 + "--"+ hs_get.text);
+			GetComponent(SummaryGraph).historicalValues3 = hs_get.text;
+			GetComponent(SummaryGraph).SetHistoricalValues("2045");
 		}
 	}
 }

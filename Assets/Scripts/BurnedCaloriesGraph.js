@@ -1,10 +1,10 @@
 var linesMaterial : Material;
 
 private var _axesColor = Color.white;
-private var _axesWidth = 2;
+private var _axesWidth = 2.5;
 
 private var _lineColor = Color.yellow;
-private var _lineWidth = 2;
+private var _lineWidth = 2.5;
 
 private var _axesLine: VectorLine;
 private var _lineLine: VectorLine;
@@ -40,7 +40,7 @@ function Start(){
 	_xAxisPos = new Array();
 	_xAxisValue = new Array();
 	if (maxBurnedCalories <= 0)
-		maxBurnedCalories = 100;
+		maxBurnedCalories = 600;
 	_currentPos = 0;
 	_spanBtwXPoints = 0;
 	_percentageXPoint = _percentageYPoint = 0;

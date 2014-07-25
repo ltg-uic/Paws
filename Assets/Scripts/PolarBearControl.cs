@@ -14,8 +14,8 @@ public class PolarBearControl : MonoBehaviour {
     const float outWRotation = 14;
     public Transform polarBearTransform;
     public bool testing;
-    public float moveSpeed = 7;
-    public float swimSpeed = 7;
+    public float moveSpeed = 9;
+    public float swimSpeed = 9;
     public float defaultGravity = 20;  
 	public GameObject polarBear;
 	public string polarBearTag;
@@ -80,13 +80,13 @@ public class PolarBearControl : MonoBehaviour {
 	float _leftStep = 0;
 	float _rightStep = 0;
 	int lefti = 0;
-	int leftj = 0;
+	int leftj = 0;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 	int righti = 0;
 	int rightj = 0;
 	float step_distance = 1;
 	//Scale factors for Step and Stroke
-	float stepScale = 6;
-	float strokeScale  = 1;
+	float stepScale = 5;
+	float strokeScale  = 5;
 	float strokeLength = 1;
 	//Mike's Variables for Arm Strokes
 	float leftStroke_cur = 0;
@@ -171,8 +171,8 @@ public class PolarBearControl : MonoBehaviour {
 		
 		if (!_gameOver){
 			//Debug.Log("No game over");
-			if (Vector3.Distance(_controller.transform.position,GameObject.FindWithTag("Goal").transform.position) < 4 || 
-			    (_controller.transform.position.x > GameObject.FindWithTag("Goal").transform.position.x))
+			if (Vector3.Distance(_controller.transform.position,GameObject.FindWithTag("Goal").transform.position) < 4  || 
+			   (_controller.transform.position.z > GameObject.FindWithTag("Goal").transform.position.z))
 			{
 				SendMessage("GoalReached");
 			    networkView.RPC ("ReceivedFinishedLevel", RPCMode.Server, "");
