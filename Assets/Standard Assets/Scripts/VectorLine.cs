@@ -290,7 +290,7 @@ public class VectorLine {
 		vectorObject = new GameObject("Vector "+lineName, typeof(MeshRenderer));
 		vectorObject.layer = Vector.vectorLayer;
 		meshFilter = (MeshFilter)vectorObject.AddComponent(typeof(MeshFilter));
-		vectorObject.renderer.material = useMaterial;
+		vectorObject.GetComponent<Renderer>().material = useMaterial;
 		meshFilter.mesh = mesh;		
 		BuildMesh (pointsLength, use2Dlines, useSegmentColors, colors);
 	}

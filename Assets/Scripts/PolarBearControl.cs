@@ -175,7 +175,7 @@ public class PolarBearControl : MonoBehaviour {
 			   (_controller.transform.position.z > GameObject.FindWithTag("Goal").transform.position.z))
 			{
 				SendMessage("GoalReached");
-			    networkView.RPC ("ReceivedFinishedLevel", RPCMode.Server, "");
+			    GetComponent<NetworkView>().RPC ("ReceivedFinishedLevel", RPCMode.Server, "");
 			}
 	
 					
@@ -624,7 +624,7 @@ public class PolarBearControl : MonoBehaviour {
 	  Initialize();
 	  _firstStep = false;
 	  _gameOver = false;
-	  GameObject.FindWithTag("Goal").audio.mute = false;
+	  GameObject.FindWithTag("Goal").GetComponent<AudioSource>().mute = false;
 	 
 	}
 
@@ -698,12 +698,12 @@ public class PolarBearControl : MonoBehaviour {
                             + GameObject.FindWithTag("Goal").transform.position.z.ToString();
     
 			Debug.Log("Set Goal -  current map position");	
-  		    networkView.RPC ("SetGoalBearInMap", RPCMode.Server, msgToSend);
+  		    GetComponent<NetworkView>().RPC ("SetGoalBearInMap", RPCMode.Server, msgToSend);
 		
 		}
 	
 	    msgToSend = NumWalkSteps.ToString() + ":" + NumSwimSteps.ToString()+":"+ _controller.transform.position.x.ToString()+":"+_controller.transform.position.z.ToString();
-	    networkView.RPC ("ReceivedMovementInput", RPCMode.Server, msgToSend);
+	    GetComponent<NetworkView>().RPC ("ReceivedMovementInput", RPCMode.Server, msgToSend);
 	}
 
    private void SensingLeftPaw(){

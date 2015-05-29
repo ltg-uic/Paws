@@ -76,9 +76,9 @@ private var _innerController : int;
 private var _labelHeight :float;
 			       
 //variable for testing different versions of the server
-var serverTest:int; //  0 mouseDown, mouseUp with only 5 prompts at a time
+var serverTest:int ; //  0 mouseDown, mouseUp with only 5 prompts at a time
 						//  1 mouseDown, mouseUp with buttons to navigate prompts	
- 
+var NoPanel:int = 1; // 0 - 1 panel; 1 - 2 panel (default)
 function Start(){
  
   StartScene();
@@ -151,6 +151,7 @@ function Initialize(){
     _getRandomPrompts = false;
     _showMap = false;
     _showCurrentGraph = false;
+
     
 	var  _map : Texture2D = Resources.Load("Images/"+yearList[_currentYear].ToString()+"_Location_Map", typeof(Texture2D));
 	GetComponent(CurrentPosInMap).mapImage = _map;
@@ -177,7 +178,7 @@ function StartGame(){
     GetComponent(BurnedCaloriesGraph).DrawCaloriesGraph();
 	GetComponent(BurnedCaloriesGraph).HideBurnedCaloriesGraph();
     isPlaying = true;
-    networkView.RPC ("LoadLevelInClient", RPCMode.Others, _currentYear.ToString()+":"+_yearAgoList[_currentYear].ToString()+":"+_durationGame.ToString());  
+    GetComponent.<NetworkView>().RPC ("LoadLevelInClient", RPCMode.Others, _currentYear.ToString()+":"+_yearAgoList[_currentYear].ToString()+":"+_durationGame.ToString());  
 }
 
 function OnConnectedToServer () {
@@ -282,60 +283,94 @@ function DrawViews(){
     		
    
 	// Draw the main view.
-	GUILayout.BeginArea (Rect (areaWidth*0.02, areaHeight*0.22, _labelHeight, _labelHeight));
+/*	GUILayout.BeginArea (Rect (areaWidth*0.02, areaHeight*0.22, _labelHeight, _labelHeight));
 	if (GUILayout.Button((serverTest%3).ToString())){	
 		serverTest++;
 	}
-    GUILayout.EndArea();
- 
+    GUILayout.EndArea();*/
+
+    
     DrawConnectionLabels();
 			
    if (!_showMap && !_showCurrentGraph && !_showGraphView){   
+   
+       // 1 Panel or 2 Panel
+	    GUILayout.BeginArea (Rect (areaWidth*0.75, areaHeight*0.18, areaWidth*0.21, _labelHeight));
+	    
+		if (GUILayout.Button(("Switch to " + ((NoPanel%2)+1).ToString() + "-panel(s)"))){	
+			NoPanel++;
+		}
+	    GUILayout.EndArea();
 	    // Show Prompts
 	    // Draw Prompts View
-	    GUILayout.BeginArea(Rect (areaWidth*0.03, areaHeight*0.28, areaWidth*0.45, areaHeight*0.45));
-	    if (_localPromptIndex >=0){
-	        GUILayout.Box(GetComponent(Prompts).prompts[_localPromptIndex]);
-	       
-	        }
-	    else
-	  	    GUILayout.Box(localViewTexture);
-	    if (_selectedPromptIndex >=0 && Event.current.type == EventType.MouseUp && GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
-	    {
-	       _localPromptIndex = _selectedPromptIndex;
-	       GetComponent(DatabaseConnection).AppendDataToUILog('L',1,_localPromptIndex.ToString(),isPlaying,DateTime.Now.ToString());
-	       _selectedPromptIndex = -1;
-	       _localToRemotePromptIndex = -1;
+	    if ((NoPanel%2) == 0 ){
+		    GUILayout.BeginArea(Rect (areaWidth*0.03, areaHeight*0.28, areaWidth*0.45, areaHeight*0.45));
+		    if (_localPromptIndex >=0){
+		        GUILayout.Box(GetComponent(Prompts).prompts[_localPromptIndex]);
+		       
+		        }
+		    else
+		  	    GUILayout.Box(localViewTexture);
+		    if (_selectedPromptIndex >=0 && Event.current.type == EventType.MouseUp && GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
+		    {
+		       _localPromptIndex = _selectedPromptIndex;
+		       GetComponent(DatabaseConnection).AppendDataToUILog('L',1,_localPromptIndex.ToString(),isPlaying,DateTime.Now.ToString());
+		       _selectedPromptIndex = -1;
+		       _localToRemotePromptIndex = -1;
+		    }
+		    if (_localPromptIndex >=0 && Event.current.type == EventType.MouseDown && GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
+			  {
+			   // Debug.Log("logging down "+ GetComponent(Prompts).promptCurrentList[_p]);
+			    _localToRemotePromptIndex = _localPromptIndex;
+			     _selectedPromptIndex = -1;
+			    GetComponent(DatabaseConnection).AppendDataToUILog('B',0,_localToRemotePromptIndex.ToString(),isPlaying,DateTime.Now.ToString());
+			  }
+		    GUILayout.EndArea();
+	 
+		    GUILayout.BeginArea(Rect (areaWidth*0.53, areaHeight*0.28, areaWidth*0.45, areaHeight*0.45));
+		      if (_remotePromptIndex >=0){
+		        GUILayout.Box(GetComponent(Prompts).prompts[_remotePromptIndex]);
+		       
+		        }
+		    else
+		  	    GUILayout.Box(remoteViewTexture);
+			if ((_selectedPromptIndex >=0 || _localToRemotePromptIndex>=0) && Event.current.type == EventType.MouseUp && GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
+		    {
+		        if (_selectedPromptIndex >=0)
+		       		 _remotePromptIndex = _selectedPromptIndex;
+		        else
+		        	_remotePromptIndex = _localToRemotePromptIndex;
+		        	
+		         GetComponent(DatabaseConnection).AppendDataToUILog('R',1,_remotePromptIndex.ToString(),isPlaying,DateTime.Now.ToString());
+		         _selectedPromptIndex = -1;
+		         _localToRemotePromptIndex = -1;
+		    }
+		    GUILayout.EndArea();
 	    }
-	    if (_localPromptIndex >=0 && Event.current.type == EventType.MouseDown && GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
-		  {
-		   // Debug.Log("logging down "+ GetComponent(Prompts).promptCurrentList[_p]);
-		    _localToRemotePromptIndex = _localPromptIndex;
-		     _selectedPromptIndex = -1;
-		    GetComponent(DatabaseConnection).AppendDataToUILog('B',0,_localToRemotePromptIndex.ToString(),isPlaying,DateTime.Now.ToString());
-		  }
-	    GUILayout.EndArea();
- 
-	    GUILayout.BeginArea(Rect (areaWidth*0.53, areaHeight*0.28, areaWidth*0.45, areaHeight*0.45));
-	      if (_remotePromptIndex >=0){
-	        GUILayout.Box(GetComponent(Prompts).prompts[_remotePromptIndex]);
-	       
-	        }
-	    else
-	  	    GUILayout.Box(remoteViewTexture);
-		if ((_selectedPromptIndex >=0 || _localToRemotePromptIndex>=0) && Event.current.type == EventType.MouseUp && GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
-	    {
-	        if (_selectedPromptIndex >=0)
-	       		 _remotePromptIndex = _selectedPromptIndex;
-	        else
-	        	_remotePromptIndex = _localToRemotePromptIndex;
-	        	
-	         GetComponent(DatabaseConnection).AppendDataToUILog('R',1,_remotePromptIndex.ToString(),isPlaying,DateTime.Now.ToString());
-	         _selectedPromptIndex = -1;
-	         _localToRemotePromptIndex = -1;
+	    else{ //Show only one prompt
+	      GUILayout.BeginArea(Rect (areaWidth*0.25, areaHeight*0.25, areaWidth*0.52, areaHeight*0.50));
+		    if (_localPromptIndex >=0){
+		        GUILayout.Box(GetComponent(Prompts).prompts[_localPromptIndex]);
+		       
+		        }
+		    else
+		  	    GUILayout.Box(localViewTexture);
+		    if (_selectedPromptIndex >=0 && Event.current.type == EventType.MouseUp && GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
+		    {
+		       _localPromptIndex = _selectedPromptIndex;
+		       GetComponent(DatabaseConnection).AppendDataToUILog('L',1,_localPromptIndex.ToString(),isPlaying,DateTime.Now.ToString());
+		       _selectedPromptIndex = -1;
+		       _localToRemotePromptIndex = -1;
+		    }
+		    if (_localPromptIndex >=0 && Event.current.type == EventType.MouseDown && GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
+			  {
+			   // Debug.Log("logging down "+ GetComponent(Prompts).promptCurrentList[_p]);
+			    _localToRemotePromptIndex = _localPromptIndex;
+			     _selectedPromptIndex = -1;
+			    GetComponent(DatabaseConnection).AppendDataToUILog('B',0,_localToRemotePromptIndex.ToString(),isPlaying,DateTime.Now.ToString());
+			  }
+		    GUILayout.EndArea();
 	    }
-	    GUILayout.EndArea();
-	    
 	    	///Show prompts - resources
 	      if (GetComponent(Prompts).countImages > 0){
 	          if (GetComponent(Prompts).countImages < promptsXScreen)
@@ -368,6 +403,8 @@ function DrawViews(){
    		    //Debug.Log("Past");
 		    GetComponent(Prompts).GetPrompts(-1);
 		    GetComponent(DatabaseConnection).AppendDataToUILog('B',0,"<",isPlaying,DateTime.Now.ToString());
+		     _showInterpreterList = false;
+		     GetComponent(GameParameters).showGameParameters(false);
 	    }
 	    GUILayout.EndArea();  
 	    GUILayout.BeginArea (Rect (areaWidth*0.9, areaHeight*0.79, _labelHeight, _labelHeight*3));
@@ -375,6 +412,8 @@ function DrawViews(){
 	        // Debug.Log("Future");
 		     GetComponent(Prompts).GetPrompts(1);
 		     GetComponent(DatabaseConnection).AppendDataToUILog('B',0,">",isPlaying,DateTime.Now.ToString());
+		      _showInterpreterList = false;
+		      GetComponent(GameParameters).showGameParameters(false);
 	    }
 	    GUILayout.EndArea(); 
 	
@@ -395,26 +434,30 @@ function DrawViews(){
 			_scoresLoaded = false;
 		
 			// Show Historical values
-			GUILayout.BeginArea (Rect (areaWidth*0.75, areaHeight*0.12, _labelHeight*8, _labelHeight));
+			GUILayout.BeginArea (Rect (areaWidth*0.75, areaHeight*0.12, _labelHeight*7, _labelHeight));
 			if (_showGraphView){
-			    if (GUILayout.Button("Hide Historical Graph")){	
+			    if (GUILayout.Button("<< Back")){	
 					 _showGraphView = false;
+					 _showInterpreterList = false;
+		             GetComponent(GameParameters).showGameParameters(false);
 					 SendMessage("ShowSummaryGraph",false); 
 					}
 			}
 			else{
-			   if (GUILayout.Button("Show Historical Graph")){	
+			   if (GUILayout.Button("Historical Graph")){	
 		     	  	GetComponent(SummaryGraph).UpdateAverageValues();
 	                GetComponent(SummaryGraph).GetHistoricalAverageValues();
 				    _showGraphView = true;
 					_showCurrentGraph = false;
 					_showMap = false;
+					 _showInterpreterList = false;
+		            GetComponent(GameParameters).showGameParameters(false);
 					SendMessage("PrintSummaryGraph"); 
 		            SendMessage("ShowSummaryGraph",true); 
 				}
 			}
 			GUILayout.EndArea();
-					  	    
+		  	    
 			if (!isPlaying){
 				
 				// Area rendering the UI elements 
@@ -429,14 +472,16 @@ function DrawViews(){
     			
    			    }
    			    GUILayout.EndArea();
-   			    
+   	
    			    if (_showInterpreterList){
+   			        GetComponent(GameParameters).showGameParameters(false);
 				 	for (var cnt:int  = 1; cnt < GetComponent(Interpreters).interpreterNames.Count; cnt++){		 
 				 	   GUILayout.BeginArea (Rect (areaWidth*0.32, areaHeight*0.05+_labelHeight*(cnt), areaWidth*0.15, _labelHeight));
 				 	   if (GUILayout.Button((GetComponent(Interpreters).interpreterNames[cnt].ToString()))){
 				 	   		interpreterName = GetComponent(Interpreters).interpreterNames[cnt];
 				 	   		interpreterID = GetComponent(Interpreters).interpreterIDs[cnt];
 				 	   		_showInterpreterList = !_showInterpreterList;
+		                    
 				 	   } 
 				 	   GUILayout.EndArea();
 				    }
@@ -445,9 +490,9 @@ function DrawViews(){
 			    GUILayout.BeginArea (Rect (areaWidth*0.52, areaHeight*0.05, areaWidth*0.1, _labelHeight));
 				if (GUILayout.Button("Settings")){	// Game Parameters
 				     GetComponent(GameParameters).showGameParameters(true);
+				      _showInterpreterList = false;
 				}
 				GUILayout.EndArea();
-				 
 				 
 			}
 			else{
@@ -515,7 +560,7 @@ function DrawViews(){
 		         GetComponent(InfoPolarBear).ShowInfo(false);
 				 isPlaying = false;  
 				 GetComponent(AppendToLog).AppendDataToLog();
-			     networkView.RPC ("StopGame", RPCMode.Others,burnedCalories); 
+			     GetComponent.<NetworkView>().RPC ("StopGame", RPCMode.Others,burnedCalories); 
 			     Initialize();    
 			   }
 			   GUILayout.EndArea();  
@@ -523,33 +568,41 @@ function DrawViews(){
 				// show map Button
 			    GUILayout.BeginArea (Rect (areaWidth*0.03, areaHeight*0.12, _labelHeight*7, _labelHeight));
 				if (_showMap){
-				    if (GUILayout.Button("Hide Bird's eye view")){	
+				    if (GUILayout.Button("<< Back")){	
 						_showMap = false;
 						_showGraphView = false;
+						 _showInterpreterList = false;
+		                 GetComponent(GameParameters).showGameParameters(false);
 						}
 				}
 				else{
-				 if (GUILayout.Button("Show Bird's eye view")){	
+				 if (GUILayout.Button("Bird's eye view")){	
 						_showMap = true;
 						_showGraphView = false;
 						 SendMessage("ShowSummaryGraph",false); 
 						_showCurrentGraph = false;
+						 _showInterpreterList = false;
+		                 GetComponent(GameParameters).showGameParameters(false);
 						}
 				}
 				GUILayout.EndArea();
 				
 				// Show current Calories graph Button
-				GUILayout.BeginArea (Rect (areaWidth*0.35, areaHeight*0.12, _labelHeight*10, _labelHeight));
+				GUILayout.BeginArea (Rect (areaWidth*0.35, areaHeight*0.12, _labelHeight*8, _labelHeight));
 				if (_showCurrentGraph){
-				    if (GUILayout.Button("Hide Current Calories Graph")){	
+				    if (GUILayout.Button("<< Back")){	
+				     _showInterpreterList = false;
+		             GetComponent(GameParameters).showGameParameters(false);
 						_showCurrentGraph = false;
 						}
 				}
 				else{
-				 if (GUILayout.Button("Show Current Calories Graph")){	
+				 if (GUILayout.Button("Current Calories Graph")){	
 						_showCurrentGraph = true;
 						_showMap = false;
 						_showGraphView = false;
+						 _showInterpreterList = false;
+		                GetComponent(GameParameters).showGameParameters(false);
 					    SendMessage("ShowSummaryGraph",false); 
 						}
 				}
@@ -610,10 +663,10 @@ function DrawViews(){
 	///  Game will stop when reach timer    
     if ((isPlaying && _displayMinutes == gameDurationList[_durationGame]) || _goalReached ){
     	if (_goalReached){
-    	    networkView.RPC ("FinishGame", RPCMode.Others,burnedCalories);  
+    	    GetComponent.<NetworkView>().RPC ("FinishGame", RPCMode.Others,burnedCalories);  
     	}
     	else {
-    	    networkView.RPC ("StopGameTimeOut", RPCMode.Others,burnedCalories);  
+    	    GetComponent.<NetworkView>().RPC ("StopGameTimeOut", RPCMode.Others,burnedCalories);  
     	}
    
        _timerReached = true; 

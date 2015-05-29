@@ -12,7 +12,7 @@ var noSkybox : Material;
 
 function Start () {
     //Set the background color
-    camera.backgroundColor = Color (0, 0.4, 0.7, 1);
+    GetComponent.<Camera>().backgroundColor = Color (0, 0.4, 0.7, 1);
 }
 
 function Update () {
@@ -21,7 +21,7 @@ function Update () {
         RenderSettings.fogColor = Color (0, 0.4, 0.7, 0.6);
         RenderSettings.fogDensity = 0.04;
         RenderSettings.skybox = noSkybox;
-       	audio.PlayOneShot(underwaterSound);
+       	GetComponent.<AudioSource>().PlayOneShot(underwaterSound);
         //        yield return new WaitForSeconds(audio.clip.length);
     }
 

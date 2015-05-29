@@ -32,7 +32,7 @@ function Awake ()
 //Every fixed frame, if the character controller is moving, and the accumulation level is above a threshold, make footprints.
 function FixedUpdate ()
 {
-	playerRigidbody = rigidbody;
+	playerRigidbody = GetComponent.<Rigidbody>();
 	playerVelocity = playerRigidbody.velocity.magnitude;
 	var delay : float = (playerVelocity) * (0.035 * footDelay) ;
 	acum = SnowGlobalControl.varAcum;
@@ -65,8 +65,8 @@ function FootPrints ()
 				feet = Instantiate (footprintR, (hit.point + offset), reflected) as GameObject;
 				feet.transform.Rotate(0,(ry),0, Space.Self);
 				rightLeft = false;
-				audio.clip = nextSound;
-				audio.Play();
+				GetComponent.<AudioSource>().clip = nextSound;
+				GetComponent.<AudioSource>().Play();
 				}
 				else
 				{
@@ -74,8 +74,8 @@ function FootPrints ()
 				feet = Instantiate (footprintL, (hit.point + offset), reflected) as GameObject;
 				feet.transform.Rotate(0,(ry),0, Space.Self);
 				rightLeft = true;
-				audio.clip = nextSound;
-				audio.Play();
+				GetComponent.<AudioSource>().clip = nextSound;
+				GetComponent.<AudioSource>().Play();
 				}
 				
 				

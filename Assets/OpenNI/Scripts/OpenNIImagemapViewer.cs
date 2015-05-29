@@ -20,7 +20,7 @@ public class OpenNIImagemapViewer : MonoBehaviour
 	void Start () 
 	{
         if (null == target) {
-            target = renderer;
+            target = GetComponent<Renderer>();
         }
 
 		Image = OpenNIContext.OpenNode(NodeType.Image) as ImageGenerator;

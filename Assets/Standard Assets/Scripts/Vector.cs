@@ -112,7 +112,7 @@ public class Vector {
 	
 	public static Camera SetCamera (Camera thisCamera, CameraClearFlags clearFlags, bool useOrtho) {
 		if (!cam) {
-			cam = new GameObject("VectorCam", typeof(Camera)).camera;
+			cam = new GameObject("VectorCam", typeof(Camera)).GetComponent<Camera>();
 			MonoBehaviour.DontDestroyOnLoad(cam);
 		}
 		cam.depth = thisCamera.depth+1;
@@ -1831,7 +1831,7 @@ public class Vector {
 	}
 	
 	public static void Active (VectorLine line, bool active) {
-		line.vectorObject.renderer.enabled = active;
+		line.vectorObject.GetComponent<Renderer>().enabled = active;
 		line.active = active;
 	}
 }

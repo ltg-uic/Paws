@@ -37,11 +37,11 @@ public class OpenNIDepthmapViewer : MonoBehaviour
 		depthHistogramMap = new float[maxDepth];
 		
 		if (null == target){
-			target = renderer;
+			target = GetComponent<Renderer>();
 		}
 		
-		if (null == target && null != guiTexture){
-			target = guiTexture.renderer;
+		if (null == target && null != GetComponent<GUITexture>()){
+			target = GetComponent<GUITexture>().GetComponent<Renderer>();
 		}
 		
 		if (target){

@@ -113,7 +113,7 @@ public function SetTrigger(_value:int){ // receive bear's z position
 	if (_trigger != _prevTrigger && _eventId > 0){
 	    Debug.Log("Send trigger " + _eventId);
 		_prevTrigger = _trigger;	   
-		networkView.RPC ("SendEventId", RPCMode.Server, _eventId);
+		GetComponent.<NetworkView>().RPC ("SendEventId", RPCMode.Server, _eventId);
 	}
 }
 	

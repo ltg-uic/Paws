@@ -50,11 +50,11 @@ function Start ()
 	{
 		AddCopy(s, original, false);	
 	}
-	if(waves.length < renderer.materials.length)
+	if(waves.length < GetComponent.<Renderer>().materials.length)
 	{
 		AddCopy(gameObject, original, true);
 	}
-	theMaterial = renderer.materials[index];
+	theMaterial = GetComponent.<Renderer>().materials[index];
 	color = theMaterial.GetColor("_Color");
 	fadeColor = color;
 	fadeColor.a = 0;
@@ -65,10 +65,10 @@ function Start ()
 
 private function CheckHWSupport()
 {
-	var supported = renderer.sharedMaterial.shader.isSupported;
+	var supported = GetComponent.<Renderer>().sharedMaterial.shader.isSupported;
 	for(var s : GameObject in siblings)
-		s.renderer.enabled = supported;
-	renderer.enabled = supported;
+		s.GetComponent.<Renderer>().enabled = supported;
+	GetComponent.<Renderer>().enabled = supported;
 }
 
 
@@ -103,7 +103,7 @@ function AddCopy (ob : GameObject, original : WaveAnimation, copy : boolean)
 	newWave.original = original;
 	if(copy) newWave.index = index + 1;
 	else newWave.index = index;
-	newWave.offset = original.offset + (2.00 / parseFloat(renderer.materials.length));
+	newWave.offset = original.offset + (2.00 / parseFloat(GetComponent.<Renderer>().materials.length));
 	newWave.slideMin = original.slideMin;
 	newWave.slideMax = original.slideMax;
 	newWave.slideSpeed = original.slideSpeed + Random.Range(-original.slideSpeed / 5, original.slideSpeed / 5);

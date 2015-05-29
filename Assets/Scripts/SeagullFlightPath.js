@@ -33,7 +33,7 @@ function Start ()
 {
 	terrainData = Terrain.activeTerrain.terrainData;
 	terrainSize = terrainData.size;
-	col = Terrain.activeTerrain.collider;
+	col = Terrain.activeTerrain.GetComponent.<Collider>();
 	myT = transform;
 	
 	MainRoutine();	

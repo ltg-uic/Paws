@@ -14,7 +14,7 @@ function Play(seconds)
 {
 	if (seconds!=savedTime)
 	{
-		audio.Play();
+		GetComponent.<AudioSource>().Play();
 		savedTime = seconds;
 	}
 }

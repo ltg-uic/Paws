@@ -54,13 +54,13 @@ function Acumulate ()
 	
 	for(var snowAcum : GameObject in snowAcumulators)
 	{	
-		var currentAcum = snowAcum.renderer.material.color.a;
+		var currentAcum = snowAcum.GetComponent.<Renderer>().material.color.a;
 			varAcum = Mathf.Lerp(currentAcum, currentAcum + snowDir, Time.deltaTime * (transitionSpeed*0.0005)); //0.0005 is an arbitrary basement i chose.
 		
 		if(varAcum < 1 && varAcum > 0.1) //  VERY IMPORTANT! - this is the basement alpha level, surfaces below this wont accumulate ever. To find the alpha value of an object, divide the color instpector alpha/255.
 		{
 			
-			snowAcum.renderer.material.color.a = varAcum; // all effects are coordinated using the alpha value of our Snow Material.
+			snowAcum.GetComponent.<Renderer>().material.color.a = varAcum; // all effects are coordinated using the alpha value of our Snow Material.
 		}
 	}
 	
@@ -69,11 +69,11 @@ function Acumulate ()
 	{
 		if (snowFall == true)
 		{
-			snowPart.particleEmitter.emit = true;
+			snowPart.GetComponent.<ParticleEmitter>().emit = true;
 		}
 		else
 		{
-			snowPart.particleEmitter.emit = false;
+			snowPart.GetComponent.<ParticleEmitter>().emit = false;
 		}
 	}
 }

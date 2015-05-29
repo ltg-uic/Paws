@@ -64,26 +64,26 @@ public class BearStatus : MonoBehaviour {
 	}
 	
 	public void setAudioClip(string _clip){
-		  audio.volume = 0.8f;
-    	  audio.loop = false;
+		  GetComponent<AudioSource>().volume = 0.8f;
+    	  GetComponent<AudioSource>().loop = false;
 		
     	  switch (_clip)
 	      {
 			case "inWater":{
-				audio.volume = 0.65f;
-		    	if (!(audio.isPlaying && audio.clip == splashSound)){
+				GetComponent<AudioSource>().volume = 0.65f;
+		    	if (!(GetComponent<AudioSource>().isPlaying && GetComponent<AudioSource>().clip == splashSound)){
 			    		//audio.Stop();
-				        audio.PlayOneShot(waterSplash);
+				        GetComponent<AudioSource>().PlayOneShot(waterSplash);
 			    }	    	
 				
 				break;
 				}
 			case "rightStep":{	
-			     audio.volume = 0.8f;
+			     GetComponent<AudioSource>().volume = 0.8f;
 			
-			    if (!(audio.isPlaying && audio.clip == splashSound)){
+			    if (!(GetComponent<AudioSource>().isPlaying && GetComponent<AudioSource>().clip == splashSound)){
 			    //	audio.Stop();
-				    audio.PlayOneShot(walkingSteps_2);
+				    GetComponent<AudioSource>().PlayOneShot(walkingSteps_2);
 			    }	
 				//audio.clip = walkingSteps_2;
 			    //audio.Play();
@@ -91,20 +91,20 @@ public class BearStatus : MonoBehaviour {
 			 	break;
 				}
 			case "waterRightStep":{	
-			    audio.volume = 0.6f;
-			    if (!(audio.isPlaying && audio.clip == splashSound)){
+			    GetComponent<AudioSource>().volume = 0.6f;
+			    if (!(GetComponent<AudioSource>().isPlaying && GetComponent<AudioSource>().clip == splashSound)){
 			    //	audio.Stop();
-				    audio.PlayOneShot(waterWalkingSteps_2);
+				    GetComponent<AudioSource>().PlayOneShot(waterWalkingSteps_2);
 			    }	
 				Debug.Log("touching water right");
 				
 			 	break;
 				}
 		    case "leftStep": {
-			 audio.volume = 0.8f;
-		    	 if (!(audio.isPlaying && audio.clip == splashSound)){
+			 GetComponent<AudioSource>().volume = 0.8f;
+		    	 if (!(GetComponent<AudioSource>().isPlaying && GetComponent<AudioSource>().clip == splashSound)){
 			    //	audio.Stop();
-					audio.PlayOneShot(walkingSteps_1);
+					GetComponent<AudioSource>().PlayOneShot(walkingSteps_1);
 			    }
 			    //audio.clip = walkingSteps_1;
 		    	//audio.Play();
@@ -112,10 +112,10 @@ public class BearStatus : MonoBehaviour {
 				break;
 				}
 			case "waterLeftStep": {
-			 audio.volume = 0.6f;
-		    	 if (!(audio.isPlaying && audio.clip == splashSound)){
+			 GetComponent<AudioSource>().volume = 0.6f;
+		    	 if (!(GetComponent<AudioSource>().isPlaying && GetComponent<AudioSource>().clip == splashSound)){
 			    //	audio.Stop();
-					audio.PlayOneShot(waterWalkingSteps_1);
+					GetComponent<AudioSource>().PlayOneShot(waterWalkingSteps_1);
 			    }
 			    //audio.clip = walkingSteps_1;
 		    	//audio.Play();
@@ -123,11 +123,11 @@ public class BearStatus : MonoBehaviour {
 				break;
 				}
 			case "underwater":{
-			    audio.volume = 0.65f;
-			    audio.Stop();
+			    GetComponent<AudioSource>().volume = 0.65f;
+			    GetComponent<AudioSource>().Stop();
 				//audio.clip = underwaterSound;
 			    //audio.Play(); 
-				audio.PlayOneShot(underwaterSound);
+				GetComponent<AudioSource>().PlayOneShot(underwaterSound);
 				break;
 				}
 			default:{

@@ -198,7 +198,7 @@ public class BlendShape : MayaNode
 			_targetsByName.Add(t.name, t);
 		
 		// acquire the _outMesh based on the type of renderer
-		bool isSkin = renderer.GetType() == typeof(SkinnedMeshRenderer);
+		bool isSkin = GetComponent<Renderer>().GetType() == typeof(SkinnedMeshRenderer);
 		if (_outMesh == null)
 		{
 			if (isSkin)

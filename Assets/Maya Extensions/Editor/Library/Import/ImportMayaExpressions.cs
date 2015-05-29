@@ -328,7 +328,7 @@ public class ImportMayaExpressions : ImportMayaRigs
 		else
 		{
 			// add the expression component to the root gameObject
-			MayaExpressions newExpressionComponent = go.AddComponent(expressionContents.className) as MayaExpressions;
+			MayaExpressions newExpressionComponent = UnityEngineInternal.APIUpdaterRuntimeServices.AddComponent(go, "Assets/Maya Extensions/Editor/Library/Import/ImportMayaExpressions.cs (331,45)", expressionContents.className) as MayaExpressions;
 			
 			// set scale values
 			newExpressionComponent.importScale = (assetImporter as ModelImporter).globalScale;

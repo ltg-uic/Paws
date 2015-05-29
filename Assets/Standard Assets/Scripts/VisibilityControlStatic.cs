@@ -39,7 +39,7 @@ public class VisibilityControlStatic : MonoBehaviour {
 		VectorManager.DrawArrayLine(m_objectNumber.i);
 		
 		yield return null;
-		if (!renderer.isVisible) {
+		if (!GetComponent<Renderer>().isVisible) {
 			Vector.Active (vectorLine, false);
 		}
 	}

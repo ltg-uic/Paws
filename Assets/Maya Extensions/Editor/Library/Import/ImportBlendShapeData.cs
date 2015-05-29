@@ -204,13 +204,13 @@ public class ImportBlendShapeData : AssetPostprocessor
 					blendContainer = skin.transform;
 			}
 			// if no match was found, then assume it is the root
-			if (blendContainer == null || blendContainer.renderer == null)
+			if (blendContainer == null || blendContainer.GetComponent<Renderer>() == null)
 			{
 				blendContainer = go.transform;
 			}
 			// add the blendShape component if it does not yet exist
 			BlendShape blendShapeNode = blendContainer.gameObject.AddComponent<BlendShape>();
-			blendShapeNode.meshRenderer = blendShapeNode.renderer;
+			blendShapeNode.meshRenderer = blendShapeNode.GetComponent<Renderer>();
 			
 			// grab the base mesh to map target indices and the ArrayList of target models
 			Mesh taggedBaseMesh = indexMap.GetComponent<MeshFilter>().sharedMesh;

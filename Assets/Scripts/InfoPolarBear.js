@@ -35,7 +35,7 @@ function OnGUI() {
 	       _showInfo = false;
 	       _logLine = "TestB|Close Info|"+GetComponent(NetworkConnectionIT).playerName()+"|"+GetComponent(NetworkConnectionIT).currentYear()+
               "|"+(_currentInfo+1)+"|"+DateTime.Now;
-           networkView.RPC ("SaveLogDocent", RPCMode.Others,_logLine); 
+           GetComponent.<NetworkView>().RPC ("SaveLogDocent", RPCMode.Others,_logLine); 
 		}
 		GUILayout.EndArea();
 		GUILayout.EndArea();
@@ -48,7 +48,7 @@ public function SetCurrentInfo(_value: int) {
    _showInfo = true;
    _logLine = "TestB|Show Info|"+GetComponent(NetworkConnectionIT).playerName()+"|"+GetComponent(NetworkConnectionIT).currentYear()+
               "|"+_value+"|"+DateTime.Now;
-   networkView.RPC ("SaveLogDocent", RPCMode.Others,_logLine);                         
+   GetComponent.<NetworkView>().RPC ("SaveLogDocent", RPCMode.Others,_logLine);                         
 }
 
 public function ShowInfo(_value: boolean){

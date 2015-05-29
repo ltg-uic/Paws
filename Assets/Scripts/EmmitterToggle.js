@@ -10,9 +10,9 @@ function Start(){
 	
 function OutOfWater(){
    if (inWater){
-    audio.volume = 0.5f;
+    GetComponent.<AudioSource>().volume = 0.5f;
     ToggleAllEmitters(true,"WaterDripEmitter");
-    audio.PlayOneShot(outSplashSound);
+    GetComponent.<AudioSource>().PlayOneShot(outSplashSound);
 	yield WaitForSeconds(3);
 	ToggleAllEmitters(false,"WaterDripEmitter");
 	inWater =false;
@@ -22,10 +22,10 @@ function OutOfWater(){
 function InsideWater(){
    if (!inWater){
 	ToggleAllEmitters(true,"WaterSplashEmitter");
-	audio.volume = 0.6f;
-    audio.PlayOneShot(inSplashSound);
-    audio.volume = 0.8f;
-    audio.PlayOneShot(underWaterSound);
+	GetComponent.<AudioSource>().volume = 0.6f;
+    GetComponent.<AudioSource>().PlayOneShot(inSplashSound);
+    GetComponent.<AudioSource>().volume = 0.8f;
+    GetComponent.<AudioSource>().PlayOneShot(underWaterSound);
 	yield WaitForSeconds(3);
 	ToggleAllEmitters(false, "WaterSplashEmitter");
 	inWater = true;
@@ -34,7 +34,7 @@ function InsideWater(){
 
 function ToggleAllEmitters(emit : boolean, type : String) {
      var particleSystems = GameObject.FindWithTag(type);
-     particleSystems.particleEmitter.enabled = emit;
+     particleSystems.GetComponent.<ParticleEmitter>().enabled = emit;
 }
 
 		

@@ -20,18 +20,18 @@ function OnTriggerExit(hit : Collider){
 
 function IsOnLand(){
 	print ("walinkg now");
-	audio.clip = landSteps;
-	audio.loop = true;
-	audio.volume = 1;
-	audio.Play();
+	GetComponent.<AudioSource>().clip = landSteps;
+	GetComponent.<AudioSource>().loop = true;
+	GetComponent.<AudioSource>().volume = 1;
+	GetComponent.<AudioSource>().Play();
 }
 
 function IsInWater(){
 	print ("in Water");
-	audio.clip = waterSplash;
-	audio.loop = true;
-	audio.volume = 1;
-	audio.Play();
+	GetComponent.<AudioSource>().clip = waterSplash;
+	GetComponent.<AudioSource>().loop = true;
+	GetComponent.<AudioSource>().volume = 1;
+	GetComponent.<AudioSource>().Play();
 	
 	gameObject.SendMessage("SetGravityToZero");
 }
@@ -51,14 +51,14 @@ function OnControllerColliderHit(other : ControllerColliderHit){
 
 function IsUnderWater(){
 	print ("drawning");
-	audio.clip = waterUnder;
-	audio.loop = true;
-	audio.volume = 1;
-	audio.Play();
+	GetComponent.<AudioSource>().clip = waterUnder;
+	GetComponent.<AudioSource>().loop = true;
+	GetComponent.<AudioSource>().volume = 1;
+	GetComponent.<AudioSource>().Play();
 }
 
 function HitTheIce(){
-	audio.PlayOneShot (iceHitSound);
+	GetComponent.<AudioSource>().PlayOneShot (iceHitSound);
 }
 
 function FadeAudio (timer : float) {
@@ -69,7 +69,7 @@ function FadeAudio (timer : float) {
 
 	while (i <= 1.0) {
 		i += step * Time.deltaTime;
-		audio.volume = Mathf.Lerp(start, end, i);
+		GetComponent.<AudioSource>().volume = Mathf.Lerp(start, end, i);
 		yield;
 	}
 }

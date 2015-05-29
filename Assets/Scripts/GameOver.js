@@ -38,13 +38,13 @@ function GameOverTimeOut(_value: float){
    //	_gameOver = false;
    _counterMsg=0;
    yield WaitForSeconds(5.0);
-   GameObject.FindWithTag("Goal").audio.mute = true;
+   GameObject.FindWithTag("Goal").GetComponent.<AudioSource>().mute = true;
  }
 
 function GoalReached(){
    reachedGoal = true;
-   GameObject.FindWithTag("Goal").audio.mute = true;
-   GameObject.Find("PolarBear(Clone)").audio.PlayOneShot(reachGoalSound);
+   GameObject.FindWithTag("Goal").GetComponent.<AudioSource>().mute = true;
+   GameObject.Find("PolarBear(Clone)").GetComponent.<AudioSource>().PlayOneShot(reachGoalSound);
 }
 
 function OnGUI(){

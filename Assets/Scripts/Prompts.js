@@ -7,11 +7,11 @@ private var countError:int = 0;
 var countImages = 0;
 
 public function LoadImages(){
-    var www : WWW;
+    var www : WWW = null;
     prompts = new Texture2D[countImages];
 	for (var i:int = 0; i < countImages;i++)
 	{ 
-		prompts[i] = new Texture2D(100,75);
+	    var image:Texture2D =  new Texture2D(128,128);
 	    www = new WWW (url+(i+1).ToString()+".jpg");
 		yield www;
 		if (!String.IsNullOrEmpty(www.error)){
@@ -19,12 +19,18 @@ public function LoadImages(){
 	    	countError ++;
 	    }
 	    else
-		prompts[i] = www.texture;
+	    { 
+	       image = www.texture;
+	       www.Dispose();
+	       prompts[i] = image;
+	    }
 	//	Debug.Log(url+(i+1).ToString()+".jpg");
+	
 	}
 	if ( countImages > 0 ){
 		GetComponent(NetworkConnectionIT).PromptReady = true;
 	}
+	
 }
 
 public function GetPrompts(_direction:int){
